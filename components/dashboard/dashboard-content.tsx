@@ -3,7 +3,7 @@ import { CardTitle } from "@/components/ui/card";
 import KpisCards from "@/components/dashboard/kpis-cards";
 import { DashboardPieChart } from "@/components/charts/pie-chart";
 import { DashboardRadarChart } from "@/components/charts/radar-chart";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { PageHeader } from "@/components/common/page-header";
 import { Action, UserAction } from "@/types";
 import { getUserMoralData } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -24,7 +24,7 @@ export default async function DashboardContent() {
   
   return (
     <>
-      <DashboardHeader />
+      <PageHeader title="Tableau de bord" />
       <div className="flex flex-col space-y-6 p-6">
       <div
         className={`grid grid-cols-1 md:grid-cols-2 ${actions && environnement.length != 0 && social.length != 0 && gouvEtEthique.length != 0 ? "xl:grid-cols-4" : "xl:grid-cols-3"} gap-6`}

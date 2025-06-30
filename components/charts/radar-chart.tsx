@@ -102,8 +102,8 @@ export function DashboardRadarChart({ data }: { data: Action[] }) {
   }, [pathname, searchParams]);
 
   return (
-    <Card className="xl:w-1/2">
-      <CardContent className="pt-6 pb-0">
+    <Card className="xl:w-1/2 py-4">
+      <CardContent className="pt-4 pb-0 px-4">
         {data ? (
           <ChartContainer
             config={chartConfig}
@@ -124,7 +124,7 @@ export function DashboardRadarChart({ data }: { data: Action[] }) {
           <p></p>
         )}
       </CardContent>
-      <CardHeader className="items-center pb-6">
+      <CardHeader className="items-center pb-4 px-4">
         <CardTitle>Cartographie des enjeux</CardTitle>
         <CardDescription className="text-xs">
           Nombre d&apos;actions proposées par enjeu de durabilité (ESRS)

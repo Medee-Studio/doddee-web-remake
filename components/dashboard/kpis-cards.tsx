@@ -1,6 +1,5 @@
 import { Kpi } from "@/types";
-import { formDataKpis } from "@/utils/formData/formDataKpis";
-import { getKpiValueByLabel, whichEmoji } from "@/utils/helpers";
+import { whichEmoji } from "@/utils/helpers";
 import { Activity, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -12,61 +11,39 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-export default function KpisCards({ kpis }: { kpis: Kpi[] }) {
-  // Debug logging
-  console.log('KpisCards - received kpis:', kpis);
-  
-  const kpiTemplate: Kpi[] = formDataKpis.flatMap((form) => {
-    return form.content.map((item) => {
-      const kpiValue = getKpiValueByLabel(kpis, item.supabaseColumnName);
-      console.log(`KPI: ${item.supabaseColumnName}, Value: ${kpiValue}`);
-      return {
-        kpi_type: form.kpi_type,
-        kpi_value: kpiValue ?? -1,
-        kpi_label: item.supabaseColumnName,
-      };
-    });
-  });
-
-  const validKpis = kpiTemplate.filter(kpi => kpi.kpi_value !== -1);
-  console.log('Valid KPIs:', validKpis);
-  
-  // Fallback sample data for testing when no real KPIs
-  const sampleKpis: Kpi[] = [
-    { kpi_type: 'environnement', kpi_value: 1250, kpi_label: 'tonnes consommation d\'énergie' },
-    { kpi_type: 'social', kpi_value: 45, kpi_label: 'nombre employés' },
-    { kpi_type: 'gouvernance', kpi_value: 12, kpi_label: 'réunions gouvernance' },
-    { kpi_type: 'environnement', kpi_value: 890, kpi_label: 'litres consommation d\'eau' },
-  ];
-  
-  const displayKpis = validKpis.length > 0 ? validKpis : sampleKpis;
+export default function KpisCards({ kpis }: { kpis: Kpi[] }) {  
+  // Filter out KPIs with -1 or invalid values
+  const validKpis = kpis?.filter(kpi => {
+    const value = typeof kpi.kpi_value === 'string' ? parseFloat(kpi.kpi_value.replace(',', '.')) : kpi.kpi_value;
+    return value && value !== -1 && !isNaN(value);
+  }) || [];
   
   return (
     <>
-      {displayKpis.length > 0 ? (
-        <div className="px-10 md:px-10 xl:px-8 w-full ">
+      {kpis && validKpis.length > 0 ? (
+        <div className="w-full relative px-12">
           <Carousel opts={{ align: "start" }}>
             <CarouselContent>
-              {displayKpis.map((kpi: Kpi, i: number) => (
-                <CarouselItem key={i} className="basis-full md:basis-1/4">
-                  <Card className="w-full flex flex-col relative h-full justify-between">
-                    <p className="absolute top-2 left-2 text-sm">
-                      {whichEmoji(kpi.kpi_type)}
-                    </p>
-                    <p className="text-3xl font-bold text-center">
-                      {kpi.kpi_value}{" "}
-                      <span>{kpi.kpi_label.split(" ")[0]}</span>
-                    </p>
-                    <p
-                      className="text-muted-foreground text-xs text-center line-clamp-2"
-                      title={kpi.kpi_label}
-                    >
-                      {kpi.kpi_label.substring(
-                        kpi.kpi_label.indexOf(" ") + 1,
-                      )}
-                    </p>
-                  </Card>
-                </CarouselItem>
+              {validKpis.map((kpi: Kpi, i: number) => (
+                  <CarouselItem key={i} className="basis-full md:basis-1/4">
+                    <Card className="w-full flex flex-col relative h-full justify-between py-4">
+                      <p className="absolute top-2 left-2 text-sm">
+                        {whichEmoji(kpi.kpi_type)}
+                      </p>
+                      <p className="text-3xl font-bold text-center">
+                        {typeof kpi.kpi_value === 'string' ? kpi.kpi_value : kpi.kpi_value}{" "}
+                        <span>{kpi.kpi_label.split(" ")[0]}</span>
+                      </p>
+                      <p
+                        className="text-muted-foreground text-xs text-center line-clamp-2"
+                        title={kpi.kpi_label}
+                      >
+                        {kpi.kpi_label.substring(
+                          kpi.kpi_label.indexOf(" ") + 1,
+                        )}
+                      </p>
+                    </Card>
+                  </CarouselItem>
               ))}
             </CarouselContent>
             <CarouselPrevious />
@@ -78,7 +55,7 @@ export default function KpisCards({ kpis }: { kpis: Kpi[] }) {
           <Carousel opts={{ align: "start" }}>
             <CarouselContent>
               <CarouselItem className="basis-full md:basis-1/3">
-                <Card className="w-full flex flex-col relative justify-between px-3 pt-2 pb-1">
+                <Card className="w-full flex flex-col relative justify-between py-4 px-4">
                   <Activity className="mt-2 ml-2 h-4 w-4" strokeWidth={3} />
                   <div className="flex flex-col items-center justify-center h-[150px] p-3">
                     <Link href={"/dashboard/kpis"} passHref>
