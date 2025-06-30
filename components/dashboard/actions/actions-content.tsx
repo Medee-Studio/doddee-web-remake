@@ -6,8 +6,8 @@ import {
 } from "@/app/dashboard/actions/functions";
 import ActionsList from "@/components/dashboard/actions/actions-components/actions-list";
 import { PageHeader } from "@/components/common/page-header";
-import { redirectToPath } from "@/utils/auth-helpers/server";
-import { getStatusRedirect } from "@/utils/helpers";
+import { redirectToPath } from "@/lib/auth/server";
+import { getStatusRedirect } from "@/lib/helpers";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function ActionsContent() {

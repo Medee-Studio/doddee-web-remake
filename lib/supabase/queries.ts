@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
-import { RessourcesDataType, PlanAction } from '@/types';
+import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload } from '@/types';
 import { cache } from 'react';
 
 // Define types for RPC data structures
@@ -590,3 +590,221 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
     throw new Error("Failed to get user actions data");
   }
 });
+
+// Eco Profile Queries
+export const getUserLabelsAndEcoProfile = cache(
+  async (supabase: SupabaseClient, userId: string) => {
+    const { data: userLabelsAndEcoProfile } = await supabase.rpc(
+      "get_labels_and_eco_profile",
+      {
+        user_id_moral: userId,
+      },
+    );
+
+    return userLabelsAndEcoProfile;
+  },
+);
+
+export async function getEcoProfileById(supabase: SupabaseClient, profileId: string): Promise<EcoProfileWithActions | null> {
+  const { data, error } = await supabase.rpc(
+    "get_eco_profile_with_actions_labels_and_kpis",
+    {
+      profile_id: profileId,
+    },
+  );
+
+  if (error || !data) {
+    console.error('Error fetching eco profile:', error?.message);
+    return null;
+  }
+
+  return data as EcoProfileWithActions;
+}
+
+export async function upsertEcoProfile(
+  supabase: SupabaseClient,
+  profile: EcoProfile
+): Promise<ActionResult> {
+  const { error } = await supabase
+    .from("eco_profiles")
+    .upsert(profile)
+    .eq("user_id_moral", profile.user_id_moral);
+
+  if (error) {
+    console.error('Error upserting eco profile:', error.message);
+    return { error: 'Impossible de sauvegarder votre profil écologique.' };
+  }
+
+  return { success: 'Votre profil écologique a été sauvegardé avec succès.' };
+}
+
+// KPI Queries - Debug function to check what exists in database
+export async function debugDatabaseKpiStructure(supabase: SupabaseClient) {
+  console.log('🔍 [debugDatabaseKpiStructure] Investigating database structure...');
+  
+  try {
+    // Check if utilisateurs_moraux_kpis table exists and what's in it
+    console.log('🔍 [debugDatabaseKpiStructure] Checking utilisateurs_moraux_kpis table...');
+    const { data: kpiTableData, error: kpiTableError } = await supabase
+      .from('utilisateurs_moraux_kpis')
+      .select('*')
+      .limit(5);
+    
+    console.log('🔍 [debugDatabaseKpiStructure] utilisateurs_moraux_kpis query result:', { kpiTableData, kpiTableError });
+    
+    // Check what columns exist in the table
+    if (kpiTableData && kpiTableData.length > 0) {
+      console.log('🔍 [debugDatabaseKpiStructure] Table columns:', Object.keys(kpiTableData[0]));
+    }
+    
+    // Check what RPC functions are available
+    console.log('🔍 [debugDatabaseKpiStructure] Attempting to list available RPC functions...');
+    try {
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('get_kpi_definitions');
+      console.log('🔍 [debugDatabaseKpiStructure] get_kpi_definitions RPC result:', { rpcResult, rpcError });
+    } catch (error) {
+      console.log('🔍 [debugDatabaseKpiStructure] get_kpi_definitions RPC not available:', error);
+    }
+    
+    // Check if there are any other KPI-related tables
+    const possibleTables = ['kpi_definitions', 'kpis', 'kpi_templates', 'indicators'];
+    for (const tableName of possibleTables) {
+      try {
+        console.log(`🔍 [debugDatabaseKpiStructure] Checking if ${tableName} table exists...`);
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .limit(1);
+        console.log(`🔍 [debugDatabaseKpiStructure] ${tableName} table result:`, { data, error });
+      } catch (error) {
+        console.log(`🔍 [debugDatabaseKpiStructure] ${tableName} table not accessible:`, error);
+      }
+    }
+    
+  } catch (error) {
+    console.log('🔍 [debugDatabaseKpiStructure] Error during investigation:', error);
+  }
+}
+
+export async function getKpiDefinitions(supabase: SupabaseClient) {
+  console.log('🔍 [getKpiDefinitions] Starting to fetch KPI definitions from database...');
+  
+  // NOTE: The get_kpi_definitions RPC function doesn't exist in the database yet.
+  // This is expected behavior - the system will fall back to hardcoded definitions.
+  // To implement dynamic KPI definitions from database:
+  // 1. Create a kpi_definitions table in Supabase
+  // 2. Create the get_kpi_definitions RPC function
+  // 3. Populate with KPI definition data
+  
+  try {
+    console.log('🔍 [getKpiDefinitions] Calling supabase.rpc("get_kpi_definitions")...');
+    const { data, error } = await supabase.rpc('get_kpi_definitions');
+    
+    if (error) {
+      if (error.code === 'PGRST202') {
+        console.log('⚠️ [getKpiDefinitions] RPC function not found - this is expected. Using hardcoded fallback.');
+      } else {
+        console.log('❌ [getKpiDefinitions] Unexpected RPC error:', error);
+      }
+      return null;
+    }
+    
+    if (data) {
+      console.log('✅ [getKpiDefinitions] Successfully got data from RPC:', data);
+      console.log('✅ [getKpiDefinitions] Data type:', typeof data);
+      console.log('✅ [getKpiDefinitions] Data length:', Array.isArray(data) ? data.length : 'Not an array');
+      return data;
+    } else {
+      console.log('⚠️ [getKpiDefinitions] RPC returned null/undefined data');
+      return null;
+    }
+  } catch (error) {
+    console.log('❌ [getKpiDefinitions] Exception caught:', error);
+    return null;
+  }
+}
+
+export async function getUserKpis(supabase: SupabaseClient): Promise<Kpi[] | null> {
+  console.log('🔍 [getUserKpis] Starting to fetch user KPI values from database...');
+  
+  const user = await getUser(supabase);
+  console.log('🔍 [getUserKpis] Current user:', user ? { id: user.id, email: user.email } : 'No user');
+  
+  if (!user) {
+    console.log('❌ [getUserKpis] No authenticated user found');
+    return null;
+  }
+
+  console.log('🔍 [getUserKpis] Querying utilisateurs_moraux_kpis table for user:', user.id);
+  
+  const { data, error } = await supabase
+    .from("utilisateurs_moraux_kpis")
+    .select("kpi_type,kpi_value,kpi_label")
+    .eq("user_id_moral", user.id);
+
+  console.log('🔍 [getUserKpis] Query response:', { data, error });
+
+  if (error) {
+    console.error('❌ [getUserKpis] Database error:', error);
+    console.error('❌ [getUserKpis] Error message:', error.message);
+    console.error('❌ [getUserKpis] Error code:', error.code);
+    return null;
+  }
+
+  if (data) {
+    console.log('✅ [getUserKpis] Successfully fetched user KPIs:', data);
+    console.log('✅ [getUserKpis] Number of KPIs found:', data.length);
+    console.log('✅ [getUserKpis] KPI types found:', data.map(kpi => kpi.kpi_type));
+    return data as Kpi[];
+  } else {
+    console.log('⚠️ [getUserKpis] No KPI data found for user');
+    return null;
+  }
+}
+
+export async function upsertKpis(
+  supabase: SupabaseClient,
+  kpis: KpiPayload[]
+): Promise<ActionResult> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return { error: 'Utilisateur non authentifié.' };
+  }
+
+  try {
+    // First, delete existing KPIs for this user
+    const { error: deleteError } = await supabase
+      .from("utilisateurs_moraux_kpis")
+      .delete()
+      .eq("user_id_moral", user.id);
+
+    if (deleteError) {
+      console.error('Error deleting existing KPIs:', deleteError.message);
+      return { error: 'Erreur lors de la suppression des anciens KPIs.' };
+    }
+
+    // Then insert new KPIs, filtering out empty values
+    const validKpis = kpis
+      .filter(kpi => kpi.kpi_value !== "" && kpi.kpi_value !== -1)
+      .map(kpi => ({
+        ...kpi,
+        user_id_moral: user.id,
+      }));
+
+    if (validKpis.length > 0) {
+      const { error: insertError } = await supabase
+        .from("utilisateurs_moraux_kpis")
+        .insert(validKpis);
+
+      if (insertError) {
+        console.error('Error inserting KPIs:', insertError.message);
+        return { error: 'Impossible de sauvegarder vos KPIs.' };
+      }
+    }
+
+    return { success: 'Vos KPIs ont été sauvegardés avec succès.' };
+  } catch (error) {
+    console.error('Unexpected error in upsertKpis:', error);
+    return { error: 'Une erreur inattendue s\'est produite.' };
+  }
+}

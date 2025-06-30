@@ -6,6 +6,7 @@ export interface Enjeu {
 
 export interface Action {
   id: string;
+  nom_action: string;
   action_type: 'environnement' | 'social' | 'gouvernance';
   action_status: ActionStatus;
   enjeu?: Enjeu;
@@ -127,4 +128,53 @@ export interface UserActionData {
 export interface PlanAction {
   action_data: PlanActionData;
   user_action_data: UserActionData;
+}
+
+// Types for Eco Profile System
+export interface EcoProfile {
+  user_id_moral: string;
+  raison_etre?: string;
+  valeurs?: string;
+  missions?: string;
+  vision?: string;
+  presentation_entreprise?: string;
+  mot_equipe?: string;
+  url_linkedin?: string;
+  url_insta?: string;
+  url_facebook?: string;
+  url_unique?: boolean;
+  raison_sociale?: string;
+  logo_organisation?: string;
+}
+
+export interface EcoProfileWithActions extends EcoProfile {
+  actions?: Action[];
+  labels?: string[];
+  kpis?: Kpi[];
+}
+
+// Types for KPI Form System
+export interface QuestionType {
+  supabaseColumnName: string;
+  label: string;
+  type: string;
+  placeholder?: string;
+  infos?: string;
+}
+
+export interface FormDataKpisType {
+  kpi_type: 'environnement' | 'social' | 'gouvernance';
+  formType: 'input';
+  content: QuestionType[];
+}
+
+export interface KpiPayload {
+  kpi_label: string;
+  kpi_value: string | number;
+  kpi_type: 'environnement' | 'social' | 'gouvernance';
+}
+
+export interface ToSendSupabase {
+  supabaseTableName: string;
+  payload: KpiPayload[];
 } 

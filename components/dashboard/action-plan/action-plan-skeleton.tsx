@@ -4,12 +4,22 @@ import { Separator } from "@/components/ui/separator";
 
 export function ActionPlanSkeleton() {
   return (
-    <div className="space-y-6 mt-6">
-      {/* Header skeleton */}
-      <div className="flex flex-col">
-        <Skeleton className="h-8 w-80 mx-auto mb-2" />
-        <Skeleton className="h-6 w-48 mx-auto" />
-      </div>
+    <>
+      {/* Page Header skeleton */}
+      <header className="flex items-center justify-between border-b bg-background px-6 h-[64px]">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-6 w-6" />
+          <Skeleton className="h-8 w-32" />
+        </div>
+      </header>
+      
+      <div className="flex flex-col space-y-6 p-6">
+        <div className="space-y-6 mt-6">
+          {/* Header skeleton */}
+          <div className="flex flex-col">
+            <Skeleton className="h-9 w-64 mx-auto mb-2" />
+            <Skeleton className="h-6 w-48 mx-auto" />
+          </div>
 
       {/* Timeline skeleton */}
       <div className="w-full flex flex-row justify-center gap-6 relative">
@@ -77,11 +87,13 @@ export function ActionPlanSkeleton() {
           ))}
         </div>
 
-        {/* Vertical line skeleton */}
-        <div className="hidden md:flex h-full w-full absolute justify-center z-[-1]">
-          <Separator orientation="vertical" className="h-full opacity-20" />
+          {/* Vertical line skeleton */}
+          <div className="hidden md:flex h-full w-full absolute justify-center z-[-1]">
+            <Separator orientation="vertical" className="h-full" />
+          </div>
         </div>
       </div>
     </div>
+    </>
   );
 }

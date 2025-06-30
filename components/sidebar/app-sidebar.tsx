@@ -57,9 +57,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
     {
       title: "Mes KPIs",
-      url: "/dashboard/kpi",
+      url: "/dashboard/kpis",
       icon: BarChart3,
-      isActive: pathname === "/dashboard/kpi",
+      isActive: pathname === "/dashboard/kpis",
     }
   ]
 

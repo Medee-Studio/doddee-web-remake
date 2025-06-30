@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/common/page-header";
 import CoursesCards from "@/components/dashboard/courses/courses-cards";
-import { redirectToPath } from "@/utils/auth-helpers/server";
-import { getStatusRedirect } from "@/utils/helpers";
+import { redirectToPath } from "@/lib/auth/server";
+import { getStatusRedirect } from "@/lib/helpers";
 import { createClient } from "@/lib/supabase/server";
 import { getUserRessources } from "@/lib/supabase/queries";
 

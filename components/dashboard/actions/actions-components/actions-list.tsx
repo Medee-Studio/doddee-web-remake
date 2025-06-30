@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { ActionFormDataType, EnjeuFormDataType } from "@/types";
-import { whichClasseEmoji } from "@/utils/helpers";
+import { whichClasseEmoji } from "@/lib/helpers";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";

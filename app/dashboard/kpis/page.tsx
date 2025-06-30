@@ -1,8 +1,11 @@
+import { Suspense } from "react";
+import { KpisSkeleton } from "@/components/dashboard/kpis/kpis-skeleton";
+import KpisContent from "@/components/dashboard/kpis/kpis-content";
+
 export default function KpisPage() {
   return (
-    <div>
-      <h1>KPIs</h1>
-      <p>Coming soon...</p>
-    </div>
+    <Suspense fallback={<KpisSkeleton />}>
+      <KpisContent />
+    </Suspense>
   );
 }
