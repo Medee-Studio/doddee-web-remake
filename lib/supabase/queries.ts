@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
+import { RessourcesDataType } from '@/types';
 import { cache } from 'react';
 
 // Define types for RPC data structures
@@ -441,4 +442,12 @@ export const getUserMoralData = cache(async (supabase: SupabaseClient) => {
   } else {
     throw new Error("No active session found");
   }
+});
+
+export const getUserRessources = cache(async (supabase: SupabaseClient) => {
+  const user = await getUser(supabase);
+  const { data: ressourcesData } = await supabase.rpc("get_user_resources", {
+    p_user_id_moral: user?.id,
+  });
+  return ressourcesData as RessourcesDataType;
 });

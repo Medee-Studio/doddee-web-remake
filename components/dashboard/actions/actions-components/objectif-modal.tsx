@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ActionFormDataType, ObjectifFormDataType } from "@/types";
-import ActionCard from "./action-card";
+import ActionCard from "@/components/dashboard/actions/actions-components/action-card";
 
 type ObjectifModalProps = {
   objectif: ObjectifFormDataType;

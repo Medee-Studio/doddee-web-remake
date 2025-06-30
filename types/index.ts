@@ -81,4 +81,33 @@ export interface SupabaseEnjeuType {
   classe: {
     nom_classe_enjeu: string;
   };
+}
+
+// Types for Courses/Resources System
+export interface Cours {
+  type: 'title' | 'html_content';
+  content: string;
+}
+
+export interface RessourceInterne {
+  nom_ressource: string;
+  type: string;
+  status: ActionStatus;
+  intro: string;
+  author: string;
+  author_image_url: string;
+  cours: Cours[];
+}
+
+export interface RessourceExterne {
+  nom_ressource: string;
+  type: string;
+  status: ActionStatus;
+  nom_action: string;
+  url_ressource: string;
+}
+
+export interface RessourcesDataType {
+  ressources_internes?: RessourceInterne[];
+  ressources_externes?: RessourceExterne[];
 } 

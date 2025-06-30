@@ -1,4 +1,4 @@
-import ActionsList from "@/components/dashboard/action-list";
+import ActionsList from "@/components/dashboard/actions/action-list";
 import { CardTitle } from "@/components/ui/card";
 import KpisCards from "@/components/dashboard/kpis-cards";
 import { DashboardPieChart } from "@/components/charts/pie-chart";
