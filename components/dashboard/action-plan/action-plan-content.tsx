@@ -2,8 +2,8 @@ import { PageHeader } from "@/components/common/page-header";
 import Plan from "@/components/dashboard/action-plan/action-plan-components/plan";
 import { getUserActionsData } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
-import { redirectToPath } from "@/utils/auth-helpers/server";
-import { getStatusRedirect } from "@/utils/helpers";
+import { redirectToPath } from "@/lib/auth/server";
+import { getStatusRedirect } from "@/lib/helpers";
 
 export const dynamic = "force-dynamic";
 

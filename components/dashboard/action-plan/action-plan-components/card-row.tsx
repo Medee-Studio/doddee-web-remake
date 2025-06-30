@@ -8,7 +8,7 @@ import {
   getMonthAbbreviation,
   getYear,
   whichEmoji,
-} from "@/utils/helpers";
+} from "@/lib/helpers";
 import { whichActionStatusIcon } from "@/components/dashboard/actions/actions-components/action-status-icon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";

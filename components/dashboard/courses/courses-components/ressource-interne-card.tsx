@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Cours, RessourceInterne } from "@/types";
-import { whichEmoji } from "@/utils/helpers";
+import { whichEmoji } from "@/lib/helpers";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, PlayCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";

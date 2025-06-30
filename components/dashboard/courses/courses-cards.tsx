@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RessourcesDataType } from "@/types";
-import { whichEmoji } from "@/utils/helpers";
+import { whichEmoji } from "@/lib/helpers";
 import { whichActionStatusIcon } from "@/components/dashboard/actions/actions-components/action-status-icon";
 import RessourceInterneCard from "./courses-components/ressource-interne-card";
 import Image from "next/image";

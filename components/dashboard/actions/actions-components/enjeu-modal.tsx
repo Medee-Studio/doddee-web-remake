@@ -12,7 +12,7 @@ import {
   EnjeuFormDataType,
   ObjectifFormDataType,
 } from "@/types";
-import { whichClasseEmoji } from "@/utils/helpers";
+import { whichClasseEmoji } from "@/lib/helpers";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import ObjectifModal from "./objectif-modal";

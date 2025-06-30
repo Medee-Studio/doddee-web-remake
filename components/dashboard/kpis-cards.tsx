@@ -1,5 +1,5 @@
 import { Kpi } from "@/types";
-import { whichEmoji } from "@/utils/helpers";
+import { whichEmoji } from "@/lib/helpers";
 import { Activity, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
