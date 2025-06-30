@@ -16,4 +16,35 @@ export function whichEmoji(kpiType: string): string {
     default:
       return '📊';
   }
+}
+
+export function whichClasseEmoji(classeType: string): string {
+  switch (classeType.toLowerCase()) {
+    case 'environnement':
+      return '🌱';
+    case 'social':
+      return '👥';
+    case 'gouvernance':
+      return '⚖️';
+    case 'économique':
+      return '💼';
+    default:
+      return '📋';
+  }
+}
+
+export function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export function getStatusRedirect(
+  path: string,
+  title: string,
+  description: string,
+): string {
+  const params = new URLSearchParams({
+    title,
+    description,
+  });
+  return `${path}?${params.toString()}`;
 } 
