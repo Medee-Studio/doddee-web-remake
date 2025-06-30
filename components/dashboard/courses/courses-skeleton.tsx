@@ -13,16 +13,14 @@ export function CoursesSkeleton() {
       </header>
       
       <div className="p-6">
-        <div className="space-y-6">
-          <Skeleton className="h-10 w-48" />
-          
-          <div className="w-full relative px-12">
+        <div className="space-y-6">                    
+          <div className="w-full relative">
             <div className="flex gap-4">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="basis-full md:basis-1/4">
-                  <Card className="w-full flex flex-col relative h-full">
+                  <Card className="w-full flex flex-col relative h-full p-0">
                     <CardContent className="p-0">
-                      <div className="bg-gray-100 rounded-t-lg h-[90px] p-4">
+                      <div className="bg-gray-100 rounded-t-xl h-[90px] p-4">
                         <Skeleton className="h-4 w-full mb-2" />
                         <Skeleton className="h-4 w-3/4" />
                       </div>

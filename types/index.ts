@@ -110,4 +110,21 @@ export interface RessourceExterne {
 export interface RessourcesDataType {
   ressources_internes?: RessourceInterne[];
   ressources_externes?: RessourceExterne[];
+}
+
+// Types for Plan d'Action System
+export interface PlanActionData {
+  id: number;
+  nom_action: string;
+  action_type: 'environnement' | 'social' | 'gouvernance';
+}
+
+export interface UserActionData {
+  deadline: string;
+  action_status: 'disponible' | 'en_cours_validation' | 'en_cours' | 'valide';
+}
+
+export interface PlanAction {
+  action_data: PlanActionData;
+  user_action_data: UserActionData;
 } 

@@ -1,8 +1,11 @@
+import { Suspense } from "react";
+import { ActionPlanSkeleton } from "@/components/dashboard/action-plan/action-plan-skeleton";
+import ActionPlanContent from "@/components/dashboard/action-plan/action-plan-content";
+
 export default function ActionPlanPage() {
   return (
-    <div>
-      <h1>Action Plan</h1>
-      <p>Coming soon...</p>
-    </div>
+    <Suspense fallback={<ActionPlanSkeleton />}>
+      <ActionPlanContent />
+    </Suspense>
   );
 }
