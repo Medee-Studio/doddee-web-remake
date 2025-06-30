@@ -75,4 +75,4 @@ export default function ActionsList({ actions }: { actions: UserAction[] }) {
       </CardContent>
     </Card>
   );
-} 
+}

@@ -88,8 +88,8 @@ export function DashboardPieChart({
 
   const showForm = data?.length == 0 || data == undefined;
   return (
-    <Card className={`flex flex-col w-full ${className}`}>
-      <CardContent className="flex-1 pb-0">
+    <Card className={`flex flex-col w-full py-4 ${className}`}>
+      <CardContent className="flex-1 pb-0 px-4">
         {!showForm ? (
           <ChartContainer
             config={chartConfig}
@@ -160,7 +160,7 @@ export function DashboardPieChart({
         )}
       </CardContent>
       <CardHeader
-        className={`flex flex-col items-center pb-6 ${!data && "pt-0"}`}
+        className={`flex flex-col items-center pb-4 px-4 ${!data && "pt-0"}`}
       >
         <CardTitle>{title}</CardTitle>
         {!showForm ? (
