@@ -1,66 +1,100 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Loader2, Check, ChevronRight } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { CheckIcon } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { submitCompleteProfile } from "@/lib/supabase/queries";
 import { toast } from "sonner";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { completeProfileFormData } from "@/lib/form-data/complete-profile";
-import { Address } from "@/types";
+import {
+  labels,
+  secteurs,
+  sous_secteurs,
+  fonctions,
+  categoryQuestions,
+  steps,
+} from "@/lib/form-data/complete-profile";
+import { useRouter } from "next/navigation";
+import { AddressInput } from "@/components/ui/address-input";
 
-// Types
-interface FormData {
-  raison_sociale: string;
-  tel: string;
-  siren: string;
-  adresse: string;
-  annee_de_creation: number;
-  labels: number[];
-  secteur_principal: string;
-  sous_secteur: string;
-  fonction: string;
-  categories: string[];
-}
+// Zod schema
+const completeProfileSchema = z.object({
+  // Step 1: Company Info
+  raison_sociale: z.string().min(1, "La raison sociale est requise"),
+  tel: z
+    .string()
+    .min(10, "Le numéro de téléphone doit contenir au moins 10 chiffres"),
+  siren: z
+    .string()
+    .min(9, "Le SIREN doit contenir 9 chiffres")
+    .max(9, "Le SIREN ne doit pas dépasser 9 chiffres"),
+  adresse: z.string().min(1, "L'adresse est requise"),
+  annee_de_creation: z.coerce
+    .number()
+    .min(1800, "Année invalide")
+    .max(new Date().getFullYear(), "Année invalide"),
 
-interface StepConfig {
-  id: number;
-  title: string;
-  description: string;
-}
+  // Step 2: Labels
+  labels: z.array(z.string()),
 
-interface CategoryAnswers {
-  [key: string]: string;
-}
+  // Step 3: Sector and Function
+  secteur: z.string().min(1, "Le secteur est requis"),
+  sous_secteur: z.string().min(1, "Le sous-secteur est requis"),
+  fonction: z.string().min(1, "La fonction est requise"),
 
-// Dynamic imports for step components
-import CompanyInfoStep from "@/components/auth/steps/CompanyInfoStep";
-import LabelsStep from "@/components/auth/steps/LabelsStep";
-import SectorFunctionStep from "@/components/auth/steps/SectorFunctionStep";
-import CategoriesStep from "@/components/auth/steps/CategoriesStep";
+  // Step 4: Categories
+  flotte_vehicule: z.boolean(),
+  plus_de_un_salarie: z.boolean(),
+  locaux: z.boolean(),
+  parc_informatique: z.boolean(),
+  site_web: z.boolean(),
+  site_de_production: z.boolean(),
+  approvisionnement: z.boolean(),
+  distribution: z.boolean(),
+  stock: z.boolean(),
+});
 
-const STEPS: StepConfig[] = [
-  { id: 1, title: "Votre entreprise", description: "Informations et coordonnées" },
-  { id: 2, title: "Vos pratiques actuelles", description: "Labels et certifications" },
-  { id: 3, title: "Secteur et fonction", description: "Votre secteur d'activité et fonction" },
-  { id: 4, title: "Votre catégorie", description: "Caractéristiques de votre entreprise" },
-];
+type FormData = z.infer<typeof completeProfileSchema>;
 
 export function CompleteProfileForm() {
-  // State
-  const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-  const [categoryAnswers, setCategoryAnswers] = useState<CategoryAnswers>({});
+  const [selectedSector, setSelectedSector] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const router = useRouter();
 
-  // Form
   const form = useForm<FormData>({
+    resolver: zodResolver(completeProfileSchema),
     defaultValues: {
       raison_sociale: "",
       tel: "",
@@ -68,181 +102,65 @@ export function CompleteProfileForm() {
       adresse: "",
       annee_de_creation: new Date().getFullYear(),
       labels: [],
-      secteur_principal: "",
+      secteur: "",
       sous_secteur: "",
       fonction: "",
-      categories: [],
+      flotte_vehicule: false,
+      plus_de_un_salarie: false,
+      locaux: false,
+      parc_informatique: false,
+      site_web: false,
+      site_de_production: false,
+      approvisionnement: false,
+      distribution: false,
+      stock: false,
     },
   });
 
-  // Get form sections
-  const [companyInfo, labelsSection, sectorSection, functionSection, categoriesSection] = completeProfileFormData;
+  const nextStep = async () => {
+    let isValid = false;
 
-  // Validation functions
-  const validateStep = (stepId: number): boolean => {
-    const values = form.getValues();
-    console.log("values", values)
-    switch (stepId) {
+    switch (currentStep) {
       case 1:
-        return !!(values.raison_sociale && values.tel && values.siren && values.annee_de_creation && values.adresse);
+        isValid = await form.trigger([
+          "raison_sociale",
+          "tel",
+          "siren",
+          "adresse",
+          "annee_de_creation",
+        ]);
+        break;
       case 2:
-        return true; // Labels are optional
+        isValid = true; // Labels are optional
+        break;
       case 3:
-        return !!(values.secteur_principal && values.sous_secteur && values.fonction);
+        isValid = await form.trigger(["secteur", "sous_secteur", "fonction"]);
+        break;
       case 4:
-        const categoriesContent = categoriesSection.content as Array<{
-          name: string;
-          label: string;
-          options: Array<{ label: string; value: string; }>;
-        }>;
-        return Object.keys(categoryAnswers).length === categoriesContent.length &&
-               Object.values(categoryAnswers).every(answer => answer !== "");
-      default:
-        return false;
+        isValid = await form.trigger();
+        break;
+    }
+
+    if (isValid && currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+    } else if (isValid && currentStep === 4) {
+      handleSubmit();
     }
   };
 
-  // Event handlers
-  const handleAddressSelect = (address: Address) => {
-    setSelectedAddress(address);
-    form.setValue("adresse", address.properties.label);
-  };
-
-  const handleCategoryAnswer = (categoryName: string, value: string) => {
-    const newAnswers = { ...categoryAnswers, [categoryName]: value };
-    setCategoryAnswers(newAnswers);
-
-    const positiveCategories = Object.entries(newAnswers)
-      .filter(([_, answer]) => answer === "true")
-      .map(([category, _]) => category);
-
-    form.setValue("categories", positiveCategories);
-  };
-
-  const handleNextStep = () => {
-    if (validateStep(currentStep)) {
-      setCompletedSteps(prev => [...prev.filter(step => step !== currentStep), currentStep]);
-      if (currentStep < 4) {
-        setCurrentStep(currentStep + 1);
-      }
-    } else {
-      toast.error("Veuillez remplir tous les champs obligatoires");
-    }
-  };
-
-  const handlePreviousStep = () => {
+  const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
 
-  const handleSkipStep = () => {
-    if (currentStep === 2 && currentStep < 4) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  // Submit handler
-  const onSubmit = async (values: FormData) => {
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
-      setIsLoading(true);
+      const formData = form.getValues();
       const supabase = createClient();
-      
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) {
-        toast.error(userError?.message || "Utilisateur non trouvé.");
-        router.push("/auth/login");
-        return;
-      }
 
-      // Prepare data
-      const coordinates = selectedAddress ? {
-        longitude: selectedAddress.geometry.coordinates[0],
-        latitude: selectedAddress.geometry.coordinates[1],
-        properties: selectedAddress.properties,
-      } : null;
-
-      const labelsContent = labelsSection.content as Array<{
-        id: number;
-        label: string;
-      }>;
-      const labelNames = values.labels
-        ?.map(labelId => {
-          const label = labelsContent.find((l) => l.id === labelId);
-          return label ? label.label : "";
-        })
-        .filter(Boolean) || [];
-
-      const sectorContent = sectorSection.content as {
-        label: string;
-        placeholder: string;
-        options: Array<{
-          value: string;
-          label: string;
-          children?: Array<{
-            value: string;
-            label: string;
-          }>;
-        }>;
-      };
-      const mainSector = sectorContent.options.find((s) => s.label === values.secteur_principal);
-      const subSector = mainSector?.children?.find((ss) => ss.label === values.sous_secteur);
-      const mainSectorId = mainSector ? parseInt(mainSector.value, 10) : null;
-      const subSectorId = subSector ? parseInt(subSector.value, 10) : null;
-
-      // Insert into utilisateurs_moraux
-      const { error: moralError } = await supabase
-        .from("utilisateurs_moraux")
-        .insert({
-          user_id_moral: user.id,
-          raison_sociale: values.raison_sociale,
-          tel: values.tel,
-          siren: values.siren,
-          adresse: values.adresse,
-          annee_de_creation: values.annee_de_creation,
-          labels: labelNames,
-          secteur_id: mainSectorId,
-          sous_secteur_id: subSectorId,
-          coordinates: coordinates,
-        });
-
-      if (moralError) {
-        toast.error("Erreur lors de l'enregistrement des informations de l'entreprise.");
-        return;
-      }
-
-      // Insert categories
-      const categoriesData: any = { user_id: user.id };
-      const categoriesContent = categoriesSection.content as Array<{
-        name: string;
-        label: string;
-        options: Array<{ label: string; value: string; }>;
-      }>;
-      categoriesContent.forEach((category) => {
-        categoriesData[category.name] = values.categories?.includes(category.name) ?? false;
-      });
-
-      const { error: categoriesError } = await supabase
-        .from("utilisateurs_moraux_categories")
-        .insert(categoriesData);
-
-      if (categoriesError) {
-        toast.error("Erreur lors de l'enregistrement de vos catégories.");
-        return;
-      }
-
-      // Insert into utilisateurs_physiques
-      const { error: physicalError } = await supabase
-        .from("utilisateurs_physiques")
-        .insert({
-          fonction: values.fonction,
-          user_id_moral: user.id,
-        });
-
-      if (physicalError) {
-        toast.error("Erreur lors de l'enregistrement de votre fonction.");
-        return;
-      }
+      const result = await submitCompleteProfile(supabase, formData);
 
       // Update user metadata
       const { error: updateError } = await supabase.auth.updateUser({
@@ -254,196 +172,455 @@ export function CompleteProfileForm() {
         return;
       }
 
-      toast.success("Profil complété avec succès !");
-      router.push("/dashboard");
-    } catch (err) {
-      toast.error("Une erreur inattendue est survenue.");
+      if ("success" in result ) {
+        toast.success("Profil complété avec succès!");
+        // Redirect to dashboard or next page
+        router.push("/dashboard");
+      } else {
+        toast.error("Une erreur est survenue");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Une erreur est survenue lors de la soumission");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  // Helper functions
-  const isStepCompleted = (stepId: number) => completedSteps.includes(stepId);
-  const isCurrentStepValid = validateStep(currentStep);
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <FormField
+              control={form.control}
+              name="raison_sociale"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-[#64748b]">
+                    Raison sociale
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Entrez votre raison sociale"
+                      className="mt-2 h-12 border-[#cbd5e1] focus:border-primary focus:ring-primary"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-  return (
-    <div className="flex h-screen">
-      {/* Main Form Area */}
-      <div className="md:w-2/3 w-full p-8 overflow-y-auto">
-        {/* Progress Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            {STEPS.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <div className="flex flex-col items-center">
-                  <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center mb-2 ${
-                    currentStep === step.id
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : isStepCompleted(step.id)
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-gray-300 text-gray-400"
-                  }`}>
-                    {isStepCompleted(step.id) ? (
-                      <Check className="w-6 h-6" />
-                    ) : (
-                      <span className="text-lg font-semibold">{step.id}</span>
-                    )}
-                  </div>
-                  <div className="text-center">
-                    <div className={`text-sm font-medium ${
-                      currentStep === step.id ? "text-primary" : "text-gray-600"
-                    }`}>
-                      {step.title}
+            <FormField
+              control={form.control}
+              name="tel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-[#64748b]">
+                    Téléphone
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="tel"
+                      placeholder="06 XX XX XX XX"
+                      className="mt-2 h-12 border-[#cbd5e1] focus:border-primary focus:ring-primary"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="siren"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-[#64748b]">
+                    SIREN
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Entrez votre SIREN"
+                      className="mt-2 h-12 border-[#cbd5e1] focus:border-primary focus:ring-primary"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="adresse"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-[#64748b]">
+                    Adresse
+                  </FormLabel>
+                  <FormControl>
+                    <AddressInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Entrez votre adresse"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="annee_de_creation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-[#64748b]">
+                    Année de création
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Entrez l'année de création"
+                      className="mt-2 h-12 border-[#cbd5e1] focus:border-primary focus:ring-primary"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <FormField
+              control={form.control}
+              name="labels"
+              render={() => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-[#64748b]">
+                    Sélectionnez vos labels et certifications
+                  </FormLabel>
+                  <div className="mt-4 h-80 border  p-4 overflow-y-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {labels.map((label) => (
+                        <FormField
+                          key={label}
+                          control={form.control}
+                          name="labels"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0  p-3 rounded-md border ">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(label)}
+                                  onCheckedChange={(checked) => {
+                                    const currentValues = field.value || [];
+                                    if (checked) {
+                                      field.onChange([...currentValues, label]);
+                                    } else {
+                                      field.onChange(
+                                        currentValues.filter(
+                                          (value) => value !== label
+                                        )
+                                      );
+                                    }
+                                  }}
+                                  className="border-[#cbd5e1] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal text-[#64748b] leading-relaxed cursor-pointer">
+                                {label}
+                              </FormLabel>
+                            </FormItem>
+                          )}
+                        />
+                      ))}
                     </div>
                   </div>
-                </div>
-                {index < STEPS.length - 1 && (
-                  <ChevronRight className="w-6 h-6 text-gray-400 mx-6" />
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-primary h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
-        </div>
+        );
 
-        {/* Form Content */}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {currentStep === 1 && (
-              <CompanyInfoStep
-                form={form}
-                companyInfo={companyInfo}
-                isLoading={isLoading}
-                onAddressSelect={handleAddressSelect}
-              />
-            )}
-
-            {currentStep === 2 && (
-              <LabelsStep
-                form={form}
-                labelsSection={labelsSection}
-              />
-            )}
-
-            {currentStep === 3 && (
-              <SectorFunctionStep
-                form={form}
-                sectorSection={sectorSection}
-                functionSection={functionSection}
-              />
-            )}
-
-            {currentStep === 4 && (
-              <CategoriesStep
-                categoriesSection={categoriesSection}
-                categoryAnswers={categoryAnswers}
-                onCategoryAnswer={handleCategoryAnswer}
-              />
-            )}
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between items-center pt-6 pb-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePreviousStep}
-                disabled={currentStep === 1}
-                className="px-8 h-12"
-              >
-                Précédent
-              </Button>
-
-              <div className="flex gap-4">
-                {currentStep === 2 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={handleSkipStep}
-                    className="px-6 h-12"
+      case 3:
+        return (
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="secteur"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Secteur principal</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setSelectedSector(value);
+                      form.setValue("sous_secteur", "");
+                    }}
+                    defaultValue={field.value}
                   >
-                    Ignorer cette étape
-                  </Button>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez un secteur" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {secteurs.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="sous_secteur"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sous-secteur</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez un sous-secteur" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {(sous_secteurs[selectedSector] || []).map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="fonction"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Votre fonction</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez votre fonction" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {fonctions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            {categoryQuestions.map((question) => (
+              <FormField
+                key={question.name}
+                control={form.control}
+                name={question.name}
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>{question.label}</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) =>
+                          field.onChange(value === "true")
+                        }
+                        value={field.value ? "true" : "false"}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="true"
+                            id={`${question.name}-true`}
+                          />
+                          <Label htmlFor={`${question.name}-true`}>Oui</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="false"
+                            id={`${question.name}-false`}
+                          />
+                          <Label htmlFor={`${question.name}-false`}>Non</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
+              />
+            ))}
+          </div>
+        );
 
-                {currentStep < 4 ? (
-                  <Button
-                    type="button"
-                    onClick={handleNextStep}
-                    disabled={!isCurrentStepValid}
-                    className="px-12 h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold"
-                  >
-                    VALIDER
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isLoading || !isCurrentStepValid}
-                    className="px-12 h-12 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold"
-                  >
-                    {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                    TERMINER
-                  </Button>
-                )}
+      default:
+        return null;
+    }
+  };
+
+  const currentStepData = steps.find((step) => step.id === currentStep);
+
+  return (
+    <div className="min-h-screen ">
+      <div className=" mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 min-h-screen">
+          {/* Form Section - 2/3 width */}
+          <div className="lg:col-span-2 p-8">
+            {/* Step Navigation */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between">
+                {steps.map((step, index) => (
+                  <div key={step.id} className="flex items-center">
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium border-2 ${
+                          step.id === currentStep
+                            ? "border-primary bg-primary text-white"
+                            : step.id < currentStep
+                            ? "border-primary bg-primary text-white"
+                            : "border-[#cbd5e1] bg-[#f1f5f9] text-[#64748b]"
+                        }`}
+                      >
+                        {step.id < currentStep ? (
+                          <CheckIcon className="w-3 h-3" />
+                        ) : (
+                          step.id
+                        )}
+                      </div>
+                      <span
+                        className={`text-sm font-medium ${
+                          step.id === currentStep
+                            ? "text-primary"
+                            : step.id < currentStep
+                            ? "text-primary"
+                            : "text-[#64748b]"
+                        }`}
+                      >
+                        {step.title}
+                      </span>
+                    </div>
+                    {index < steps.length - 1 && (
+                      <div className="mx-4 flex-1 h-px bg-[#cbd5e1]" />
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
-          </form>
-        </Form>
-      </div>
 
-      {/* Right Sidebar */}
-      <div className="md:w-1/3 hidden bg-blue-50 p-8 md:flex flex-col justify-center">
-        <div className="text-center">
-          <div className="mb-8">
-            <Image
-              src={require("@/public/mascotte.png")}
-              alt="Mascotte"
-              width={120}
-              height={120}
-              className="mx-auto mb-4"
-            />
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">
-              À quoi servent ces questions ?
-            </h3>
-            <p className="text-gray-600 leading-relaxed">
-              À mieux connaître votre entreprise pour vous proposer un accompagnement RSE hautement personnalisé.
-            </p>
+            {/* Form Content */}
+            <Card className="shadow-sm border-[#cbd5e1]">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl font-semibold text-[#64748b]">
+                  {currentStepData?.title}
+                </CardTitle>
+                <CardDescription className="text-[#64748b]">
+                  {currentStepData?.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <Form {...form}>
+                  <form className="space-y-8">
+                    {renderStepContent()}
+
+                    <div className="flex items-center justify-between pt-8 border-t border-[#cbd5e1]">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={prevStep}
+                        disabled={currentStep === 1}
+                        className="text-[#64748b] hover:text-primary"
+                      >
+                        Précédent
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={nextStep}
+                        disabled={isSubmitting}
+                        className="bg-primary hover:bg-primary/90 text-white px-8 py-2 rounded-full"
+                      >
+                        {currentStep === 4 ? "Terminer" : "Suivant"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="space-y-4">
-            {STEPS.map((step) => (
-              <div key={step.id} className="flex items-center space-x-4 p-3 rounded-lg bg-white/50">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  isStepCompleted(step.id)
-                    ? "bg-primary text-primary-foreground"
-                    : currentStep === step.id
-                    ? "bg-primary/20"
-                    : "bg-gray-200"
-                }`}>
-                  {isStepCompleted(step.id) ? (
-                    <Check className="w-5 h-5" />
-                  ) : currentStep === step.id ? (
-                    <div className="w-3 h-3 bg-primary rounded-full"></div>
-                  ) : (
-                    <span className="text-sm font-medium text-gray-500">{step.id}</span>
-                  )}
-                </div>
-                <div className="text-left">
-                  <div className={`text-sm font-medium ${
-                    currentStep === step.id ? "text-gray-900" : "text-gray-600"
-                  }`}>
+          {/* Mascotte & Info Section - 1/3 width */}
+          <div className="lg:col-span-1 bg-[#ebfaff] p-8 flex flex-col justify-center">
+            {/* Mascotte */}
+            <div className="text-center mb-8">
+              <Image
+                src={require("@/public/mascotte.png")}
+                alt="Mascotte"
+                width={160}
+                height={160}
+                className="mx-auto mb-6"
+              />
+              <h3 className="text-lg font-semibold text-[#64748b] mb-2">
+                À quoi servent ces questions ?
+              </h3>
+              <p className="text-sm text-[#64748b] leading-relaxed">
+                À mieux connaître votre entreprise pour vous proposer un
+                accompagnement RSE hautement personnalisé.
+              </p>
+            </div>
+
+            {/* Progress Indicators */}
+            <div className="space-y-4">
+              {steps.map((step) => (
+                <div key={step.id} className="flex items-center space-x-3">
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 ${
+                      step.id <= currentStep
+                        ? "border-primary bg-primary"
+                        : "border-[#cbd5e1] bg-[#f1f5f9]"
+                    }`}
+                  />
+                  <span
+                    className={`text-sm ${
+                      step.id <= currentStep ? "text-primary" : "text-[#64748b]"
+                    }`}
+                  >
                     {step.title}
-                  </div>
-                  <div className="text-xs text-gray-500">{step.description}</div>
+                  </span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
