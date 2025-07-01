@@ -6,6 +6,8 @@ import {
   timestamp,
   integer,
   uuid, // Added for UUID type
+  boolean,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -72,11 +74,38 @@ export const npsResponses = pgTable('nps_responses', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
+export const forms = pgTable('forms', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  createdBy: uuid('created_by')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  schema: jsonb('schema').notNull(),
+  settings: jsonb('settings').default({}),
+  isPublic: boolean('is_public').default(false),
+  publicId: uuid('public_id').unique().defaultRandom(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const formResponses = pgTable('form_responses', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  formId: uuid('form_id')
+    .notNull()
+    .references(() => forms.id, { onDelete: 'cascade' }),
+  respondentEmail: varchar('respondent_email', { length: 255 }),
+  respondentName: varchar('respondent_name', { length: 255 }),
+  responseData: jsonb('response_data').notNull(),
+  submittedAt: timestamp('submitted_at').notNull().defaultNow(),
+});
+
 // RELATIONS
 
 export const usersRelations = relations(users, ({ many }) => ({
   teamMemberships: many(teamMembers, { relationName: 'UserTeamMembers' }),
-  invitationsSent: many(invitations, { relationName: 'UserInvitationsSent' }),  
+  invitationsSent: many(invitations, { relationName: 'UserInvitationsSent' }),
+  forms: many(forms, { relationName: 'UserForms' }),
 }));
 
 export const teamsRelations = relations(teams, ({ many }) => ({
@@ -110,6 +139,23 @@ export const invitationsRelations = relations(invitations, ({ one }) => ({
   }),
 }));
 
+export const formsRelations = relations(forms, ({ one, many }) => ({
+  createdBy: one(users, {
+    fields: [forms.createdBy],
+    references: [users.id],
+    relationName: 'FormCreatedBy',
+  }),
+  responses: many(formResponses, { relationName: 'FormResponses' }),
+}));
+
+export const formResponsesRelations = relations(formResponses, ({ one }) => ({
+  form: one(forms, {
+    fields: [formResponses.formId],
+    references: [forms.id],
+    relationName: 'FormResponseForm',
+  }),
+}));
+
 // INFERED TYPES
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -121,6 +167,10 @@ export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
 export type NpsResponse = typeof npsResponses.$inferSelect;
 export type NewNpsResponse = typeof npsResponses.$inferInsert;
+export type Form = typeof forms.$inferSelect;
+export type NewForm = typeof forms.$inferInsert;
+export type FormResponse = typeof formResponses.$inferSelect;
+export type NewFormResponse = typeof formResponses.$inferInsert;
 
 
 
