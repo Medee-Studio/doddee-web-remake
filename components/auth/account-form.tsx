@@ -212,25 +212,6 @@ export function AccountForm({ user }: { user: User }) {
           </div>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Gestion de l&apos;équipe</CardTitle>
-          <CardDescription>
-            Gérez les membres de votre équipe et les paramètres de collaboration.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Accédez à la page de gestion de l&apos;équipe pour inviter de nouveaux membres ou modifier les rôles existants.
-            </p>
-            <Button variant="outline" size="sm" asChild className="mt-2">
-              <Link href="/dashboard/team">Gérer l&apos;équipe</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 } 

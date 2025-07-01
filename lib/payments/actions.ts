@@ -20,6 +20,8 @@ export const customerPortalAction = withTeam(async (_, team) => {
 export async function createUserCheckoutSession(planId: string) {
   console.log('[SERVER ACTION] createUserCheckoutSession started with planId:', planId);
   
+  let checkoutUrl: string;
+  
   try {
     const supabase = await createClient();
     console.log('[SERVER ACTION] Supabase client created');
@@ -33,13 +35,12 @@ export async function createUserCheckoutSession(planId: string) {
     }
 
     console.log('[SERVER ACTION] Calling createUserCheckout with:', { userId: user.id, planId });
-    const checkoutUrl = await createUserCheckout({ 
+    checkoutUrl = await createUserCheckout({ 
       user, 
       planId 
     });
     
     console.log('[SERVER ACTION] Checkout URL created:', checkoutUrl);
-    redirect(checkoutUrl);
   } catch (error) {
     console.error('[SERVER ACTION] Error in createUserCheckoutSession:', {
       error: error instanceof Error ? error.message : error,
@@ -48,6 +49,9 @@ export async function createUserCheckoutSession(planId: string) {
     });
     throw error;
   }
+  
+  // Redirect outside try-catch to avoid catching NEXT_REDIRECT error
+  redirect(checkoutUrl);
 }
 
 export async function createUserCustomerPortalAction() {

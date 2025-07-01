@@ -77,6 +77,47 @@ Cette solution apporte une **flexibilité maximale** avec son architecture hybri
 
 ### Réalisation
 
+#### 🔐 Système d'Authentification et Inscription
+
+Le système d'authentification repose sur **Supabase Auth** avec support de l'inscription par email/mot de passe et connexion OAuth Google. Le processus d'inscription utilise une validation Zod stricte avec confirmation de mot de passe et gestion d'erreurs contextuelles en français. La connexion Google utilise OAuth avec redirection automatique vers le callback approprié selon le contexte utilisateur.
+
+Après inscription, les utilisateurs doivent obligatoirement compléter leur profil (prénom/nom) via un formulaire dédié. Cette étape est enforcie par le middleware qui redirige automatiquement vers `/auth/complete-profile` si les métadonnées `first_name` et `last_name` sont manquantes. Cette approche garantit la cohérence des données utilisateur et facilite la personnalisation de l'expérience.
+
+#### 👤 Gestion de Profil et Métadonnées Utilisateur
+
+Le système stocke les informations utilisateur dans `auth.users` (Supabase) et `public.users` (application) avec synchronisation automatique. Les métadonnées utilisateur (`user_metadata`) contiennent les informations de profil tandis que la table `users` stocke les données de subscription Stripe. Les formulaires de profil utilisent React Hook Form avec validation temps réel et états de chargement pour une expérience utilisateur optimale.
+
+La mise à jour du profil utilise `supabase.auth.updateUser()` pour maintenir la cohérence avec l'authentification Supabase. Les changements sont immédiatement reflétés dans l'interface avec feedback utilisateur via Sonner toasts. Le système détecte automatiquement les modifications (pristine state) pour éviter les soumissions inutiles.
+
+#### 🏢 Architecture Multi-tenant et Gestion d'Équipes
+
+L'application implémente un système multi-tenant basé sur les équipes avec rôles (owner/member) et invitations par email. Les équipes sont créées via la fonction RPC `create_team_for_current_user` qui assure l'unicité d'appartenance (un utilisateur par équipe) et l'attribution automatique du rôle propriétaire. Le système d'invitation utilise des tokens uniques avec workflow de validation et notification par email.
+
+Les fonctions RPC sécurisées (`SECURITY DEFINER`) gèrent la logique métier complexe : création d'équipe, acceptation d'invitations, transfert de propriété, et suppression d'équipe. La Row Level Security (RLS) Supabase protège l'accès aux données selon l'appartenance à l'équipe, garantissant l'isolation complète des données entre organisations.
+
+#### 🔒 Middleware et Protection des Routes
+
+Le middleware d'authentification (`middleware.ts`) implémente une vérification en cascade : validation JWT locale puis session Supabase comme source de vérité. Les routes protégées (`/dashboard/*`) redirigent automatiquement vers `/auth/login` avec messages contextuels selon la route demandée. Le système gère les sessions expirées avec nettoyage automatique des cookies et messages d'information appropriés.
+
+La protection des routes intègre également la vérification d'abonnement pour les fonctionnalités premium. Le middleware détecte le plan utilisateur et redirige vers `/dashboard/subscription?upgrade=true` avec paramètres contextuels pour les fonctionnalités nécessitant un upgrade. Cette approche unifie l'authentification et l'autorisation d'accès aux fonctionnalités.
+
+#### 🔑 Gestion Sécurisée des Mots de Passe
+
+Le système de mots de passe utilise les fonctionnalités natives Supabase avec validation côté client et serveur. La réinitialisation de mot de passe génère un token sécurisé envoyé par email avec redirection vers un formulaire dédié. Le changement de mot de passe nécessite l'ancien mot de passe pour sécuriser l'opération et éviter les modifications non autorisées.
+
+Les formulaires de mot de passe implémentent une validation robuste avec critères de complexité et confirmation obligatoire. Les erreurs Supabase sont interceptées et traduites en messages utilisateur compréhensibles en français. Le système maintient les sessions actives après changement de mot de passe pour une expérience fluide.
+
+#### 🏪 Interface Utilisateur et Tableaux de Bord
+
+L'interface de gestion de compte utilise le design system shadcn/ui avec composants réactifs et accessibles. Les formulaires incluent des états de chargement, validation en temps réel, et feedback visuel pour guider l'utilisateur. La navigation entre les étapes (inscription → profil → dashboard) est fluide avec conservation du contexte et paramètres de redirection.
+
+Le tableau de bord utilisateur centralise la gestion du profil, des équipes, et des abonnements. Les composants sont modulaires avec séparation claire entre logique métier et présentation. L'interface s'adapte automatiquement selon le rôle utilisateur (owner/member) et le plan d'abonnement pour afficher uniquement les actions autorisées.
+
+#### ✅ Conformité aux Exigences
+
+L'implémentation répond intégralement aux engagements : **interface intuitive** avec formulaires guidés et validation en temps réel, **gestion complète du profil** depuis le tableau de bord avec mises à jour temps réel, **base de données sécurisée** avec RLS Supabase et chiffrement bout-en-bout, **système multi-tenant** avec isolation des données par équipe, et **authentification robuste** avec support OAuth et gestion sécurisée des sessions.
+
+Cette solution apporte une **sécurité de niveau entreprise** avec Supabase Auth, une **expérience utilisateur fluide** avec validation temps réel et feedback contextuel, une **architecture scalable** supportant la croissance des équipes, et une **maintenabilité optimale** avec séparation claire des responsabilités entre authentification, autorisation, et logique métier.
 
 ## RE01-6 | Calendrier et roadmap
 ### Engagement
