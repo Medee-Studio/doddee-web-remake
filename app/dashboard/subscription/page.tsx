@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { PageHeader } from '@/components/common/page-header';
+import { UpgradeNotification } from '@/components/subscription/upgrade-notification';
 
 export default async function SubscriptionPage() {
   const supabase = await createClient();
@@ -15,6 +16,7 @@ export default async function SubscriptionPage() {
   
   return (
     <>
+      <UpgradeNotification />
       <PageHeader title="Abonnement" />
       <div className="p-6">
         <div className="mb-8">
