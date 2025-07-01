@@ -44,10 +44,7 @@ export async function createCheckoutSession({
     cancel_url: `${process.env.BASE_URL}/pricing`,
     customer: team.stripeCustomerId || undefined,
     client_reference_id: user.id.toString(),
-    allow_promotion_codes: true,
-    subscription_data: {
-      trial_period_days: 7
-    }
+    allow_promotion_codes: true
   });
 
   redirect(session.url!);
@@ -204,28 +201,51 @@ export async function createUserCheckoutSession({
   user: User;
   planId: string;
 }) {
+  console.log('[STRIPE] createUserCheckoutSession started:', { userId: user.id, planId });
+  
   const supabase = await createClient();
+  console.log('[STRIPE] Supabase client created');
   
   // Check if plan exists
+  console.log('[STRIPE] Available plans:', Object.keys(PLAN_PRICE_IDS));
   if (!PLAN_PRICE_IDS[planId as keyof typeof PLAN_PRICE_IDS]) {
-    console.error('Invalid plan ID:', planId);
+    console.error('[STRIPE] Invalid plan ID:', planId, 'Available plans:', Object.keys(PLAN_PRICE_IDS));
     throw new Error(`Plan invalide: ${planId}`);
   }
 
   const priceId = PLAN_PRICE_IDS[planId as keyof typeof PLAN_PRICE_IDS];
+  console.log('[STRIPE] Price ID retrieved:', priceId);
   
   // Check if price ID is configured
   if (!priceId) {
-    console.error(`Price ID not configured for plan: ${planId}`);
+    console.error('[STRIPE] Price ID not configured for plan:', planId);
     throw new Error(`Configuration manquante pour le plan: ${planId}`);
   }
 
-  console.log('Creating checkout session for:', { planId, priceId, userId: user.id });
+  console.log('[STRIPE] Environment variables check:', {
+    BASE_URL: process.env.BASE_URL,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? 'SET' : 'NOT SET',
+    priceIdForPlan: priceId
+  });
   
   // Get or create user profile
+  console.log('[STRIPE] Getting user subscription status...');
   const userProfile = await getUserSubscriptionStatus(supabase, user.id);
+  console.log('[STRIPE] User profile retrieved:', userProfile ? {
+    stripe_customer_id: userProfile.stripe_customer_id,
+    plan_name: userProfile.plan_name,
+    subscription_status: userProfile.subscription_status
+  } : 'null');
   
   try {
+    console.log('[STRIPE] Creating Stripe checkout session with params:', {
+      priceId,
+      userId: user.id,
+      userEmail: user.email,
+      existingCustomerId: userProfile?.stripe_customer_id,
+      planId
+    });
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -242,7 +262,6 @@ export async function createUserCheckoutSession({
       customer_email: user.email,
       allow_promotion_codes: true,
       subscription_data: {
-        trial_period_days: 7,
         metadata: {
           plan_id: planId,
           user_id: user.id
@@ -254,10 +273,20 @@ export async function createUserCheckoutSession({
       }
     });
 
-    console.log('Stripe session created successfully:', session.id);
+    console.log('[STRIPE] Stripe session created successfully:', {
+      sessionId: session.id,
+      url: session.url,
+      customerId: session.customer
+    });
     return session.url!;
   } catch (error) {
-    console.error('Stripe session creation failed:', error);
+    console.error('[STRIPE] Stripe session creation failed:', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      planId,
+      priceId,
+      userId: user.id
+    });
     throw new Error(`Erreur lors de la création de la session de paiement: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
   }
 }

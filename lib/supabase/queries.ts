@@ -811,11 +811,13 @@ export async function upsertKpis(
 
 // USER SUBSCRIPTION FUNCTIONS
 export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, userId?: string) {
+  console.log('[QUERY] getUserSubscriptionStatus called with userId:', userId);
+  
   const supabase = supabaseClient;
   
   // Verify supabase client is properly provided
   if (!supabase || !supabase.auth) {
-    console.error('Invalid Supabase client provided');
+    console.error('[QUERY] Invalid Supabase client provided');
     return {
       stripe_customer_id: null,
       stripe_subscription_id: null,
@@ -828,8 +830,12 @@ export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, 
   let idToFetch = userId;
   
   if (!idToFetch) {
+    console.log('[QUERY] No userId provided, fetching from auth...');
     const authUser = await getUser(supabase);
+    console.log('[QUERY] Auth user retrieved:', authUser ? { id: authUser.id, email: authUser.email } : 'null');
+    
     if (!authUser) {
+      console.log('[QUERY] No authenticated user found, returning default free plan');
       return {
         stripe_customer_id: null,
         stripe_subscription_id: null,
@@ -841,6 +847,8 @@ export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, 
     idToFetch = authUser.id;
   }
 
+  console.log('[QUERY] Fetching subscription for user ID:', idToFetch);
+
   try {
     const { data: userProfile, error } = await supabase
       .from('users')
@@ -848,9 +856,22 @@ export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, 
       .eq('id', idToFetch)
       .single();
 
+    console.log('[QUERY] Database query completed:', {
+      error: error ? { code: error.code, message: error.message } : null,
+      data: userProfile
+    });
+
     if (error) {
       if (error.code !== 'PGRST116') { 
-        console.error('Error fetching user subscription:', error.message);
+        console.error('[QUERY] Error fetching user subscription:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          userId: idToFetch
+        });
+      } else {
+        console.log('[QUERY] User not found in database (PGRST116), returning default free plan');
       }
       // Return default subscription for free plan
       return {
@@ -862,9 +883,14 @@ export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, 
       };
     }
     
+    console.log('[QUERY] User subscription data retrieved successfully:', userProfile);
     return userProfile;
   } catch (error) {
-    console.error('Error in getUserSubscriptionStatus:', error);
+    console.error('[QUERY] Unexpected error in getUserSubscriptionStatus:', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      userId: idToFetch
+    });
     // Return default subscription for free plan
     return {
       stripe_customer_id: null,

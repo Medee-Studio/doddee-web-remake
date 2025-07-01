@@ -80,13 +80,23 @@ export function SubscriptionPlans({ currentPlan }: SubscriptionPlansProps) {
   const handleUpgrade = async (planId: string) => {
     if (planId === 'gratuit') return;
     
+    console.log('[COMPONENT] handleUpgrade called with planId:', planId);
     setLoading(planId);
     try {
+      console.log('[COMPONENT] Calling createUserCheckoutSession...');
       await createUserCheckoutSession(planId);
+      console.log('[COMPONENT] createUserCheckoutSession completed successfully');
     } catch (error) {
-      console.error('Erreur lors de la création de la session de paiement:', error);
-      alert(`Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
+      console.error('[COMPONENT] Error in handleUpgrade:', {
+        error: error instanceof Error ? error.message : error,
+        stack: error instanceof Error ? error.stack : undefined,
+        planId
+      });
+      
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      alert(`Erreur lors de l'achat du plan: ${errorMessage}\n\nVeuillez vérifier les logs de la console pour plus de détails.`);
     } finally {
+      console.log('[COMPONENT] handleUpgrade finished, clearing loading state');
       setLoading(null);
     }
   };
