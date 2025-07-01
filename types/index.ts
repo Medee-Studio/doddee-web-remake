@@ -177,4 +177,26 @@ export interface KpiPayload {
 export interface ToSendSupabase {
   supabaseTableName: string;
   payload: KpiPayload[];
+}
+
+// Types for Address API
+export interface Address {
+  type: string;
+  properties: {
+    id: string;
+    label: string;
+    name: string;
+    postcode: string;
+    citycode: string;
+    x: number;
+    y: number;
+    city: string;
+    context: string;
+    type: string;
+    importance: number;
+  };
+  geometry: {
+    type: string;
+    coordinates: [number, number];
+  };
 } 

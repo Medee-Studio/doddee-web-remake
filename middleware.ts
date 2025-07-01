@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 // import { verifyToken } from './lib/auth/session'
 
 // Protected routes that require authentication
-const protectedRoutes = ['/dashboard', '/auth/change-password', '/auth/complete-profile']
+// const protectedRoutes = ['/dashboard', '/auth/change-password', '/auth/complete-profile']
+const protectedRoutes = ['/dashboard', '/auth/change-password']
 
 // Auth routes that should redirect to dashboard when authenticated
 const authRoutes = ['/auth/login', '/auth/signup']
