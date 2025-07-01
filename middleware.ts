@@ -79,8 +79,8 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/auth/login'
       if (!isTokenValid && accessTokenCookie?.value) { // Token was present but invalid
         url.searchParams.set('message', 'Votre session a expiré. Veuillez vous reconnecter.')        
-        response.cookies.delete('sb-access-token')
-        response.cookies.delete('sb-refresh-token')
+        // response.cookies.delete('sb-access-token')
+        // response.cookies.delete('sb-refresh-token')
       } else if (pathname === '/auth/change-password') {
         url.searchParams.set('message', 'Veuillez vous connecter pour changer votre mot de passe.')
       } else if (pathname.startsWith('/dashboard')) {
