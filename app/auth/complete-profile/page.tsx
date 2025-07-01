@@ -8,7 +8,7 @@ export default function CompleteProfilePage() {
       <div className="w-full max-w-md grid gap-6">
         <div className="flex flex-col items-center gap-2">
           <Link href="/" className="flex flex-col items-center gap-2 font-medium">
-            <AppIcon className="size-6" />
+            <AppIcon className="w-48" />
             <span className="sr-only">{process.env.NEXT_PUBLIC_APP_NAME}</span>
           </Link>
           <h1 className="text-xl font-bold">Complétez votre profil</h1>
