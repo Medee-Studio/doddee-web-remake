@@ -1,10 +1,15 @@
 import Stripe from 'stripe';
 import { redirect } from 'next/navigation';
 import { Team } from '@/lib/supabase/schema';
+import { User } from '@supabase/supabase-js';
 import {
   getTeamByStripeCustomerId,
   getUser,
-  updateTeamSubscription
+  updateTeamSubscription,
+  getUserByStripeCustomerId,
+  updateUserSubscription,
+  createUserStripeCustomer,
+  getUserSubscriptionStatus
 } from '@/lib/supabase/queries';
 import { createClient } from '../supabase/server';
 
@@ -39,10 +44,7 @@ export async function createCheckoutSession({
     cancel_url: `${process.env.BASE_URL}/pricing`,
     customer: team.stripeCustomerId || undefined,
     client_reference_id: user.id.toString(),
-    allow_promotion_codes: true,
-    subscription_data: {
-      trial_period_days: 7
-    }
+    allow_promotion_codes: true
   });
 
   redirect(session.url!);
@@ -183,4 +185,171 @@ export async function getStripeProducts() {
         ? product.default_price
         : product.default_price?.id
   }));
+}
+
+// USER SUBSCRIPTION FUNCTIONS
+const PLAN_PRICE_IDS = {
+  'eco-profile': process.env.STRIPE_ECO_PROFILE_PRICE_ID!,
+  'cours': process.env.STRIPE_COURS_PRICE_ID!,
+  'la-totale': process.env.STRIPE_LA_TOTALE_PRICE_ID!,
+};
+
+export async function createUserCheckoutSession({
+  user,
+  planId
+}: {
+  user: User;
+  planId: string;
+}) {
+  console.log('[STRIPE] createUserCheckoutSession started:', { userId: user.id, planId });
+  
+  const supabase = await createClient();
+  console.log('[STRIPE] Supabase client created');
+  
+  // Check if plan exists
+  console.log('[STRIPE] Available plans:', Object.keys(PLAN_PRICE_IDS));
+  if (!PLAN_PRICE_IDS[planId as keyof typeof PLAN_PRICE_IDS]) {
+    console.error('[STRIPE] Invalid plan ID:', planId, 'Available plans:', Object.keys(PLAN_PRICE_IDS));
+    throw new Error(`Plan invalide: ${planId}`);
+  }
+
+  const priceId = PLAN_PRICE_IDS[planId as keyof typeof PLAN_PRICE_IDS];
+  console.log('[STRIPE] Price ID retrieved:', priceId);
+  
+  // Check if price ID is configured
+  if (!priceId) {
+    console.error('[STRIPE] Price ID not configured for plan:', planId);
+    throw new Error(`Configuration manquante pour le plan: ${planId}`);
+  }
+
+  console.log('[STRIPE] Environment variables check:', {
+    BASE_URL: process.env.BASE_URL,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? 'SET' : 'NOT SET',
+    priceIdForPlan: priceId
+  });
+  
+  // Get or create user profile
+  console.log('[STRIPE] Getting user subscription status...');
+  const userProfile = await getUserSubscriptionStatus(supabase, user.id);
+  console.log('[STRIPE] User profile retrieved:', userProfile ? {
+    stripe_customer_id: userProfile.stripe_customer_id,
+    plan_name: userProfile.plan_name,
+    subscription_status: userProfile.subscription_status
+  } : 'null');
+  
+  try {
+    console.log('[STRIPE] Creating Stripe checkout session with params:', {
+      priceId,
+      userId: user.id,
+      userEmail: user.email,
+      existingCustomerId: userProfile?.stripe_customer_id,
+      planId
+    });
+    
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1
+        }
+      ],
+      mode: 'subscription',
+      success_url: `${process.env.BASE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.BASE_URL}/dashboard/subscription?canceled=true`,
+      customer: userProfile?.stripe_customer_id || undefined,
+      client_reference_id: user.id,
+      customer_email: user.email,
+      allow_promotion_codes: true,
+      subscription_data: {
+        metadata: {
+          plan_id: planId,
+          user_id: user.id
+        }
+      },
+      metadata: {
+        plan_id: planId,
+        user_id: user.id
+      }
+    });
+
+    console.log('[STRIPE] Stripe session created successfully:', {
+      sessionId: session.id,
+      url: session.url,
+      customerId: session.customer
+    });
+    return session.url!;
+  } catch (error) {
+    console.error('[STRIPE] Stripe session creation failed:', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      planId,
+      priceId,
+      userId: user.id
+    });
+    throw new Error(`Erreur lors de la création de la session de paiement: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
+  }
+}
+
+export async function createUserCustomerPortalSession(user: User) {
+  const supabase = await createClient();
+  const userProfile = await getUserSubscriptionStatus(supabase, user.id);
+  
+  if (!userProfile?.stripe_customer_id) {
+    redirect('/dashboard/subscription');
+  }
+
+  return stripe.billingPortal.sessions.create({
+    customer: userProfile.stripe_customer_id,
+    return_url: `${process.env.BASE_URL}/dashboard/subscription`,
+  });
+}
+
+export async function handleUserSubscriptionChange(
+  subscription: Stripe.Subscription
+) {
+  const customerId = subscription.customer as string;
+  const subscriptionId = subscription.id;
+  const status = subscription.status;
+  const planId = subscription.metadata?.plan_id;
+
+  const supabase = await createClient();
+  const user = await getUserByStripeCustomerId(supabase, customerId);
+
+  if (!user) {
+    console.error('User not found for Stripe customer:', customerId);
+    return;
+  }
+
+  if (status === 'active' || status === 'trialing') {
+    const plan = subscription.items.data[0]?.plan;
+    await updateUserSubscription(supabase, user.id, {
+      stripe_subscription_id: subscriptionId,
+      stripe_product_id: plan?.product as string,
+      plan_name: planId || 'unknown',
+      subscription_status: status
+    });
+  } else if (status === 'canceled' || status === 'unpaid') {
+    await updateUserSubscription(supabase, user.id, {
+      stripe_subscription_id: null,
+      stripe_product_id: null,
+      plan_name: 'gratuit',
+      subscription_status: 'canceled'
+    });
+  }
+}
+
+export async function handleUserCheckoutComplete(session: Stripe.Checkout.Session) {
+  const supabase = await createClient();
+  
+  if (!session.customer || !session.client_reference_id) {
+    console.error('Missing customer or client_reference_id in checkout session');
+    return;
+  }
+
+  const customerId = session.customer as string;
+  const userId = session.client_reference_id;
+  
+  // Create or update user's Stripe customer ID
+  await createUserStripeCustomer(supabase, userId, customerId);
 }
