@@ -46,6 +46,7 @@ import {
 } from "@/lib/form-data/complete-profile";
 import { useRouter } from "next/navigation";
 import { AddressInput } from "@/components/ui/address-input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Zod schema
 const completeProfileSchema = z.object({
@@ -302,47 +303,43 @@ export function CompleteProfileForm() {
             <FormField
               control={form.control}
               name="labels"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-[#64748b]">
                     Sélectionnez vos labels et certifications
                   </FormLabel>
-                  <div className="mt-4 h-80 border  p-4 overflow-y-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <ScrollArea className="mt-4 max-h-72 rounded-md border">
+                    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                       {labels.map((label) => (
-                        <FormField
+                        <FormItem
                           key={label}
-                          control={form.control}
-                          name="labels"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0  p-3 rounded-md border ">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(label)}
-                                  onCheckedChange={(checked) => {
-                                    const currentValues = field.value || [];
-                                    if (checked) {
-                                      field.onChange([...currentValues, label]);
-                                    } else {
-                                      field.onChange(
-                                        currentValues.filter(
-                                          (value) => value !== label
-                                        )
-                                      );
-                                    }
-                                  }}
-                                  className="border-[#cbd5e1] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                                />
-                              </FormControl>
-                              <FormLabel className="text-sm font-normal text-[#64748b] leading-relaxed cursor-pointer">
-                                {label}
-                              </FormLabel>
-                            </FormItem>
-                          )}
-                        />
+                          className="flex flex-row items-start space-x-3 space-y-0 p-3 rounded-md border"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(label)}
+                              onCheckedChange={(checked) => {
+                                const currentValues = field.value || [];
+                                if (checked) {
+                                  field.onChange([...currentValues, label]);
+                                } else {
+                                  field.onChange(
+                                    currentValues.filter(
+                                      (value) => value !== label
+                                    )
+                                  );
+                                }
+                              }}
+                              className="border-[#cbd5e1] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal text-[#64748b] leading-relaxed cursor-pointer">
+                            {label}
+                          </FormLabel>
+                        </FormItem>
                       ))}
                     </div>
-                  </div>
+                  </ScrollArea>
                   <FormMessage />
                 </FormItem>
               )}
@@ -494,134 +491,130 @@ export function CompleteProfileForm() {
   const currentStepData = steps.find((step) => step.id === currentStep);
 
   return (
-    <div className="min-h-screen ">
-      <div className=" mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 min-h-screen">
-          {/* Form Section - 2/3 width */}
-          <div className="lg:col-span-2 p-8">
-            {/* Step Navigation */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                {steps.map((step, index) => (
-                  <div key={step.id} className="flex items-center">
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium border-2 ${
-                          step.id === currentStep
-                            ? "border-primary bg-primary text-white"
-                            : step.id < currentStep
-                            ? "border-primary bg-primary text-white"
-                            : "border-[#cbd5e1] bg-[#f1f5f9] text-[#64748b]"
-                        }`}
-                      >
-                        {step.id < currentStep ? (
-                          <CheckIcon className="w-3 h-3" />
-                        ) : (
-                          step.id
-                        )}
-                      </div>
-                      <span
-                        className={`text-sm font-medium ${
-                          step.id === currentStep
-                            ? "text-primary"
-                            : step.id < currentStep
-                            ? "text-primary"
-                            : "text-[#64748b]"
-                        }`}
-                      >
-                        {step.title}
-                      </span>
-                    </div>
-                    {index < steps.length - 1 && (
-                      <div className="mx-4 flex-1 h-px bg-[#cbd5e1]" />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 min-h-screen">
+      {/* Form Section - 2/3 width */}
+      <div className="lg:col-span-2 p-8 overflow-y-auto">
+        {/* Step Navigation */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex items-center">
+                <div className="flex items-center space-x-2">
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium border-2 ${
+                      step.id === currentStep
+                        ? "border-primary bg-primary text-white"
+                        : step.id < currentStep
+                        ? "border-primary bg-primary text-white"
+                        : "border-[#cbd5e1] bg-[#f1f5f9] text-[#64748b]"
+                    }`}
+                  >
+                    {step.id < currentStep ? (
+                      <CheckIcon className="w-3 h-3" />
+                    ) : (
+                      step.id
                     )}
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Form Content */}
-            <Card className="shadow-sm border-[#cbd5e1]">
-              <CardHeader className="pb-6">
-                <CardTitle className="text-2xl font-semibold text-[#64748b]">
-                  {currentStepData?.title}
-                </CardTitle>
-                <CardDescription className="text-[#64748b]">
-                  {currentStepData?.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-8">
-                <Form {...form}>
-                  <form className="space-y-8">
-                    {renderStepContent()}
-
-                    <div className="flex items-center justify-between pt-8 border-t border-[#cbd5e1]">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={prevStep}
-                        disabled={currentStep === 1}
-                        className="text-[#64748b] hover:text-primary"
-                      >
-                        Précédent
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={nextStep}
-                        disabled={isSubmitting}
-                        className="bg-primary hover:bg-primary/90 text-white px-8 py-2 rounded-full"
-                      >
-                        {currentStep === 4 ? "Terminer" : "Suivant"}
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Mascotte & Info Section - 1/3 width */}
-          <div className="lg:col-span-1 bg-[#ebfaff] p-8 flex flex-col justify-center">
-            {/* Mascotte */}
-            <div className="text-center mb-8">
-              <Image
-                src={require("@/public/mascotte.png")}
-                alt="Mascotte"
-                width={160}
-                height={160}
-                className="mx-auto mb-6"
-              />
-              <h3 className="text-lg font-semibold text-[#64748b] mb-2">
-                À quoi servent ces questions ?
-              </h3>
-              <p className="text-sm text-[#64748b] leading-relaxed">
-                À mieux connaître votre entreprise pour vous proposer un
-                accompagnement RSE hautement personnalisé.
-              </p>
-            </div>
-
-            {/* Progress Indicators */}
-            <div className="space-y-4">
-              {steps.map((step) => (
-                <div key={step.id} className="flex items-center space-x-3">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 ${
-                      step.id <= currentStep
-                        ? "border-primary bg-primary"
-                        : "border-[#cbd5e1] bg-[#f1f5f9]"
-                    }`}
-                  />
                   <span
-                    className={`text-sm ${
-                      step.id <= currentStep ? "text-primary" : "text-[#64748b]"
+                    className={`text-sm font-medium ${
+                      step.id === currentStep
+                        ? "text-primary"
+                        : step.id < currentStep
+                        ? "text-primary"
+                        : "text-[#64748b]"
                     }`}
                   >
                     {step.title}
                   </span>
                 </div>
-              ))}
-            </div>
+                {index < steps.length - 1 && (
+                  <div className="mx-4 flex-1 h-px bg-[#cbd5e1]" />
+                )}
+              </div>
+            ))}
           </div>
+        </div>
+
+        {/* Form Content */}
+        <Card className="shadow-sm border-[#cbd5e1]">
+          <CardHeader className="pb-6">
+            <CardTitle className="text-2xl font-semibold text-[#64748b]">
+              {currentStepData?.title}
+            </CardTitle>
+            <CardDescription className="text-[#64748b]">
+              {currentStepData?.description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-8">
+            <Form {...form}>
+              <form className="space-y-8">
+                {renderStepContent()}
+                
+                <div className="flex items-center justify-between pt-8 border-t border-[#cbd5e1]">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={prevStep}
+                    disabled={currentStep === 1}
+                    className="text-[#64748b] hover:text-primary"
+                  >
+                    Précédent
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={nextStep}
+                    disabled={isSubmitting}
+                    className="bg-primary hover:bg-primary/90 text-white px-8 py-2 rounded-full"
+                  >
+                    {currentStep === 4 ? "Terminer" : "Suivant"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Mascotte & Info Section - 1/3 width */}
+      <div className="lg:col-span-1 bg-[#ebfaff] p-8 flex flex-col justify-center">
+        {/* Mascotte */}
+        <div className="text-center mb-8">
+          <Image
+            src={require("@/public/mascotte.png")}
+            alt="Mascotte"
+            width={160}
+            height={160}
+            className="mx-auto mb-6"
+          />
+          <h3 className="text-lg font-semibold text-[#64748b] mb-2">
+            À quoi servent ces questions ?
+          </h3>
+          <p className="text-sm text-[#64748b] leading-relaxed">
+            À mieux connaître votre entreprise pour vous proposer un
+            accompagnement RSE hautement personnalisé.
+          </p>
+        </div>
+
+        {/* Progress Indicators */}
+        <div className="space-y-4">
+          {steps.map((step) => (
+            <div key={step.id} className="flex items-center space-x-3">
+              <div
+                className={`w-4 h-4 rounded-full border-2 ${
+                  step.id <= currentStep
+                    ? "border-primary bg-primary"
+                    : "border-[#cbd5e1] bg-[#f1f5f9]"
+                }`}
+              />
+              <span
+                className={`text-sm ${
+                  step.id <= currentStep ? "text-primary" : "text-[#64748b]"
+                }`}
+              >
+                {step.title}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
