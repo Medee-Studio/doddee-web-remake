@@ -95,8 +95,8 @@ export async function middleware(request: NextRequest) {
     // CASE 2: User IS authenticated AND tries to access auth routes (login, signup) or root
     if (user && (isAuthRoute || pathname === '/')) {
       if (pathname !== '/auth/complete-profile' && pathname !== '/auth/change-password') {
-        const { first_name, last_name } = user.user_metadata || {}
-        if (!first_name || !last_name) {
+        const {  profile_completed } = user.user_metadata || {}
+        if ( !profile_completed) {
           // If profile incomplete, always redirect to complete-profile first
           return NextResponse.redirect(new URL('/auth/complete-profile', request.url))
         }
@@ -106,8 +106,8 @@ export async function middleware(request: NextRequest) {
 
     // CASE 3: User IS authenticated, but profile is incomplete
     if (user) {
-      const { first_name, last_name } = user.user_metadata || {}
-      const isProfileIncomplete = !first_name || !last_name
+      const {  profile_completed } = user.user_metadata || {}
+      const isProfileIncomplete =  !profile_completed
       const isExcludedPath = (
         pathname === '/auth/complete-profile' || 
         pathname === '/auth/login' || 
@@ -125,8 +125,8 @@ export async function middleware(request: NextRequest) {
     
     // CASE 4: User IS authenticated and on /auth/complete-profile, but profile IS complete
     if (user && pathname === '/auth/complete-profile') {
-      const { first_name, last_name } = user.user_metadata || {}
-      if (first_name && last_name) {
+      const { first_name, last_name, profile_completed } = user.user_metadata || {}
+      if ((first_name && last_name) || profile_completed) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
       }
     }

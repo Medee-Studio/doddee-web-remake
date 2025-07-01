@@ -17,6 +17,9 @@ export const completeProfileSchema = z.object({
   
   // User function
   fonction: z.string().min(1, "La fonction est requise"),
+  
+  // Categories (stored as array of category names that were answered positively)
+  categories: z.array(z.string()).optional(),
 })
 
 export type CompleteProfileFormData = z.infer<typeof completeProfileSchema>
@@ -490,5 +493,84 @@ export const completeProfileFormData = [
         { value: "Salarié", label: "Salarié" },
       ],
     },
+  },
+  {
+    formName: "Votre catégorie",
+    formType: "radio",
+    name: "categories",
+    content: [
+      {
+        name: "flotte_vehicule",
+        label: "Avez-vous une flotte de véhicules ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "plus_de_un_salarie",
+        label: "Votre entreprise compte-t-elle d'autres salariés que le dirigeant ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "locaux",
+        label: "Êtes-vous propriétaires de vos locaux ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "parc_informatique",
+        label: "Avez-vous un parc informatique ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "site_web",
+        label: "Votre entreprise a-t-elle un site web ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "site_de_production",
+        label: "Avez-vous un site de production ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "approvisionnement",
+        label: "Votre entreprise s'approvisionne-t-elle en matières premières ou produits ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "distribution",
+        label: "Votre entreprise assure-t-elle la distribution de ses produits ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+      {
+        name: "stock",
+        label: "Gérez-vous des stocks ?",
+        options: [
+          { label: "Oui", value: "true" },
+          { label: "Non", value: "false" },
+        ],
+      },
+    ],
   },
 ]
