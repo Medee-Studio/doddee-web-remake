@@ -64,6 +64,14 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const npsResponses = pgTable('nps_responses', {
+  id: serial('id').primaryKey(),
+  ecoProfileId: varchar('eco_profile_id', { length: 255 }).notNull(),
+  score: integer('score').notNull(),
+  ipAddress: varchar('ip_address', { length: 45 }).notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
 // RELATIONS
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -111,6 +119,8 @@ export type TeamMember = typeof teamMembers.$inferSelect;
 export type NewTeamMember = typeof teamMembers.$inferInsert;
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
+export type NpsResponse = typeof npsResponses.$inferSelect;
+export type NewNpsResponse = typeof npsResponses.$inferInsert;
 
 
 

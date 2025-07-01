@@ -23,6 +23,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Facebook, Handshake, Instagram, Linkedin } from "lucide-react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import NPSWidget from "@/components/nps-widget";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -266,6 +267,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           </CardContent>
         </Card>
       )}
+
+      <NPSWidget ecoProfileId={id} />
     </div>
   );
 }
