@@ -5,7 +5,7 @@ import QuestionnaireSkeleton from "@/components/dashboard/questionnaire/question
 export default function EnvironnementPage() {
   return (
     <Suspense fallback={<QuestionnaireSkeleton />}>
-      <QuestionnaireDataWrapper />
+      <QuestionnaireDataWrapper questionnaireType="environnement" />
     </Suspense>
   );
 }

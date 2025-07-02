@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
-import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload } from '@/types';
+import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType } from '@/types';
 import { cache } from 'react';
 
 // Define types for RPC data structures
@@ -1047,7 +1047,8 @@ interface QuestionnaireData {
 
 export async function saveQuestionnaireData(
   supabaseClient: SupabaseClient,
-  questionnaireData: QuestionnaireData
+  questionnaireData: QuestionnaireData,
+  questionnaireType: QuestionnaireType
 ): Promise<ActionResult> {
   const supabase = supabaseClient;
   const user = await getUser(supabase);
@@ -1112,7 +1113,7 @@ export async function saveQuestionnaireData(
       }
     }
 
-    // 4. Insert form answers
+    // 4. Insert form answers - dynamically select table based on questionnaire type
     if (questionnaireData.answers.length > 0) {
       const answerInserts = questionnaireData.answers.map(answer => ({
         user_id_moral: user.id,
@@ -1122,12 +1123,29 @@ export async function saveQuestionnaireData(
           : answer.answer.toString()
       }));
 
+      // Determine target table based on questionnaire type
+      const getTableName = (type: QuestionnaireType): string => {
+        switch (type) {
+          case "environnement":
+            return "utilisateurs_moraux_environnement_response";
+          case "social":
+            return "utilisateurs_moraux_social_response";
+          case "gouvernance":
+            return "utilisateurs_moraux_gouvernance_response";
+          default:
+            return "utilisateurs_moraux_environnement_response"; // fallback
+        }
+      };
+
+      const tableName = getTableName(questionnaireType);
+      console.log(`Inserting answers into table: ${tableName}`);
+
       const { error: answersError } = await supabase
-        .from('utilisateurs_moraux_environnement_response')
+        .from(tableName)
         .insert(answerInserts);
 
       if (answersError) {
-        console.error('Error inserting answers:', answersError.message);
+        console.error(`Error inserting answers into ${tableName}:`, answersError.message);
         return { error: 'Erreur lors de l\'enregistrement des réponses.' };
       }
     }

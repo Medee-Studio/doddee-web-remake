@@ -6325,7 +6325,6 @@ export const et: QuestionTree = [
     type: "question",
     inputType: "single",
   },
-
   {
     id: "663",
     value:
@@ -7275,6 +7274,3801 @@ export const et: QuestionTree = [
         id: "757",
         value: "Non",
         id_action: 188,
+        done: false,
+        information: null,
+        children: [],
+        type: "reponse",
+      },
+    ],
+    type: "question",
+    inputType: "single",
+  },
+  {
+    id: "758",
+    value:
+      "Pour un ou plusieurs de vos produits/services, avez-vous intégré des principes d'écoconception ?",
+    ids_secteurs: [
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 29, 29,
+    ],
+    id_action: null,
+    information:
+      "Cette question a pour objectif de comprendre si votre entreprise intègre l'écoconception dans le développement de ses produits.\n\nL'écoconception vise à réduire l'impact environnemental des produits tout au long de leur cycle de vie, en tenant compte des aspects tels que la durabilité, l'efficacité des ressources, et la minimisation des déchets.",
+    children: [
+      {
+        id: "759",
+        value: "Oui",
+        id_action: 229,
+        done: true,
+        information: null,
+        children: [
+          {
+            id: "760",
+            value:
+              "Quelle part de vos produits intégre des principes d'écoconception ?",
+            id_action: null,
+            information:
+              "Sélectionnez la proportion de vos produits qui intègrent des critères d'écoconception.\n\nCette question vise à évaluer la part de vos produits qui intègre des critères d'écoconception.\n\nL'écoconception, également appelée design durable, consiste à concevoir des produits en tenant compte de leur impact environnemental tout au long de leur cycle de vie, depuis la production jusqu'à la fin de vie. Cela inclut l'utilisation de matériaux sains, la limitation des matières premières neuves, et l'intégration de pratiques durables.\n\nCalcul :\n\nPour déterminer cette proportion, divisez le nombre de produits qui intègrent des principes d'écoconception par le nombre total de produits que vous offrez, puis multipliez par 100 pour obtenir le pourcentage.",
+            children: [
+              {
+                id: "761",
+                value: "Moins de 25 % de vos produits",
+                id_action: 189,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+                id_kpis: [121],
+              },
+              {
+                id: "762",
+                value: "Entre 25 % et 50 % de vos produits",
+                id_action: 189,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+                id_kpis: [122],
+              },
+              {
+                id: "763",
+                value: "Entre 51 % et 75 % de vos produits",
+                id_action: 189,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+                id_kpis: [123],
+              },
+              {
+                id: "764",
+                value: "Plus de 75 % de vos produits",
+                id_action: null,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+                id_kpis: [124],
+              },
+              {
+                id: "765",
+                value: "Ne sait pas",
+                id_action: 190,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "766",
+            value:
+              "Quels principes d'écoconception avez-vous intégrés dans vos produits ?",
+            id_action: null,
+            information: null,
+            children: [
+              {
+                id: "767",
+                value: "Réduction de l'usage de matières non renouvelables",
+                id_action: null,
+                done: false,
+                information:
+                  "La réduction de l'usage de matières non renouvelables consiste à minimiser l'utilisation de ressources qui ne se régénèrent pas naturellement à l'échelle humaine.\n\nCela implique l'adoption de matériaux alternatifs et renouvelables, ainsi que l'amélioration de l'efficacité des processus de fabrication pour diminuer la dépendance aux ressources limitées.\n\nStratégies pour réduire l'utilisation de matières non renouvelables :\n• Évaluation et identification : Analysez les matières non renouvelables actuellement utilisées dans vos produits pour comprendre leur impact et leur rôle.\n• Substitution : Remplacez les matières non renouvelables par des alternatives renouvelables, recyclées ou biosourcées.\n• Optimisation de la conception : Améliorez la conception des produits pour réduire le besoin en matières premières et optimiser l'utilisation des ressources.\n• Collaboration avec les fournisseurs : Travaillez avec les fournisseurs pour identifier et promouvoir l'utilisation de matériaux plus durables.\n• Initiatives de réduction des plastiques : Mettez en œuvre des stratégies pour diminuer l'utilisation de plastiques non renouvelables.\n\nBénéfices de la réduction de l'usage de matières non renouvelables :\n• Diminution de l'empreinte carbone : Moins de matières non renouvelables signifie moins d'extraction et de transformation, ce qui réduit les émissions de CO2.\n• Durabilité accrue : Favoriser l'utilisation de matériaux renouvelables augmente la durabilité et la résilience de vos produits.\n• Réduction des coûts : L'optimisation des ressources et la réduction du gaspillage peuvent diminuer les coûts de production à long terme.\n• Amélioration de l'image de marque : Engager votre entreprise dans des pratiques durables peut renforcer la confiance et la fidélité des consommateurs.\n• Conformité réglementaire : Se préparer aux exigences futures et aux normes environnementales strictes.",
+                children: [
+                  {
+                    id: "768",
+                    value:
+                      "Votre entreprise a-t-elle identifié et évalué les matières non renouvelables utilisées dans ses produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "769",
+                        value: "Oui",
+                        id_action: 191,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez identifié et évalué les matières non renouvelables utilisées dans vos produits.\n\nL'identification et l'évaluation des matières non renouvelables dans vos produits sont essentielles pour comprendre leur impact environnemental et identifier des opportunités de réduction ou de remplacement par des alternatives plus durables.\n\nPourquoi c'est important :\n• Analyse de l'impact : Comprendre l'impact environnemental des matières non renouvelables utilisées.\n• Amélioration continue : Identifier les opportunités de substitution par des matières renouvelables ou recyclées.\n• Stratégie durable : Élaborer des stratégies pour réduire l'utilisation de ressources limitées.\n\nComment procéder :\n• Inventaire des matières premières : Répertorier toutes les matières non renouvelables utilisées dans vos produits.\n• Évaluation de l'impact : Analyser l'impact environnemental et social de ces matières.\n• Identification des alternatives : Rechercher des matériaux renouvelables, recyclés ou biosourcés pouvant remplacer les matières non renouvelables.\n• Élaboration d'un plan : Définir un plan pour réduire progressivement l'utilisation de ces matières.",
+                        children: [
+                          {
+                            id: "770",
+                            value:
+                              "Quelle est la part de matière non renouvelables utilisées dans vos produits ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [125],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "772",
+                        value: "Non",
+                        id_action: 191,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "773",
+                    value:
+                      "Avez-vous mis en place des mesures pour réduire l'utilisation de matières non renouvelables dans vos produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "774",
+                        value: "Oui",
+                        id_action: 192,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez adopté des mesures pour réduire l'utilisation de matières non renouvelables dans vos produits.\n\nLa mise en place de mesures visant à réduire l'utilisation de matières non renouvelables est essentielle pour minimiser l'impact environnemental de vos produits et favoriser la durabilité.\n\nActions à envisager :\n\n• Substitution de matériaux : Remplacer les matières non renouvelables par des alternatives renouvelables, recyclées ou biosourcées. Par exemple, utiliser des plastiques biosourcés au lieu de plastiques traditionnels à base de pétrole.\n\n• Optimisation de la conception : Reconcevoir les produits pour utiliser moins de matériaux ou pour inclure des matériaux durables. Cela inclut la réduction du poids et du volume, ce qui peut également améliorer l'efficacité des produits.\n\n• Réduction du gaspillage : Mettre en œuvre des pratiques de fabrication qui minimisent les déchets et optimisent l'utilisation des ressources.\n\n• Collaboration avec la chaîne d'approvisionnement : Travailler avec les fournisseurs pour développer et utiliser des matériaux durables, et encourager les innovations dans les matériaux.\n\n• Recyclage et réutilisation : Intégrer des composants recyclés dans les produits et encourager la réutilisation des matériaux.",
+                        children: [
+                          {
+                            id: "775",
+                            value:
+                              "Veuillez préciser les mesures mises en place :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "777",
+                        value: "Non",
+                        id_action: 192,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "778",
+                    value:
+                      "Votre entreprise met-elle en place des stratégies pour optimiser l'utilisation des matières et composants dans la fabrication de ses produits afin de réduire le gaspillage et l'utilisation de ressources non renouvelables ?",
+                    id_action: null,
+                    information:
+                      "Sélectionnez cette option si vous avez mis en œuvre des stratégies pour optimiser l'utilisation des matériaux et composants dans vos processus de fabrication.\n\nOptimiser l'utilisation des matières et des composants est crucial pour réduire le gaspillage, minimiser l'utilisation de ressources non renouvelables, et améliorer l'efficacité de la production. Ces stratégies contribuent non seulement à la durabilité environnementale, mais aussi à la rentabilité économique.\n\nActions possibles :\n• Conception économe en ressources : Concevoir des produits qui utilisent moins de matières premières, réduisant ainsi la dépendance aux ressources non renouvelables. Cela peut inclure la simplification des produits, la réduction du nombre de pièces, et l'amélioration de l'efficacité des composants.\n\n• Amélioration des processus de fabrication : Mettre en œuvre des méthodes de production avancées qui maximisent l'efficacité et minimisent le gaspillage, comme la fabrication additive (impression 3D) ou la production à flux tendu.\n\n• Utilisation de matériaux alternatifs : Substituer les matériaux non renouvelables par des matériaux renouvelables ou recyclés, et promouvoir l'utilisation de matières premières biosourcées.\n\n• Recyclage interne et réutilisation : Recycler les déchets de production et réintégrer les matériaux dans le processus de fabrication, diminuant ainsi le besoin de nouvelles ressources.\n\n• Collaboration avec les fournisseurs : Travailler avec la chaîne d'approvisionnement pour développer des matériaux plus durables et optimiser l'approvisionnement en matières premières.\n\n• Analyse de cycle de vie (ACV) : Utiliser l'analyse de cycle de vie pour identifier les étapes où l'optimisation peut réduire l'impact environnemental.",
+                    children: [
+                      {
+                        id: "779",
+                        value: "Oui",
+                        id_action: 193,
+                        done: true,
+                        information: null,
+                        children: [
+                          {
+                            id: "780",
+                            value:
+                              "Veuillez préciser les stratégies mises en place pour optimiser l'utilisation des matières et composants afin de réduire l'utilisation de ressources non renouvelables :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "782",
+                        value: "Non",
+                        id_action: 193,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "783",
+                    value:
+                      "Votre entreprise a-t-elle mis en place des actions pour diminuer la quantité de plastique utilisée dans la fabrication de ses produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "784",
+                        value: "Oui",
+                        id_action: 196,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez mis en œuvre des initiatives pour réduire l'utilisation de plastique dans vos produits.\n\nRéduire la quantité de plastique utilisés dans les produits est essentiel pour diminuer l'impact environnemental et répondre à la demande croissante des consommateurs pour des alternatives plus durables. Les plastiques, bien que souvent économiques et polyvalents, posent des problèmes environnementaux importants, notamment en raison de leur persistance dans l'environnement.\n\nInitiatives possibles :\n\n• Substitution par des matériaux alternatifs : Remplacer les plastiques traditionnels par des matériaux renouvelables, recyclés ou biodégradables, tels que le plastique biosourcé, le carton ou des composites naturels.\n\n• Optimisation de la conception : Repenser les produits pour réduire ou éliminer les composants plastiques inutiles, tout en maintenant ou en améliorant la fonctionnalité.\n\n• Réduction du poids et du volume : Diminuer l'épaisseur ou la densité des plastiques utilisés sans compromettre la qualité, ce qui peut également réduire les coûts de transport.\n\n• Incorporation de plastiques recyclés : Utiliser des plastiques recyclés post-consommation ou post-industriels pour diminuer la demande de nouveaux plastiques vierges.\n\n• Éducation et sensibilisation des consommateurs : Encourager les consommateurs à recycler et réutiliser les produits plastiques, tout en leur proposant des alternatives plus durables.\n\n• Collaboration avec les fournisseurs : Travailler en partenariat avec des fournisseurs pour développer et adopter des solutions innovantes et durables qui réduisent l'utilisation de plastique.",
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "785",
+                        value: "Non",
+                        id_action: 196,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "786",
+                        value: "Non concerné",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "787",
+                    value:
+                      "Avez-vous remplacé des matières non renouvelables par des matières renouvelables ou biosourcées dans vos produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "788",
+                        value: "Oui",
+                        id_action: 195,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez remplacé des matières non renouvelables par des matières renouvelables ou biosourcées dans vos produits.\n\nLe remplacement des matières non renouvelables par des alternatives renouvelables ou biosourcées est une stratégie clé pour réduire l'impact environnemental de vos produits et favoriser une économie circulaire. Cela contribue non seulement à la durabilité, mais répond également à la demande croissante des consommateurs pour des produits plus écologiques.\n\nActions possibles :\n\n• Identification des matériaux : Évaluer les matières non renouvelables actuellement utilisées dans vos produits pour identifier les opportunités de remplacement.\n\n• Substitution par des matières renouvelables : Intégrer des matériaux renouvelables, tels que le bois certifié FSC, le coton biologique ou les plastiques biosourcés, qui se régénèrent naturellement et ont un impact moindre sur l'environnement.\n\n• Utilisation de matériaux biosourcés : Adopter des matières premières dérivées de biomasse, telles que les fibres de bambou, le bioplastique à base d'amidon ou de canne à sucre, qui sont biodégradables ou compostables.\n\n• Innovation en R&D : Investir dans la recherche et le développement pour découvrir de nouvelles matières renouvelables adaptées à vos produits, en collaboration avec des fournisseurs et des institutions de recherche.\n\n• Évaluation du cycle de vie : Utiliser l'analyse du cycle de vie (ACV) pour comprendre l'impact environnemental des nouveaux matériaux et s'assurer qu'ils apportent une amélioration par rapport aux alternatives non renouvelables.",
+                        children: [
+                          {
+                            id: "789",
+                            value:
+                              "Quelle est la part de matières non renouvelables remplacées par des matières renouvelables ou biosourcées ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [126],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "791",
+                        value: "Non",
+                        id_action: 195,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "792",
+                    value:
+                      "Encouragez-vous vos fournisseurs à utiliser des matières renouvelables ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "793",
+                        value: "Oui",
+                        id_action: 197,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous encouragez activement vos fournisseurs à utiliser des matières renouvelables dans leurs produits et services.\n\nEncourager vos fournisseurs à adopter des matières renouvelables est un moyen efficace de promouvoir la durabilité tout au long de votre chaîne d'approvisionnement. Cette incitation peut se faire par des recommandations, des échanges sur les meilleures pratiques, et une collaboration étroite pour atteindre des objectifs communs en matière de durabilité.\n\nTypes d'incitations :\n\n• Éducation et sensibilisation : Partager des informations et des ressources sur les avantages des matériaux renouvelables et les pratiques durables.\n\n• Critères de sélection : Inclure l'utilisation de matériaux renouvelables comme critère dans le processus de sélection des fournisseurs ou dans vos cahiers des charges.\n\n• Collaboration sur les projets : Travailler conjointement sur des projets pilotes ou des innovations produits pour intégrer des matériaux durables.\n\n• Partage des meilleures pratiques : Faciliter des sessions de partage des meilleures pratiques où les fournisseurs peuvent apprendre les uns des autres.\n\n• Établissement d'objectifs communs : Définir des objectifs de durabilité partagés avec vos fournisseurs pour accroître l'adoption de matériaux renouvelables.",
+                        children: [
+                          {
+                            id: "794",
+                            value:
+                              "Quelle proportion de vos fournisseurs avez-vous sensibilisée à l'utilisation de matières renouvelables ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [127],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "796",
+                        value: "Non",
+                        id_action: 197,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "797",
+                    value:
+                      "Avez-vous optimisé les caractéristiques dimensionnelles de vos produits, comme le poids et le volume ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "798",
+                        value: "Oui",
+                        id_action: 198,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez pris des mesures pour optimiser le poids et le volume de vos produits.\n\nL'optimisation des caractéristiques dimensionnelles des produits, telles que le poids et le volume, est un aspect important de l'écoconception. Elle permet non seulement de réduire l'utilisation de matières premières, mais aussi d'améliorer l'efficacité logistique et de diminuer l'impact environnemental des produits tout au long de leur cycle de vie.\n\nUne meilleure optimisation peut également permettre de diminuer les coûts de transport, d'augmenter l'efficacité logistique et de réduire les émissions de CO₂.\n\nActions possibles :\n\n• Conception légère : Utiliser des matériaux légers pour réduire le poids des produits sans compromettre leur durabilité ou performance.\n\n• Réduction du volume : Concevoir des produits plus compacts pour minimiser l'espace nécessaire au stockage et au transport.\n\n• Modularité : Concevoir des produits qui peuvent être facilement démontés ou reconfigurés pour optimiser le transport et la distribution.\n\n• Emballage optimisé : Développer des solutions d'emballage qui s'adaptent parfaitement au produit, réduisant ainsi le volume et la quantité de matériaux nécessaires.\n\n• Analyse de la chaîne logistique : Revoir les processus logistiques pour exploiter au mieux l'espace de transport et réduire les coûts associés.",
+                        children: [
+                          {
+                            id: "799",
+                            value:
+                              "Quelle est la part des produits ayant bénéficié d'une réduction de leur rapport poids/volume sur le total des produits au cours des 12 derniers mois ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [128],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "801",
+                        value: "Non",
+                        id_action: 198,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "802",
+                    value:
+                      "Réduisez-vous la variété des matériaux utilisés dans vos produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "803",
+                        value: "Oui",
+                        id_action: 199,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez pris des mesures pour réduire la diversité des matériaux utilisés dans vos produits.\n\nRéduire la variété des matériaux dans vos produits est une stratégie efficace pour simplifier la chaîne d'approvisionnement, faciliter le recyclage, et optimiser les processus de fabrication. Cela contribue également à améliorer l'efficacité environnementale et à réduire les coûts.\n\nActions possibles :\n\n• Standardisation des matériaux : Utiliser des matériaux standardisés et polyvalents qui peuvent être employés dans plusieurs produits pour réduire la complexité.\n\n• Simplification du design : Concevoir des produits en utilisant moins de types de matériaux, ce qui facilite le tri et le recyclage en fin de vie.\n\n• Optimisation des processus de fabrication : Rationaliser les opérations en réduisant le nombre de matériaux différents, ce qui peut réduire les besoins en stockage et simplifier la gestion des inventaires.\n\n• Partenariat avec les fournisseurs : Collaborer avec les fournisseurs pour sélectionner des matériaux qui répondent aux normes de durabilité et peuvent être utilisés de manière interchangeable.",
+                        children: [
+                          {
+                            id: "805",
+                            value:
+                              "Quelle est la part de vos produits pour lesquels la variété de matériaux a été réduite ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [129],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "807",
+                        value: "Non",
+                        id_action: 199,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "808",
+                    value:
+                      "Votre entreprise simplifie-t-elle ses produits, gammes, et variantes ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "809",
+                        value: "Oui",
+                        id_action: 200,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez entrepris des actions pour simplifier vos produits, gammes, et variantes.\n\nLa simplification des produits, des gammes, et des variantes permet de réduire la complexité de la production et de la logistique, d'améliorer l'efficacité opérationnelle, et de diminuer l'impact environnemental. Cette approche favorise également une meilleure gestion des ressources et une réponse plus agile aux besoins du marché.\n\nActions possibles :\n\n• Rationalisation des produits : Réduire le nombre de variantes pour se concentrer sur les produits essentiels qui répondent le mieux aux besoins des clients.\n\n• Standardisation des composants : Utiliser des pièces et des composants standardisés à travers différentes gammes de produits pour simplifier l'assemblage et réduire les coûts.\n\n• Optimisation du portefeuille de produits : Analyser les performances des produits pour identifier ceux qui peuvent être consolidés ou éliminés sans affecter la satisfaction client.\n\n• Réduction de la complexité : Concevoir des produits modulaires qui permettent une personnalisation sans augmenter la complexité de fabrication.\n\n• Alignement sur les tendances du marché : Évaluer les tendances et préférences des consommateurs pour ajuster les gammes de produits de manière à maximiser leur pertinence et leur attrait.",
+                        children: [
+                          {
+                            id: "810",
+                            value:
+                              "Quelle est la part de vos produits ayant été simplifiés (réduction du nombre de composants ou de variantes) au cours des 12 derniers mois ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [130],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "812",
+                        value: "Non",
+                        id_action: 200,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "813",
+                    value:
+                      "Votre entreprise réduit-elle l'utilisation de matières non renouvelables dans les emballages de ses produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "814",
+                        value: "Oui",
+                        id_action: 201,
+                        done: true,
+                        information:
+                          "Réduire l'utilisation de matières non renouvelables dans les emballages est une étape clé pour minimiser l'empreinte environnementale des produits.\n\nCela participe à la transition vers une économie plus durable, en répondant aux attentes des consommateurs et en contribuant potentiellement à des réductions de coûts.\n\nActions possibles :\n\n• Utilisation de matériaux renouvelables : Remplacer les matériaux non renouvelables par des alternatives comme le papier recyclé, le carton ou des bioplastiques compostables qui proviennent de ressources naturelles renouvelables.\n\n• Conception d'emballages minimalistes : Simplifier les designs d'emballages pour réduire la quantité de matériaux utilisés, diminuant ainsi les déchets et les coûts.\n\n• Adoption de technologies optimisées : Exploiter des technologies innovantes (ex. impression 3D) pour améliorer l'efficacité de la fabrication des emballages et limiter la consommation de matières premières.\n\n• Augmentation de la recyclabilité : Concevoir des emballages facilement recyclables, favorisant ainsi leur réintroduction dans le cycle de production.\n\n• Matériaux innovants : Investir dans des matériaux d'emballage éco-responsables offrant les mêmes performances que les options traditionnelles, mais avec un impact environnemental moindre.\n\nCette démarche permet de concilier performance et responsabilité écologique tout en répondant aux exigences croissantes en matière d'éco-conception.",
+                        children: [
+                          {
+                            id: "815",
+                            value:
+                              "Quelle est la part d'emballages composés de matières renouvelables sur l'ensemble des emballages utilisés au cours des 12 derniers mois ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [131],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "817",
+                        value: "Non",
+                        id_action: 201,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "818",
+                value: "Utilisation de matières recyclées",
+                id_action: null,
+                done: false,
+                information:
+                  "L'utilisation de matières recyclées dans la fabrication de produits est une stratégie clé pour réduire l'empreinte carbone de votre entreprise, diminuer la dépendance aux matières premières vierges et soutenir une économie circulaire. En intégrant des matériaux recyclés, votre entreprise peut non seulement contribuer à la durabilité environnementale, mais aussi répondre à une demande croissante des consommateurs pour des produits plus respectueux de l'environnement.\n\nActions possibles :\n\n• Incorporation de plastiques recyclés : Utiliser des plastiques recyclés post-consommation dans les produits pour réduire la demande de nouveaux plastiques vierges.\n\n• Utilisation de métaux recyclés : Intégrer des métaux tels que l'acier, l'aluminium ou le cuivre recyclés dans vos produits pour limiter l'extraction minière.\n\n• Emballages en matériaux recyclés : Concevoir des emballages à partir de papier ou de carton recyclé pour diminuer l'utilisation de fibres vierges.\n\n• Partenariats avec des fournisseurs : Collaborer avec des fournisseurs qui offrent des matériaux recyclés de haute qualité et certifiés.\n\n• Innovation produit : Développer des produits conçus spécifiquement pour intégrer un pourcentage élevé de matières recyclées.",
+                children: [
+                  {
+                    id: "819",
+                    value:
+                      "Avez-vous établi des objectifs pour augmenter l'utilisation de matières recyclées dans vos produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "820",
+                        value: "Oui",
+                        id_action: 202,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez défini des objectifs pour augmenter l'utilisation de matières recyclées dans vos produits.\n\nÉtablir des objectifs clairs pour maximiser l'utilisation de matières recyclées démontre un engagement stratégique envers la durabilité et l'économie circulaire. Cela implique la planification et la mise en œuvre de stratégies visant à augmenter la proportion de matériaux recyclés utilisés dans la fabrication de vos produits.\n\nActions possibles :\n\n• Définition d'objectifs quantitatifs : Fixer des cibles mesurables pour le pourcentage de matériaux recyclés à intégrer dans chaque gamme de produits.\n\n• Évaluation des matériaux actuels : Analyser l'utilisation actuelle de matériaux recyclés pour identifier les opportunités d'augmentation.\n\n• Développement de produits : Concevoir ou adapter des produits pour inclure davantage de matériaux recyclés tout en maintenant la qualité et la performance.\n\n• Collaboration avec la chaîne d'approvisionnement : Travailler avec les fournisseurs pour s'assurer qu'ils peuvent fournir des matériaux recyclés de haute qualité et certifiés.\n\n• Surveillance et reporting : Mettre en place des systèmes pour suivre les progrès réalisés vers les objectifs fixés et communiquer régulièrement les résultats aux parties prenantes.",
+                        children: [
+                          {
+                            id: "821",
+                            value: "Veuillez décrire ces objectifs :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "823",
+                        value: "Non",
+                        id_action: 202,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "824",
+                    value:
+                      "Votre entreprise a-t-elle identifié des fournisseurs de matières recyclées en vue d'augmenter la part de matériaux recyclés dans ses produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "825",
+                        value: "Oui",
+                        id_action: 203,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez identifié des fournisseurs capables de vous fournir des matières recyclées pour vos produits.\n\nIdentifier des fournisseurs de matières recyclées est essentiel pour intégrer ces matériaux dans vos produits de manière efficace et fiable. Cela implique de rechercher et d'établir des relations avec des fournisseurs qui partagent votre engagement en matière de durabilité et peuvent fournir des matériaux de haute qualité.\n\nActions possibles :\n\n• Cartographie des fournisseurs : Identifier et évaluer les fournisseurs potentiels de matières recyclées, en tenant compte de leur capacité à fournir des matériaux de haute qualité et certifiés.\n\n• Évaluation des certifications : Vérifier les certifications des fournisseurs pour s'assurer qu'ils respectent les normes de qualité et de durabilité, telles que ISO 14001 ou d'autres certifications pertinentes.\n\n• Collaboration avec les fournisseurs : Établir des partenariats stratégiques avec des fournisseurs pour assurer un approvisionnement stable et fiable en matériaux recyclés.\n\n• Recherche et développement : Collaborer avec les fournisseurs pour développer de nouveaux matériaux recyclés adaptés à vos besoins spécifiques.\n\n• Surveillance des performances : Mettre en place des indicateurs de performance clés (KPI) pour évaluer régulièrement la qualité et la fiabilité des matériaux recyclés fournis.",
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "826",
+                        value: "Non",
+                        id_action: 203,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "827",
+                    value:
+                      "Avez-vous mis en place des partenariats avec des fournisseurs et/ou éco-organismes pour améliorer l'utilisation de matières recyclées ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "828",
+                        value: "Oui",
+                        id_action: 204,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez établi des partenariats avec des fournisseurs et/ou des éco-organismes pour optimiser l'utilisation de matières recyclées dans vos produits.\n\nÉtablir des partenariats stratégiques avec des fournisseurs et des éco-organismes est crucial pour maximiser l'utilisation de matières recyclées. Ces collaborations permettent de développer de nouvelles solutions, d'améliorer les processus de production et d'assurer un approvisionnement fiable en matériaux durables.\n\nActions possibles :\n\n• Collaboration avec des éco-organismes : Travailler avec des organisations spécialisées dans le recyclage et la gestion des déchets pour améliorer l'efficacité du recyclage et identifier de nouvelles opportunités de matières recyclées.\n\n• Partenariats stratégiques avec les fournisseurs : Établir des relations à long terme avec des fournisseurs qui s'engagent à fournir des matériaux recyclés de haute qualité et certifiés.\n\n• Programmes de recherche et développement : Collaborer avec des partenaires pour innover et développer de nouveaux matériaux recyclés qui répondent aux besoins spécifiques de vos produits.\n\n• Échanges de meilleures pratiques : Participer à des réseaux ou forums pour partager des connaissances et des innovations sur l'utilisation de matières recyclées.\n\n• Certification et standardisation : Travailler avec les partenaires pour obtenir des certifications qui garantissent la qualité et la durabilité des matériaux recyclés utilisés.",
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "829",
+                        value: "Non",
+                        id_action: 204,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "830",
+                    value:
+                      "Avez-vous intégré des plastiques recyclés dans vos produits en vue d'augmenter le taux d'incorporation ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "831",
+                        value: "Oui",
+                        id_action: 205,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez intégré des plastiques recyclés dans vos produits et augmenté le taux d'incorporation de ces matériaux.\n\nIncorporer des plastiques recyclés dans vos produits est une stratégie efficace pour réduire la dépendance aux plastiques vierges et minimiser l'impact environnemental de votre production. L'augmentation du taux d'incorporation de plastiques recyclés démontre un engagement fort envers la durabilité et l'innovation dans le design produit.\n\nActions possibles :\n\n• Analyse des produits : Évaluer la faisabilité d'intégrer des plastiques recyclés dans vos produits existants et identifier de nouvelles opportunités pour utiliser ces matériaux.\n\n• Optimisation du design : Reconcevoir les produits pour inclure une plus grande proportion de plastiques recyclés tout en maintenant la qualité et la performance.\n\n• Collaboration avec les fournisseurs : Travailler avec les fournisseurs pour s'assurer de l'approvisionnement en plastiques recyclés de haute qualité et développer des solutions adaptées à vos besoins.\n\n• Amélioration des processus de fabrication : Adapter les processus de production pour mieux intégrer les plastiques recyclés, y compris la mise à jour des équipements et des techniques de fabrication.\n\n• Suivi des progrès : Mettre en place des indicateurs de performance pour suivre l'augmentation du taux d'incorporation de plastiques recyclés et évaluer les impacts environnementaux.",
+                        children: [
+                          {
+                            id: "832",
+                            value:
+                              "Quelle  est la part de vos produits contenant du plastique recyclé sur l'ensemble des produits au cours des 12 derniers mois ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [132],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "834",
+                        value: "Non",
+                        id_action: 205,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "835",
+                    value:
+                      "Collaborez-vous avec vos fournisseurs pour sensibiliser, évaluer et encourager l'utilisation de matières recyclées ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "836",
+                        value: "Oui",
+                        id_action: 207,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous collaborez activement avec vos fournisseurs pour promouvoir l'utilisation de matières recyclées dans vos produits.\n\nTravailler en étroite collaboration avec vos fournisseurs pour encourager l'utilisation de matières recyclées est essentiel pour créer une chaîne d'approvisionnement plus durable.\nCette approche collaborative permet de sensibiliser les partenaires à l'importance des matériaux recyclés, d'évaluer les possibilités d'intégration et de promouvoir l'innovation dans le développement de produits plus écologiques.\n\nActions possibles :\n\n• Sensibilisation : Organiser des ateliers et des formations pour informer les fournisseurs sur les avantages environnementaux et économiques de l'utilisation de matières recyclées.\n\n• Évaluation des capacités : Collaborer avec les fournisseurs pour évaluer leur capacité à fournir des matériaux recyclés de haute qualité et identifier les opportunités d'amélioration.\n\n• Établissement de critères de durabilité : Définir des critères clairs pour les fournisseurs afin d'encourager l'approvisionnement en matières recyclées certifiées et de haute qualité.\n\n• Co-développement de solutions : Travailler ensemble pour développer des solutions innovantes qui intègrent davantage de matières recyclées, et pour adapter les produits aux nouvelles normes de durabilité.\n\n• Suivi des performances : Mettre en place des indicateurs clés de performance (KPI) pour suivre l'utilisation de matières recyclées et évaluer les progrès réalisés par les fournisseurs.\n\n• Incitations pour l'innovation : Proposer des incitations aux fournisseurs qui développent ou fournissent des matériaux recyclés innovants, afin de stimuler l'adoption et l'amélioration continue.",
+                        children: [
+                          {
+                            id: "837",
+                            value:
+                              "Quelle proportion de vos fournisseurs avez-vous sensibilisée à l'utilisation de matières recyclées ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [133],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "839",
+                        value: "Non",
+                        id_action: 207,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "840",
+                    value:
+                      "Incorporez-vous des métaux recyclés (comme l'acier et l'aluminium) dans vos produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "841",
+                        value: "Oui",
+                        id_action: 208,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous intégrez des métaux recyclés, tels que l'acier et l'aluminium, dans vos produits.\n\nL'incorporation de métaux recyclés dans vos produits est une stratégie efficace pour réduire l'impact environnemental et promouvoir la durabilité. Les métaux recyclés offrent les mêmes propriétés de performance que les métaux vierges tout en nécessitant moins d'énergie et de ressources pour leur production.\n\nActions possibles :\n\n• Évaluation des besoins en matériaux : Analyser les produits pour identifier les opportunités d'intégrer des métaux recyclés sans compromettre la qualité et la durabilité.\n\n• Sourcing responsable : Travailler avec des fournisseurs certifiés qui peuvent garantir la qualité des métaux recyclés et leur conformité aux normes environnementales.\n\n• Optimisation de la conception : Adapter la conception des produits pour maximiser l'utilisation de métaux recyclés, que ce soit dans la structure, les composants ou les finitions.\n\n• Collaboration avec la chaîne d'approvisionnement : Établir des partenariats avec des recycleurs et des fournisseurs pour sécuriser un approvisionnement régulier en métaux recyclés.\n\n• Suivi et reporting : Mettre en place des systèmes pour suivre l'utilisation de métaux recyclés et communiquer ces efforts aux parties prenantes.",
+                        children: [
+                          {
+                            id: "842",
+                            value:
+                              "Quelle est la part de matériaux recyclés (comme l'acier et l'aluminium) utilisés dans vos produits par rapport au total des matériaux au cours des 12 derniers mois ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [134],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "844",
+                        value: "Non",
+                        id_action: 208,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "845",
+                    value:
+                      "Avez-vous mis en place un recyclage en boucle courte ou interne chez le producteur ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "846",
+                        value: "Oui",
+                        id_action: 209,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez mis en place un système de recyclage en boucle courte ou interne dans votre processus de production.\n\nLe recyclage en boucle courte (ou recyclage interne) consiste à récupérer et réutiliser les matériaux et déchets générés au cours du processus de production au sein de l'entreprise elle-même. Cette approche réduit la dépendance aux matières premières vierges, minimise les déchets et optimise l'utilisation des ressources.\n\nActions possibles :\n\n• Collecte et tri des déchets : Mettre en place des systèmes pour collecter et trier les déchets de production, permettant leur réutilisation immédiate dans le processus de fabrication.\n\n• Technologies de recyclage : Utiliser des technologies avancées pour traiter et recycler les matériaux sur place, comme le broyage, le tri automatisé, et la refonte des matériaux.\n\n• Recyclage des chutes de production : Transformer les chutes de matériaux en matières premières réutilisables pour la production de nouveaux produits ou composants.",
+                        children: [
+                          {
+                            id: "847",
+                            value:
+                              "Quel est le poids total, en kg,  des matériaux récupérés et recyclés en boucle courte ou interne chez vos producteurs au cours des 12 derniers mois ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [135],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "849",
+                        value: "Non",
+                        id_action: 209,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "850",
+                    value:
+                      "Votre entreprise favorise-t-elle l'utilisation de matières recyclées dans ses emballages ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "851",
+                        value: "Oui",
+                        id_action: 210,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous maximisez l'utilisation de matières recyclées dans vos emballages.\n\nL'intégration de matières recyclées dans les emballages est une pratique essentielle pour réduire l'empreinte écologique de vos produits. En utilisant des matériaux recyclés, votre entreprise contribue à la conservation des ressources naturelles, à la réduction des déchets et à la promotion d'une économie circulaire.\n\nActions possibles :\n\n• Conception d'emballages recyclables : Développer des emballages conçus pour être facilement recyclés après usage, en utilisant des matériaux qui peuvent être réintégrés dans le cycle de production.\n\n• Sourcing de matériaux recyclés : Collaborer avec des fournisseurs pour s'approvisionner en papier, carton, plastique, et autres matériaux recyclés certifiés pour vos emballages.\n\n• Innovation dans les matériaux : Explorer des innovations dans les matériaux, comme les bioplastiques recyclés ou les composites de fibres recyclées, pour améliorer la durabilité des emballages.\n\n• Optimisation de la conception : Réduire la quantité de matériau utilisé dans chaque emballage grâce à un design optimisé, tout en maintenant la protection et la fonctionnalité.",
+                        children: [
+                          {
+                            id: "852",
+                            value:
+                              "Quelle est la part d'emballages composés de matières recyclées ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [136],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "854",
+                        value: "Non",
+                        id_action: 210,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "855",
+                    value:
+                      "Votre entreprise a-t-elle des projets de R&D ou d'innovation visant à intégrer davantage de matières recyclées ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "856",
+                        value: "Oui",
+                        id_action: 211,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez des projets de recherche et développement (R&D) ou d'innovation qui visent à augmenter l'utilisation de matières recyclées dans vos produits.\n\nInvestir dans la R&D pour intégrer davantage de matières recyclées est un moyen efficace de stimuler l'innovation, d'améliorer la durabilité et de répondre aux attentes croissantes des consommateurs pour des produits respectueux de l'environnement. Ces projets peuvent impliquer le développement de nouveaux matériaux, l'optimisation des processus de fabrication et la création de produits innovants.\n\nActions possibles :\n\n• Développement de nouveaux matériaux : Collaborer avec des chercheurs et des experts pour créer de nouveaux matériaux recyclés qui peuvent être utilisés dans vos produits.\n\n• Optimisation des processus de fabrication : Mettre en œuvre des technologies avancées pour intégrer plus efficacement les matières recyclées dans la production.\n\n• Partenariats avec des institutions académiques : Travailler avec des universités et des centres de recherche pour bénéficier de leur expertise en développement durable et matériaux innovants.\n\n• Prototypes et tests : Concevoir et tester des prototypes utilisant des matières recyclées pour évaluer leur performance et identifier les améliorations possibles.",
+                        children: [
+                          {
+                            id: "857",
+                            value:
+                              "Quel est le nombre de projets de R&D mené par l'entreprise au cours des 12 derniers mois visant à intégrer davantage de matières recyclées dans ses produits ou procédés ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [137],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "859",
+                        value: "Non",
+                        id_action: 211,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "860",
+                value: "Limitation des impacts à l'usage",
+                id_action: null,
+                done: false,
+                information:
+                  "La conception des produits en vue de limiter les impacts à l'usage se concentre sur la réduction des impacts environnementaux pendant la phase d'utilisation des produits.\n\nCela implique de concevoir des produits qui consomment moins d'énergie et de ressources, produisent moins d'émissions et de déchets et sont plus faciles à entretenir et à réparer.\n\nEn intégrant ces principes d'écoconception, vous améliorez la durabilité des produits et leur attrait pour les consommateurs soucieux de l'environnement.",
+                children: [
+                  {
+                    id: "861",
+                    value:
+                      "Vos produits/services sont-ils conçus pourlimiter la consommation d'énergie, d'eau et de consommables durant leur usage ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "862",
+                        value: "Oui",
+                        id_action: 212,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vos produits sont spécifiquement conçus pour réduire la consommation d'énergie, d'eau et d'autres consommables pendant leur utilisation.\n\nLa conception de produits qui consomment moins de ressources contribue à minimiser leur impact environnemental, tout en offrant des économies d'utilisation aux consommateurs.\n\nActions possibles :\n\n• Conception écoénergétique : Intégrer des technologies et des matériaux qui réduisent la consommation d'énergie, comme l'isolation thermique améliorée ou des composants électroniques à faible consommation.\n\n• Réduction de la consommation d'eau : Développer des systèmes économes en eau, comme des mécanismes de limitation du débit ou des technologies de recyclage de l'eau dans les produits.\n\n• Diminution des consommables : Concevoir des produits qui nécessitent moins de consommables, comme des encres ou des cartouches durables, ou optimiser l'utilisation des matériaux pour réduire les déchets.",
+                        children: [
+                          {
+                            id: "863",
+                            value:
+                              "Quelle est la part des produits/services conçus pour réduire la consommation de ressources (énergie, eau, consommables) par rapport au total des produits/services conçus ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [138],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "865",
+                        value: "Non",
+                        id_action: 212,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "866",
+                    value:
+                      "Votre entreprise a-t-elle mis en place des actions pour réduire les émissions et rejets durant l'utilisation de ses produits/services ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "867",
+                        value: "Oui",
+                        id_action: 213,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise a pris des mesures pour réduire les émissions de gaz, les rejets liquides ou les résidus solides produits lors de l'utilisation de vos produits.\n\nLimiter ces émissions et rejets est essentiel pour diminuer l'impact environnemental global des produits tout au long de leur cycle de vie.\n\nActions possibles :\n\n• Technologies de réduction des émissions : Intégrer des technologies qui réduisent les émissions de gaz à effet de serre, comme des systèmes de filtration avancés ou des moteurs à faible émission.\n\n• Minimisation des rejets liquides : Concevoir des produits qui réduisent les effluents liquides, par exemple en intégrant des systèmes de purification ou de réutilisation des eaux usées.\n\n• Gestion des résidus solides : Mettre en place des solutions pour réduire, réutiliser ou recycler les résidus solides générés par l'utilisation des produits.\n\n• Suivi et rapport des émissions : Mettre en place des systèmes de suivi pour mesurer les émissions et rejets des produits, et rapporter ces données de manière transparente aux utilisateurs et aux régulateurs.",
+                        children: [
+                          {
+                            id: "868",
+                            value:
+                              "Veuillez décrire les actions que vous avez mises en place pour réduire les émissions et les rejets durant l'utilisation de vos produits/services :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "870",
+                        value: "Non",
+                        id_action: 213,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "871",
+                    value:
+                      "Vos produits/services facilitent-ils les écogestes pour les utilisateurs (économie d'énergie, gestion des déchets, entretien) ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "872",
+                        value: "Oui",
+                        id_action: 214,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vos produits sont conçus pour encourager et faciliter les écogestes chez les utilisateurs, tels que l'économie d'énergie, la gestion des déchets et un entretien minimal mais efficace.\n\nFavoriser ces pratiques aide à prolonger la durée de vie des produits et à réduire leur impact environnemental.\n\nActions possibles :\n\n• Instructions claires : Fournir des guides d'utilisation détaillés et simples qui expliquent comment économiser l'énergie, gérer les déchets, et entretenir les produits de manière écologique.\n\n• Conception intuitive : Créer des produits faciles à utiliser, qui encouragent naturellement les comportements écologiques, comme des modes économie d'énergie ou des fonctionnalités de gestion automatisée des déchets.\n\n• Technologies intelligentes : Intégrer des technologies qui alertent les utilisateurs sur les actions écologiques à entreprendre, comme des notifications pour le tri des déchets ou l'entretien périodique.\n\n• Partage des meilleures pratiques : Sensibiliser les utilisateurs via des campagnes éducatives ou des plateformes en ligne, où ils peuvent partager leurs expériences et astuces pour utiliser les produits de manière durable.",
+                        children: [
+                          {
+                            id: "873",
+                            value:
+                              "Veuillez décrire les actions que vous avez mises en place pour faciliter les écogestes chez les utilisateurs :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "875",
+                        value: "Non",
+                        id_action: 214,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "876",
+                    value:
+                      "Vos produits sont-ils conçus pour être facilement entretenus par les utilisateurs ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "877",
+                        value: "Oui",
+                        id_action: 215,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vos produits sont conçus pour être facilement entretenus par les utilisateurs eux-mêmes, prolongeant ainsi leur durée de vie et réduisant la nécessité de remplacements fréquents.\n\nUn entretien facile contribue également à la satisfaction des clients tout en ayant un impact positif sur l'environnement.\n\nActions possibles :\n\n• Manuels d'entretien détaillés : Fournir des guides d'entretien clairs et détaillés qui aident les utilisateurs à entretenir leurs produits sans difficulté.\n\n• Conception modulaire : Développer des produits avec des composants modulaires, facilement remplaçables ou réparables par les utilisateurs.\n\n• Accessibilité des pièces de rechange : Assurer la disponibilité des pièces de rechange, et faciliter leur commande pour les utilisateurs.\n\n• Support en ligne et tutoriels : Offrir un support en ligne avec des tutoriels vidéo, des FAQ et des forums pour aider les utilisateurs à entretenir leurs produits efficacement.",
+                        children: [
+                          {
+                            id: "878",
+                            value:
+                              "Veuillez décrire les actions que vous avez mises en place pour faciliter l'entretien de vos produits/services par les utilisateurs :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "880",
+                        value: "Non",
+                        id_action: 215,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "881",
+                    value:
+                      "Votre entreprise a-t-elle un programme pour sensibiliser les utilisateurs à l'impact environnemental lié à l'utilisation de ses produits/services ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "882",
+                        value: "Oui",
+                        id_action: 216,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise a mis en place un programme de sensibilisation visant à informer les utilisateurs sur l'impact environnemental de l'utilisation de vos produits.\n\nUne bonne sensibilisation peut encourager les utilisateurs à adopter des pratiques plus durables.\n\nActions possibles :\n\n• Campagnes de sensibilisation : Lancer des campagnes de communication pour éduquer les utilisateurs sur les impacts environnementaux et comment les réduire.\n\n• Labels informatifs : Utiliser des labels ou des certifications environnementales sur les produits pour informer les utilisateurs de leur impact écologique.\n\n• Formation et éducation : Offrir des formations en ligne, des ateliers ou des séminaires pour approfondir la compréhension des enjeux environnementaux liés à l'utilisation des produits.\n\n• Collaborations avec des ONG : Travailler avec des organisations environnementales pour créer des programmes de sensibilisation robustes et crédibles.",
+                        children: [
+                          {
+                            id: "883",
+                            value:
+                              "Veuillez décrire votre programme de sensibilisation visant à informer les utilisateurs sur l'impact environnemental de l'utilisation de vos produits :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "885",
+                        value: "Non",
+                        id_action: 216,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "886",
+                value:
+                  "Écoefficience des procédés de fabrication/distribution/traçabilité",
+                id_action: null,
+                done: false,
+                information:
+                  "L'écoefficience des procédés de fabrication, distribution et traçabilité consiste à optimiser l'utilisation des ressources tout en minimisant les impacts environnementaux, un principe clé de l'économie circulaire.\n\nCela implique de réduire les déchets et la consommation d'énergie tout au long du cycle de vie des produits, depuis la production jusqu'à la distribution, en intégrant des pratiques comme l'utilisation de matériaux durables, des processus énergétiquement efficaces et une traçabilité transparente pour garantir un suivi optimisé des flux de matériaux.\n\nCes actions permettent d'augmenter la durabilité des produits et de favoriser la circularité.",
+                children: [
+                  {
+                    id: "887",
+                    value:
+                      "Optimisez-vous vos procédés de fabrication pour minimiser les déchets et les chutes de production ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "888",
+                        value: "Oui",
+                        id_action: 217,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous optimisez vos procédés de fabrication pour réduire les déchets et les chutes de production.\n\nEn minimisant ces pertes, vous pouvez non seulement réduire les coûts, mais également limiter l'impact environnemental de votre activité.\n\nActions possibles :\n\n• Amélioration continue : Mettre en place des processus d'amélioration continue pour identifier et réduire les sources de déchets dans la production.\n\n• Technologies de précision : Utiliser des technologies de fabrication avancées, telles que la découpe laser ou l'impression 3D, qui réduisent les chutes de matériaux.\n\n•Analyse des flux de production : Réaliser des analyses régulières des flux de production pour identifier les inefficacités et les corriger.\n\n•Formation des employés : Former le personnel à des pratiques de production plus efficaces et à la gestion des ressources pour minimiser les pertes.",
+                        children: [
+                          {
+                            id: "889",
+                            value:
+                              "Quel est le pourcentage de réduction des déchets et des chutes de production depuis l'optimisation des procédés de fabrication ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [139],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "891",
+                        value: "Non",
+                        id_action: 217,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "892",
+                    value:
+                      "Votre entreprise utilise-t-elle des technologies ou équipements innovants respectueux de l'environnement pour améliorer l'efficacité de sa production ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "893",
+                        value: "Oui",
+                        id_action: 219,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise investit dans des technologies et équipements innovants qui sont respectueux de l'environnement et qui améliorent l'efficacité de la production.\n\nCes innovations peuvent inclure des procédés à faible consommation énergétique, l'utilisation de technologies sans produits chimiques nocifs ou d'autres méthodes visant à réduire l'impact écologique.\n\nActions possibles :\n\n• Adoption de technologies vertes : Intégrer des technologies de production qui réduisent la consommation d'énergie, comme les systèmes de récupération de chaleur ou les équipements à haute efficacité énergétique.\n\n• Procédés sans produits chimiques nocifs : Remplacer les procédés de production utilisant des produits chimiques dangereux par des alternatives plus sûres et écologiques.\n\n• Investissement en R&D : Investir dans la recherche et le développement pour créer ou adopter des technologies de production innovantes à faible impact environnemental.\n\n• Certification environnementale : Obtenir des certifications pour les procédés et équipements, prouvant leur efficacité et leur respect des normes environnementales.",
+                        children: [
+                          {
+                            id: "894",
+                            value:
+                              "Veuillez décrire les technologies ou équipements innovants que vous utilisez pour améliorer l'efficacité de votre production :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "896",
+                        value: "Non",
+                        id_action: 219,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "897",
+                    value:
+                      "Avez-vous mis en place une gestion des stocks efficace pour éviter les excédents et minimiser les gaspillages de matières premières ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "898",
+                        value: "Oui",
+                        id_action: 220,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise met en œuvre une gestion efficace des stocks pour éviter les excédents et minimiser les gaspillages de matières premières.\n\nUne bonne gestion des stocks permet de réduire les coûts et de diminuer l'empreinte environnementale liée à la surproduction et au gaspillage.\n\nActions possibles :\n\n• Prévision de la demande : Utiliser des logiciels de prévision pour ajuster la production en fonction des besoins réels et éviter les surstocks.\n\n• Gestion en flux tendu : Adopter des pratiques de gestion en flux tendu (Just-In-Time) pour aligner les niveaux de stock sur la demande réelle.\n\n• Rotation des stocks : Mettre en place des systèmes pour assurer une rotation optimale des stocks, réduisant ainsi les risques de péremption et de gaspillage.\n\n• Audit régulier des stocks : Réaliser des audits réguliers pour identifier et éliminer les inefficacités dans la gestion des stocks.",
+                        children: [
+                          {
+                            id: "899",
+                            value:
+                              "Veuillez décrire de quelle façon votre gestion des stocks permet d'éviter les excédents et de minimiser les gaspillages de matières premières :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "901",
+                        value: "Non",
+                        id_action: 220,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "902",
+                    value:
+                      "Pratiquez-vous le recyclage interne des déchets de production pour réintégrer les matériaux dans le processus de fabrication ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "903",
+                        value: "Oui",
+                        id_action: 221,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise recycle en interne les déchets de production pour les réintégrer dans le processus de fabrication.\n\nLe recyclage interne des matériaux permet de réduire les coûts de matières premières et de limiter les déchets, contribuant ainsi à une production plus durable.\n\nActions possibles :\n\n• Collecte et tri des déchets : Mettre en place des systèmes efficaces de collecte et de tri des déchets de production pour faciliter leur réutilisation.\n\n• Technologies de recyclage : Investir dans des technologies qui permettent de traiter et de recycler les matériaux directement sur le site de production.\n\n• Formation des employés : Former le personnel sur les procédures de recyclage interne et l'importance de minimiser les déchets.\n\n• Utilisation des matériaux recyclés : Intégrer les matériaux recyclés dans la fabrication de nouveaux produits, garantissant ainsi un cycle de production plus circulaire.",
+                        children: [
+                          {
+                            id: "904",
+                            value:
+                              "Veuillez décrire les actions que vous avez mises en place pour recycler les déchets de production et réintégrer les matériaux dans votre processus de fabrication :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "906",
+                        value: "Non",
+                        id_action: 221,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "907",
+                    value:
+                      "Avez-vous recours à des logiciels de simulation pour réduire les déchets, diminuer les coûts et optimiser l'utilisation des ressources dans votre production ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "908",
+                        value: "Oui",
+                        id_action: 222,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise utilise des logiciels de simulation pour optimiser la production, réduire les déchets et les coûts.\n\nCes outils permettent de modéliser et d'optimiser les processus avant la mise en production réelle, réduisant ainsi les inefficacités et les erreurs.\n\nActions possibles :\n\n• Simulation des processus : Utiliser des logiciels de simulation pour modéliser les processus de production, identifier les goulots d'étranglement et prévoir les déchets potentiels.\n\n• Optimisation des ressources : Mettre en œuvre des simulations pour optimiser l'utilisation des matières premières et réduire les pertes.\n\n• Réduction des coûts : Utiliser les résultats des simulations pour ajuster les processus de production en vue de réduire les coûts opérationnels.",
+                        children: [
+                          {
+                            id: "909",
+                            value:
+                              "Veuillez décrire les logiciels de simulation que vous utilisez et expliquer comment ils contribuent à réduire les déchets, diminuer les coûts et optimiser l'utilisation des ressources dans votre production :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "911",
+                        value: "Non",
+                        id_action: 222,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "912",
+                value: "Analyse du Cycle de Vie (ACV)",
+                id_action: null,
+                done: false,
+                information:
+                  "L'Analyse du Cycle de Vie (ACV) est un outil clé de l'économie circulaire, permettant d'évaluer l'impact environnemental d'un produit ou service à chaque étape de son cycle de vie, de l'extraction des matières premières à la fin de vie.\n\nElle aide à identifier les opportunités de réduction de l'empreinte écologique, d'optimisation de l'utilisation des ressources et de minimisation des déchets, contribuant ainsi à une gestion plus durable et circulaire des matériaux.",
+                children: [
+                  {
+                    id: "913",
+                    value:
+                      "Avez-vous mis en place une Analyse de Cycle de Vie (ACV) sur une partie ou la totalité de vos produits ?",
+                    id_action: null,
+                    information:
+                      "Sélectionnez cette option si votre entreprise a mis en place une Analyse de Cycle de Vie (ACV) pour évaluer l'impact environnemental de tout ou partie de vos produits.\n\nL'ACV est un outil essentiel qui permet de mesurer les impacts environnementaux à chaque étape du cycle de vie d'un produit, de l'extraction des matières premières à la fin de vie, en passant par la fabrication, la distribution et l'utilisation.\n\nCette analyse fournit une vision complète et objective, aidant à identifier les points critiques où des améliorations peuvent être apportées pour réduire l'empreinte écologique.",
+                    children: [
+                      {
+                        id: "914",
+                        value: "Oui",
+                        id_action: 223,
+                        done: true,
+                        information: null,
+                        children: [
+                          {
+                            id: "915",
+                            value:
+                              "Quelle part de vos produits/services a fait l'objet d'une Analyse de Cycle de Vie ?",
+                            id_action: null,
+                            information: null,
+                            children: [
+                              {
+                                id: "916",
+                                value:
+                                  "Plus de 75 % de nos produits ou services",
+                                id_action: null,
+                                done: false,
+                                information: null,
+                                children: [],
+                                type: "reponse",
+                                id_kpis: [140],
+                              },
+                              {
+                                id: "917",
+                                value:
+                                  "De 51 % à 75 % de nos produits ou services",
+                                id_action: null,
+                                done: false,
+                                information: null,
+                                children: [],
+                                type: "reponse",
+                                id_kpis: [141],
+                              },
+                              {
+                                id: "918",
+                                value:
+                                  "De 26 % à 50 % de nos produits ou services",
+                                id_action: null,
+                                done: false,
+                                information: null,
+                                children: [],
+                                type: "reponse",
+                                id_kpis: [142],
+                              },
+                              {
+                                id: "919",
+                                value:
+                                  "De 1 % à 25 % de nos produits ou services",
+                                id_action: null,
+                                done: false,
+                                information: null,
+                                children: [],
+                                type: "reponse",
+                                id_kpis: [143],
+                              },
+                            ],
+                            type: "question",
+                            inputType: "single",
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "920",
+                        value: "Non",
+                        id_action: 223,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "921",
+                value: "Fin de vie des produits/services",
+                id_action: null,
+                done: false,
+                information:
+                  "La fin de vie des produits/services dans le cadre de l'économie circulaire concerne la gestion des produits après leur utilisation, en minimisant les déchets et en maximisant la récupération des matériaux.\n\nCela inclut le recyclage, le réemploi, la réparation et la valorisation des composants pour éviter l'enfouissement et favoriser une réintégration dans le cycle de production. \n\nOptimiser cette phase permet de prolonger la durée de vie des ressources et de réduire l'impact environnemental global.",
+                children: [
+                  {
+                    id: "922",
+                    value:
+                      "Vos produits sont-ils conçus pour être recyclables ou compostables à la fin de leur cycle de vie ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "923",
+                        value: "Oui",
+                        id_action: 224,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vos produits sont spécifiquement conçus pour être recyclés ou compostés à la fin de leur cycle de vie.\n\nLa conception en vue du recyclage ou du compostage permet de réduire les déchets envoyés en décharge et de récupérer des matériaux précieux, contribuant ainsi à une économie circulaire.\n\nActions possibles :\n\n• Matériaux recyclables : Utiliser des matériaux facilement recyclables dans la conception de vos produits pour garantir leur valorisation en fin de vie.\n\n• Matériaux compostables : Intégrer des matériaux compostables dans les produits où cela est pertinent, notamment pour les produits à usage unique ou les emballages.\n\n• Design pour le démantèlement : Concevoir des produits qui peuvent être facilement démontés pour permettre une séparation efficace des matériaux recyclables et compostables.\n\n• Certification de recyclabilité : Obtenir des certifications pour vos produits qui attestent de leur recyclabilité ou compostabilité.",
+                        children: [
+                          {
+                            id: "924",
+                            value:
+                              "Veuillez préciser la part de vos produits qui est conçue pour être recyclable ou compostable à la fin de leur cycle de vie :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [144],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "926",
+                        value: "Non",
+                        id_action: 224,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "927",
+                    value:
+                      "Utilisez-vous des étiquetages clairs sur les emballages pour indiquer comment trier correctement les matériaux ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "928",
+                        value: "Oui",
+                        id_action: 225,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous utilisez des étiquetages clairs sur vos emballages pour guider les consommateurs sur la manière correcte de trier et de recycler les matériaux.\n\nDes instructions claires aident à améliorer les taux de recyclage et à réduire les erreurs de tri, contribuant ainsi à une gestion des déchets plus efficace.\n\nActions possibles :\n\n• Étiquetage informatif : Ajouter des instructions explicites sur les emballages pour indiquer les consignes de tri spécifiques pour chaque matériau.\n\n• Utilisation de symboles : Incorporer des symboles universels de recyclage ou de compostage pour faciliter la reconnaissance par les consommateurs.\n\n• Communication éducative : Développer des campagnes de sensibilisation qui expliquent l'importance du tri correct des matériaux et l'impact de ces actions sur l'environnement.\n\n• Collaboration avec les filières de recyclage : Travailler avec les autorités locales et les filières de recyclage pour s'assurer que les étiquetages sont conformes aux systèmes de tri locaux.",
+                        children: [
+                          {
+                            id: "929",
+                            value:
+                              "Quelle part de vos produits bénéficie d'étiquetages clairs indiquant comment trier les matériaux ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [145],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "931",
+                        value: "Non",
+                        id_action: 225,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "932",
+                        value: "Non concerné",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "933",
+                    value:
+                      "Avez-vous mis en place des systèmes de consigne pour encourager la récupération des emballages ou des produits ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "934",
+                        value: "Oui",
+                        id_action: 226,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si vous avez mis en place des systèmes de consigne pour encourager la récupération des emballages ou des produits en fin de vie.\n\nLes systèmes de consigne incitent les consommateurs à retourner les emballages ou produits usagés en échange d'une compensation, facilitant ainsi leur recyclage ou réutilisation.\n\nActions possibles :\n\n• Mise en place de consignes : Introduire un système de consigne pour les emballages ou les produits, permettant aux clients de les retourner en échange d'un remboursement ou d'une remise.\n\n• Partenariats pour la collecte : Collaborer avec des points de vente ou des centres de collecte pour faciliter la récupération des produits consignés.\n\n• Communication sur les avantages : Sensibiliser les consommateurs aux avantages environnementaux et économiques de la consigne pour augmenter les taux de retour.\n\n• Réutilisation des matériaux : Intégrer les matériaux récupérés grâce aux consignes dans votre chaîne de production pour réduire l'utilisation de nouvelles ressources.",
+                        children: [
+                          {
+                            id: "935",
+                            value:
+                              "Quelle est la part des produits pour lesquels vous avez mis en place des systèmes de consigne afin d'encourager la récupération des emballages ou des produits ?",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "numeric",
+                            id_kpis: [146],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "937",
+                        value: "Non",
+                        id_action: 226,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "938",
+                    value:
+                      "Votre entreprise participe-t-elle au financement de filières de recyclage, telles que l'éco-contribution ou les consignes ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "939",
+                        value: "Oui",
+                        id_action: 227,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise contribue au financement des filières de recyclage, par exemple par le biais de l'éco-contribution ou de systèmes de consignes.\n\nLe soutien financier à ces filières est essentiel pour assurer le recyclage efficace des produits en fin de vie et pour encourager une gestion durable des ressources.\n\nActions possibles :\n\n• Éco-contribution : Participer à des programmes d'éco-contribution qui financent le recyclage des produits en fin de vie.\n\n• Soutien aux consignes : Contribuer financièrement à des systèmes de consigne pour améliorer les taux de retour des produits et emballages.\n\n• Partenariats avec les recycleurs : Travailler avec des entreprises de recyclage pour cofinancer des initiatives de récupération et de traitement des déchets.\n\n• Transparence sur les contributions : Communiquer de manière transparente sur votre participation financière à ces filières pour renforcer votre engagement en faveur du recyclage.",
+                        children: [
+                          {
+                            id: "940",
+                            value:
+                              "Veuillez préciser à quelle(s) filière(s) de recyclage votre entreprise participe :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "942",
+                        value: "Non",
+                        id_action: 227,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "943",
+                    value:
+                      "Votre entreprise a-t-elle mis en place des systèmes de logistique inverse pour faciliter la récupération et le recyclage des produits usagés de ses clients ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "944",
+                        value: "Oui",
+                        id_action: 228,
+                        done: true,
+                        information:
+                          "Sélectionnez cette option si votre entreprise a mis en place des systèmes de logistique inverse pour faciliter la récupération et le recyclage des produits usagés de vos clients.\n\nLa logistique inverse est une approche qui permet de récupérer les produits à la fin de leur vie utile, réduisant ainsi les déchets et maximisant la réutilisation des matériaux.\n\nActions possibles :\n\n• Réseaux de collecte : Mettre en place des réseaux de collecte pour récupérer les produits usagés directement auprès des clients.\n\n• Retour gratuit : Offrir des options de retour gratuit pour encourager les clients à retourner leurs produits en fin de vie pour le recyclage.\n\n• Partenariats logistiques : Collaborer avec des prestataires de services logistiques spécialisés pour assurer un retour efficace et durable des produits.\n\n• Suivi et traçabilité : Implémenter des systèmes de suivi pour gérer les retours et vous ssurer que les produits récupérés sont bien recyclés ou réutilisés.",
+                        children: [
+                          {
+                            id: "945",
+                            value:
+                              "Veuillez préciser le(s) système(s) de logistique inverse que votre entreprise a mis en place pour faciliter la récupération et le recyclage des produits usagés de ses clients :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                      {
+                        id: "947",
+                        value: "Non",
+                        id_action: 228,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "single",
+                  },
+                  {
+                    id: "948",
+                    value: "Autre(s)",
+                    id_action: null,
+                    done: false,
+                    information: null,
+                    children: [
+                      {
+                        id: "949",
+                        value: "Veuillez préciser :",
+                        id_action: null,
+                        information: null,
+                        children: [],
+                        type: "question",
+                        inputType: "text",
+                        id_kpis: [],
+                      },
+                    ],
+                    type: "reponse",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "951",
+                value: "Autres principes d'écoconception",
+                id_action: null,
+                done: false,
+                information: null,
+                children: [
+                  {
+                    id: "952",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "multiple",
+          },
+        ],
+        type: "reponse",
+      },
+      {
+        id: "954",
+        value: "Non",
+        id_action: 229,
+        done: false,
+        information: null,
+        children: [],
+        type: "reponse",
+      },
+    ],
+    type: "question",
+    inputType: "single",
+  },
+  {
+    id: "955",
+    value:
+      "Votre entreprise est-elle engagée dans des initiatives d'écologie industrielle et territoriale ?",
+    ids_secteurs: [
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 29,
+    ],
+    id_action: null,
+    information:
+      "L'écologie industrielle et territoriale vise à créer des synergies entre les entreprises et les acteurs locaux pour optimiser l'utilisation des ressources, réduire les impacts environnementaux et favoriser une économie circulaire à l'échelle locale ou régionale.",
+    children: [
+      {
+        id: "956",
+        value: "Oui",
+        id_action: 232,
+        done: true,
+        information:
+          "Sélectionnez cette option si votre entreprise participe à des initiatives d'écologie industrielle et territoriale.\n\nActions possibles :\n\n• Participation à des réseaux locaux : Rejoindre des réseaux ou clusters locaux dédiés à l'écologie industrielle pour collaborer avec d'autres acteurs du territoire.\n\n• Projets de mutualisation : Engager des projets de mutualisation des ressources (eau, énergie, matières premières) avec d'autres entreprises pour maximiser l'efficacité et réduire les coûts.\n\n• Échanges de sous-produits : Mettre en place des systèmes d'échange de sous-produits industriels avec d'autres entreprises pour réutiliser des matériaux qui seraient autrement considérés comme des déchets.\n\n• Contribution aux initiatives territoriales : Collaborer avec les autorités locales pour développer des initiatives d'écologie industrielle qui profitent à l'ensemble de la communauté.",
+        children: [
+          {
+            id: "957",
+            value:
+              "Votre entreprise valorise-t-elle les excédents de stock et les chutes de production pour réduire le gaspillage ?",
+            id_action: null,
+            information: null,
+            children: [
+              {
+                id: "958",
+                value: "Oui",
+                id_action: 230,
+                done: true,
+                information:
+                  "Sélectionnez cette option si votre entreprise valorise les excédents de stock et les chutes de production pour réduire le gaspillage.\n\nLa valorisation des excédents et des chutes permet de réintégrer ces matériaux dans la production ou de les transformer en nouvelles ressources, contribuant ainsi à une gestion plus durable des ressources.\n\nActions possibles :\n\n• Réutilisation interne : Réintégrer les excédents de stock et les chutes de production dans vos processus de fabrication pour minimiser le besoin en nouvelles matières premières.\n\n• Transformation en nouveaux produits : Développer des solutions pour transformer les chutes de production en nouveaux produits ou matériaux vendables.\n\n• Vente des excédents : Mettre en place des canaux de vente ou de don pour les excédents de stock, évitant ainsi leur mise au rebut.\n\n• Collaboration avec des recycleurs : Travailler avec des entreprises de recyclage pour valoriser les chutes de production qui ne peuvent pas être réutilisées en interne.",
+                children: [
+                  {
+                    id: "959",
+                    value:
+                      "Quel(s) type(s) d'excédents ou de chutes valorisez-vous ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "960",
+                        value: "Produits finis non vendus",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "961",
+                        value: "Matériaux ou composants inutilisés",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "962",
+                        value: "Produits proches de la date d'expiration",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "963",
+                        value:
+                          "Chutes de production (ex : morceaux de tissus, copeaux de bois)",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "964",
+                        value: "Autre(s)",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [
+                          {
+                            id: "965",
+                            value: "Veuillez préciser :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "multiple",
+                  },
+                  {
+                    id: "967",
+                    value: "A qui bénéficient ces matériaux ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "968",
+                        value:
+                          "Utilisation en interne pour créer de nouveaux produits",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "969",
+                        value: "Dons (ou ventes avec réductions) aux salariés",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "970",
+                        value: "Entreprises de recyclage",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "971",
+                        value: "Artisans ou créateurs locaux",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "972",
+                        value: "Écoles ou centres éducatifs",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "973",
+                        value: "Associations caritatives",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "974",
+                        value: "Autre",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [
+                          {
+                            id: "975",
+                            value: "Veuillez préciser :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "multiple",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "977",
+                value: "Non",
+                id_action: 230,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "978",
+            value:
+              "Votre entreprise collabore-t-elle avec d'autres entreprises pour partager des ressources, des technologies ou des infrastructures dans le cadre de projets d'économie circulaire ?",
+            id_action: null,
+            information: null,
+            children: [
+              {
+                id: "979",
+                value: "Oui",
+                id_action: 231,
+                done: true,
+                information:
+                  "Sélectionnez cette option si votre entreprise collabore avec d'autres entreprises pour partager des ressources, des technologies ou des infrastructures dans le cadre de projets d'économie circulaire.\n\nLa collaboration inter-entreprises est essentielle pour maximiser l'efficacité des ressources, réduire les coûts et développer des solutions innovantes qui profitent à tous les participants.\n\nActions possibles :\n\n• Partage d'infrastructures : Partager des infrastructures (telles que des installations de traitement de déchets ou des systèmes de distribution d'énergie) avec d'autres entreprises pour améliorer l'efficience et réduire l'impact environnemental.\n\n• Mutualisation des technologies : Collaborer avec d'autres entreprises pour co-développer ou partager des technologies qui améliorent l'efficience des processus industriels.\n\n• Échanges de matières premières : Mettre en place des systèmes d'échange ou de vente de matières premières secondaires issues de la production entre entreprises partenaires.\n\n• Développement de projets communs : Participer à des projets d'économie circulaire avec d'autres entreprises, comme la création de boucles locales de valorisation des déchets ou l'élaboration de produits éco-conçus en commun.",
+                children: [
+                  {
+                    id: "980",
+                    value:
+                      "Quels types de ressources partagez-vous avec d'autres entreprises ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "981",
+                        value: "Équipements de production",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "982",
+                        value: "Espaces ou infrastructures",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "983",
+                        value: "Technologies ou savoir-faire",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "984",
+                        value: "Logistique ou transport",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "985",
+                        value: "Autre",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [
+                          {
+                            id: "986",
+                            value: "Veuillez préciser :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "multiple",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "988",
+                value: "Non",
+                id_action: 231,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+        ],
+        type: "reponse",
+      },
+      {
+        id: "989",
+        value: "Non",
+        id_action: 232,
+        done: false,
+        information: null,
+        children: [],
+        type: "reponse",
+      },
+    ],
+    type: "question",
+    inputType: "single",
+  },
+  {
+    id: "990",
+    value:
+      "Votre entreprise propose-t-elle des solutions pour participer à l'économie de la fonctionnalité ?",
+    ids_secteurs: [
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 29,
+    ],
+    id_action: null,
+    information:
+      "L'économie de la fonctionnalité privilégie l'usage d'un produit ou d'un service plutôt que sa possession, en mettant l'accent sur la performance et l'optimisation des ressources.\n\nCe modèle permet de réduire la consommation de matières premières, d'augmenter la durée de vie des produits, et de minimiser les déchets en favorisant des services tels que la location, la maintenance et le partage.",
+    children: [
+      {
+        id: "991",
+        value: "Oui",
+        id_action: 240,
+        done: true,
+        information:
+          "Sélectionnez cette option si votre entreprise propose des solutions qui s'inscrivent dans l'économie de la fonctionnalité.\n\nTypes d'actions possibles :\n\n• Offre de services plutôt que de produits : Développer des modèles économiques basés sur la fourniture de services (location, abonnement, maintenance) plutôt que sur la vente de produits.\n\n• Solutions de partage ou de mutualisation : Proposer des plateformes ou des solutions de partage de ressources, comme la mise à disposition de matériel en commun ou l'accès à des services partagés.\n\n• Modèles d'abonnement : Introduire des modèles d'abonnement où les clients paient pour l'usage d'un produit plutôt que pour son achat, avec des options de mise à niveau ou de remplacement.\n\n• Innovation dans les services : Innover en proposant des services qui répondent aux besoins spécifiques des clients tout en favorisant l'efficience des ressources, comme des solutions personnalisées basées sur les données d'utilisation.",
+        children: [
+          {
+            id: "992",
+            value:
+              "Votre entreprise propose-t-elle un système de location ou leasing pour ses produits comme alternative à l'achat ?",
+            id_action: null,
+            information:
+              "Proposer un système de location ou de leasing pour vos produits permet aux clients de bénéficier des avantages de vos produits sans avoir à en assumer la propriété complète. Par exemple, vous pouvez louer des machines à café aux cafés ou des équipements industriels aux entreprises, ce qui leur permet de bénéficier des produits sans les coûts initiaux élevés.\n\n• Bénéfices pour l'entreprise :\n\n• Fidélisation et revenus récurrents : les systèmes de location ou leasing créent une relation continue avec vos clients, générant des revenus récurrents. Cela peut améliorer la prévisibilité des revenus et augmenter la fidélisation des clients.\n• Accès à un marché plus large : offrir la location rend vos produits accessibles à des clients qui ne peuvent pas se permettre de les acheter directement, augmentant ainsi votre base de clientèle.\n\n• Impact environnemental :\n\n• Réduction des déchets : les produits loués sont souvent mieux entretenus et réparés, ce qui prolonge leur durée de vie et réduit le besoin de remplacement fréquent.\n• Utilisation efficace des ressources : en encourageant le partage et la réutilisation des produits, vous réduisez la consommation de ressources pour la fabrication de nouveaux produits.",
+            children: [
+              {
+                id: "993",
+                value: "Oui",
+                id_action: 233,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "994",
+                value: "Non",
+                id_action: 233,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "995",
+            value:
+              "Votre entreprise favorise-t-elle la vente de l'usage ou propose-t-elle des services basés sur la performance où les clients payent pour le résultat plutôt que pour le produit lui-même ?",
+            id_action: null,
+            information:
+              "Favoriser la vente de l'usage ou proposer des services basés sur la performance signifie que vos clients paient pour l'accès ou les résultats obtenus plutôt que pour posséder le produit. Cela peut inclure des modèles où les clients payent en fonction de l'usage ou des résultats obtenus.\n\nPar exemple, un fournisseur de solutions énergétiques pourrait facturer en fonction des économies d'énergie réalisées par le client, ou une entreprise de nettoyage pourrait facturer par la propreté mesurée ou l'état final plutôt que par le nombre d'heures travaillées.\n\nBénéfices pour l'entreprise :\n\n• Alignement avec les résultats clients : en basant votre modèle économique sur la performance, vous vous alignez sur les objectifs de vos clients, ce qui peut renforcer la confiance et la satisfaction.\n\n• Potentiel de marges plus élevées : les modèles basés sur la performance peuvent souvent justifier des marges plus élevées, car ils démontrent directement la valeur ajoutée de votre produit ou service.\n\n• Réduction de la consommation : en vendant l'usage, vous optimisez l'utilisation des ressources, ce qui peut réduire la production et, par conséquent, l'empreinte carbone.\n\n• Efficacité des ressources : ce modèle incite à concevoir des produits et services qui maximisent l'efficacité et minimisent les déchets, contribuant ainsi à une économie plus durable.",
+            children: [
+              {
+                id: "996",
+                value: "Oui",
+                id_action: 234,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "997",
+                value: "Non",
+                id_action: 234,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "998",
+            value:
+              "Avez-vous mis en place des systèmes de produits-services (PSS) où vous intégrez des services de maintenance, de réparation ou de mise à jour avec vos produits ?",
+            id_action: null,
+            information:
+              "Les systèmes de produits-services (PSS) combinent la vente de produits avec des services complémentaires tels que la maintenance, la réparation et la mise à jour.\n\nPar exemple, une entreprise de photocopieurs pourrait proposer des contrats de service qui incluent la réparation et l'entretien réguliers, garantissant ainsi le bon fonctionnement des machines.\n\n• Bénéfices pour l'entreprise :\n\n• Revenus continus : en offrant des services supplémentaires, vous générez des revenus récurrents tout en renforçant les relations client.\n• Fidélisation accrue : les clients bénéficient de la tranquillité d'esprit en sachant que leurs produits seront entretenus et réparés si nécessaire, ce qui peut les inciter à rester fidèles à votre marque.\n\n• Impact environnemental :\n\n• Prolongation de la durée de vie des produits : en maintenant et en réparant les produits, vous réduisez le besoin de remplacement, ce qui minimise la production de nouveaux produits et les déchets associés.\n• Réduction de l'empreinte carbone : en encourageant la réparation et l'entretien, vous réduisez l'impact environnemental lié à la fabrication de nouveaux produits.",
+            children: [
+              {
+                id: "999",
+                value: "Oui",
+                id_action: 235,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1000",
+                value: "Non",
+                id_action: 235,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1001",
+            value:
+              "Votre entreprise propose-t-elle des abonnements qui donnent accès à vos produits ou services sur une base régulière ?",
+            id_action: null,
+            information:
+              "Proposer des abonnements pour vos produits ou services permet aux clients d'accéder régulièrement à vos offres sans avoir à les acheter directement.\n\nPar exemple, des entreprises de logiciels offrent des abonnements mensuels qui incluent des mises à jour et un support technique ou des entreprises de meubles qui proposent des abonnements pour des meubles modulables.\n\nBénéfices pour l'entreprise :\n\n• Revenus récurrents : les abonnements génèrent un flux constant de revenus et permettent une planification financière plus précise.\n\n• Engagement client : les abonnements favorisent un engagement client continu, car les clients ont un accès régulier à vos produits ou services.\n\n• Réduction de la production : en encourageant l'utilisation continue des produits existants plutôt que l'achat de nouveaux, vous réduisez la demande de production et les déchets associés.\n\n• Optimisation des ressources : les abonnements permettent une meilleure gestion des ressources et minimisent l'empreinte environnementale.",
+            children: [
+              {
+                id: "1002",
+                value: "Oui",
+                id_action: 236,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1003",
+                value: "Non",
+                id_action: 236,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1004",
+            value:
+              "Votre entreprise conçoit-elle des produits qui offrent des usages multiples, permettant plusieurs fonctions ou applications avec le même produit ?",
+            id_action: null,
+            information:
+              "Concevoir des produits qui offrent des usages multiples signifie créer des produits qui peuvent être utilisés pour différentes fonctions ou applications.\n\nPar exemple, une lampe de bureau qui sert également de station de charge pour les appareils électroniques ou une table qui peut se transformer en bureau.\n\nBénéfices pour l'entreprise :\n\n• Augmentation de la valeur perçue : les produits polyvalents attirent les clients qui recherchent des solutions pratiques et innovantes, augmentant ainsi la valeur perçue de vos offres.\n\n• Réduction des coûts : en offrant plusieurs fonctions dans un seul produit, vous pouvez réduire les coûts de production et de stockage.\n\n• Réduction des déchets : en utilisant un produit pour plusieurs usages, vous diminuez la nécessité d'acheter plusieurs produits, ce qui réduit les déchets et l'empreinte écologique.\n\n• Utilisation efficace des matériaux : concevoir des produits multifonctionnels optimise l'utilisation des matériaux, contribuant ainsi à la durabilité.",
+            children: [
+              {
+                id: "1005",
+                value: "Oui",
+                id_action: 237,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1006",
+                value: "Non",
+                id_action: 237,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1007",
+            value:
+              "Votre entreprise propose-t-elle des produits qui sont conçus pour être partagés entre plusieurs usagers, permettant ainsi une utilisation collective ou successive ?",
+            id_action: null,
+            information:
+              "Proposer des produits conçus pour être partagés signifie qu'ils peuvent être utilisés par plusieurs personnes, souvent de manière collective ou successive.\n\nCela inclut des modèles de partage comme les vélos partagés, les outils de bricolage en commun ou les espaces de coworking.\n\nBénéfices pour l'entreprise :\n\n• Élargissement de la base de clients : en rendant les produits accessibles à plusieurs utilisateurs, vous atteignez un public plus large et diversifié.\n\n• Engagement communautaire : les produits partagés peuvent favoriser un sentiment de communauté et de collaboration entre les utilisateurs.\n\n• Réduction de la consommation : en partageant les produits, vous réduisez le besoin de production de nouveaux produits, ce qui diminue l'impact environnemental global.\n\n• Efficacité des ressources : les produits partagés optimisent l'utilisation des ressources et prolongent la durée de vie des produits.",
+            children: [
+              {
+                id: "1008",
+                value: "Oui",
+                id_action: 238,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1009",
+                value: "Non",
+                id_action: 238,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1010",
+            value:
+              "Avez-vous mis en place des solutions flexibles qui permettent de personnaliser vos produits ou services selon les besoins de vos clients ?",
+            id_action: null,
+            information:
+              "Mettre en place des solutions flexibles pour la personnalisation permet à vos clients d'adapter vos produits ou services à leurs besoins spécifiques.\nCela peut inclure des options comme la couleur, le matériau ou des fonctionnalités supplémentaires dans des produits tels que les meubles, les appareils électroniques ou même les services numériques.\n\nPar exemple, un fabricant de meubles pourrait offrir la possibilité de personnaliser la couleur et le tissu des canapés pour correspondre au décor de la maison d'un client.\n\n• Bénéfices pour l'entreprise :\n\n• Satisfaction client accrue : la personnalisation permet de répondre directement aux attentes des clients, augmentant ainsi leur satisfaction et leur fidélité. Les clients apprécient les produits qui répondent précisément à leurs besoins, ce qui peut conduire à des taux de fidélisation plus élevés et à des recommandations positives.\n\n• Différenciation sur le marché : en offrant des produits personnalisables, vous vous démarquez de la concurrence en proposant des solutions uniques que vos concurrents pourraient ne pas avoir. Cela peut également justifier des prix plus élevés en raison de la valeur ajoutée perçue par les clients.\n\n• Augmentation des ventes et des marges : la personnalisation peut créer des opportunités de vente incitative, où les clients choisissent des options supplémentaires ou des fonctionnalités premium, augmentant ainsi le panier moyen et les marges bénéficiaires.\n\n• Impact environnemental :\n\n• Réduction du gaspillage : en produisant exactement ce que les clients désirent, la personnalisation réduit la production de produits invendus ou obsolètes, minimisant ainsi le gaspillage.\n\n• Utilisation efficace des ressources : en adaptant la production aux demandes spécifiques, l'entreprise utilise ses ressources de manière plus ciblée et responsable, ce qui peut contribuer à une empreinte carbone réduite.\n\n• Encouragement à une consommation responsable : en offrant des produits sur mesure, les clients sont encouragés à acheter des articles qui leur conviennent parfaitement, réduisant ainsi le besoin de remplacer fréquemment les produits.",
+            children: [
+              {
+                id: "1011",
+                value: "Oui",
+                id_action: 239,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1012",
+                    value:
+                      "Veuillez préciser les solutions flexibles que vous avez mises en place pour permettre la personnalisation de vos produits ou services selon les besoins de vos clients :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1014",
+                value: "Non",
+                id_action: 239,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+        ],
+        type: "reponse",
+      },
+      {
+        id: "1015",
+        value: "Non",
+        id_action: 240,
+        done: false,
+        information: null,
+        children: [],
+        type: "reponse",
+      },
+    ],
+    type: "question",
+    inputType: "single",
+  },
+
+  {
+    id: "1016",
+    value:
+      "Votre entreprise encourage t-elle une consommation durable et responsable ?",
+    ids_secteurs: [
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 29,
+    ],
+    id_action: null,
+    information:
+      "Sélectionnez cette option si votre entreprise met en place des initiatives pour promouvoir une consommation durable et responsable auprès de ses clients.\n\nEncourager une consommation durable signifie sensibiliser les consommateurs à l'impact environnemental de leurs choix, leur offrir des produits et services qui respectent l'environnement et les inciter à adopter des comportements d'achat plus conscients.",
+    children: [
+      {
+        id: "1017",
+        value: "Oui",
+        id_action: 246,
+        done: true,
+        information: null,
+        children: [
+          {
+            id: "1018",
+            value:
+              "L'entreprise communique t-elle publiquement des informations sur l'origine de ses matériaux ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise fournit des informations transparentes sur l'origine des matériaux utilisés dans ses produits.\n\nConnaître l'origine des matériaux permet aux consommateurs de faire des choix éclairés, en privilégiant les produits issus de sources durables, éthiques et respectueuses de l'environnement.\n\nActions possibles :\n\n• Transparence sur l'origine : Communiquer clairement l'origine géographique des matériaux sur les produits ou leur emballage.\n\n• Labels et certifications : Obtenir des certifications qui garantissent l'origine durable et éthique des matériaux utilisés, comme les labels biologiques, fair trade ou FSC.\n\n• Documentation en ligne : Fournir des informations détaillées en ligne sur l'origine des matériaux, incluant des histoires, des vidéos ou des témoignages de producteurs locaux.\n\n• Communication proactive : Sensibiliser les consommateurs à l'importance de l'origine des matériaux par des campagnes de communication et des partenariats éducatifs.",
+            children: [
+              {
+                id: "1019",
+                value: "Oui",
+                id_action: 241,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1020",
+                value: "Non",
+                id_action: 241,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1021",
+            value:
+              "L'entreprise communique-t-elle sur la traçabilité de ses fournisseurs tout au long de la chaîne d'approvisionnement ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise communique activement sur la traçabilité de ses fournisseurs tout au long de la chaîne d'approvisionnement.\n\nLa traçabilité garantit que chaque étape de la production est transparente et conforme aux standards éthiques et environnementaux, renforçant ainsi la confiance des consommateurs.\n\nActions possibles :\n\n• Chaîne d'approvisionnement transparente : Publier des informations sur vos fournisseurs et sur les pratiques mises en place pour garantir une chaîne d'approvisionnement durable.\n\n• Cartographie des fournisseurs : Créer des cartes interactives en ligne montrant l'emplacement des principaux fournisseurs et les étapes de transformation des matériaux.\n\n• Audits et certifications : Réaliser des audits réguliers de la chaîne d'approvisionnement pour assurer la conformité aux normes environnementales et sociales.\n\n• Communication sur la traçabilité : Utiliser des QR codes ou des numéros de lot sur les produits pour permettre aux consommateurs de suivre l'origine des matériaux et les conditions de production.",
+            children: [
+              {
+                id: "1022",
+                value: "Oui",
+                id_action: 242,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1023",
+                value: "Non",
+                id_action: 242,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1024",
+            value:
+              "Offrez-vous des réductions ou avantages à vos clients pour les encourager à revendre ou donner leurs anciens produits au lieu de les jeter ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise offre des réductions ou des avantages pour inciter les clients à revendre ou donner leurs anciens produits plutôt que de les jeter.\n\nCette approche soutient la consommation durable en prolongeant la durée de vie des produits et en réduisant les déchets.\n\nActions possibles :\n\n• Programmes de reprise : Mettre en place des programmes de reprise où les clients peuvent retourner leurs anciens produits en échange de réductions sur de nouveaux achats.\n\n• Partenariats avec des associations : Collaborer avec des associations caritatives pour faciliter le don des produits usagés en échange d'avantages pour les clients.\n\n• Incitations à la revente : Offrir des incitations financières ou des crédits d'achat pour les clients qui revendent leurs produits via votre plateforme ou vos partenaires.\n\n• Campagnes de sensibilisation : Lancer des campagnes pour sensibiliser les consommateurs aux avantages environnementaux et économiques de la revente ou du don de produits.",
+            children: [
+              {
+                id: "1025",
+                value: "Oui",
+                id_action: 243,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1026",
+                    value:
+                      "Veuillez préciser les réductions ou avantages que vous offrez à vos clients pour les encourager à revendre ou donner leurs anciens produits au lieu de les jeter :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1028",
+                value: "Non",
+                id_action: 243,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1029",
+            value:
+              "Votre entreprise participe-t-elle à des actions de lutte contre la surconsommation (comme le boycott des soldes ou du black friday, la lutte contre la publicité agressive, la participation au green friday) ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise s'engage dans des actions de lutte contre la surconsommation, telles que le boycott des soldes ou du Black Friday, la lutte contre la publicité agressive ou la participation au Green Friday.\n\nCes actions montrent votre engagement à encourager une consommation plus réfléchie et responsable.\n\nActions possibles :\n\n• Participation au Green Friday : Participer activement au Green Friday en proposant des alternatives au Black Friday, comme des promotions sur des produits durables ou des dons à des causes environnementales.\n\n• Campagnes anti-surconsommation : Lancer des campagnes qui sensibilisent aux dangers de la surconsommation et promeuvent des pratiques d'achat plus conscientes.\n\n• Boycott des soldes : Refuser de participer aux périodes de soldes traditionnelles pour éviter d'encourager l'achat impulsif et la surconsommation.\n\n• Promotion de produits durables : Mettre en avant des produits durables et de qualité, conçus pour durer, en opposition à la culture du \"fast fashion\" ou du \"fast consumer goods\".",
+            children: [
+              {
+                id: "1030",
+                value: "Oui",
+                id_action: 244,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1031",
+                    value: "Veuillez préciser les actions mises en place :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1033",
+                value: "Non",
+                id_action: 244,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1034",
+            value:
+              'Votre entreprise fabrique-t-elle des produits "à la demande", uniquement sur commande pour éviter les surplus de production ?',
+            id_action: null,
+            information:
+              'Sélectionnez cette option si votre entreprise adopte un modèle de production "à la demande", fabriquant des produits uniquement sur commande pour éviter le surplus de production.\n\nCe modèle réduit les déchets, limite les invendus, et répond précisément aux besoins des clients, favorisant ainsi une consommation plus responsable.\n\nActions possibles :\n\n• Production sur commande : Mettre en place un système de production où les produits sont fabriqués uniquement lorsqu\'ils sont commandés par les clients.\n\n• Personnalisation des produits : Offrir des options de personnalisation pour les clients, renforçant ainsi la valeur perçue du produit et réduisant le risque de surplus.\n\n• Optimisation des stocks : Utiliser des outils de gestion de la demande pour ajuster la production en fonction des commandes, évitant ainsi les invendus.\n\n• Communication sur la durabilité : Informer les clients des avantages environnementaux de la production à la demande et les inciter à planifier leurs achats de manière plus réfléchie.',
+            children: [
+              {
+                id: "1035",
+                value: "Oui",
+                id_action: 245,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1036",
+                value: "Non",
+                id_action: 245,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+        ],
+        type: "reponse",
+      },
+      {
+        id: "1037",
+        value: "Non",
+        id_action: 246,
+        done: false,
+        information: null,
+        children: [],
+        type: "reponse",
+      },
+    ],
+    type: "question",
+    inputType: "single",
+  },
+  {
+    id: "1038",
+    value:
+      "Votre entreprise met-elle en place des solutions visant à allonger la durée d'usage de ses produits/services ?",
+    ids_secteurs: [
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 29,
+    ],
+    id_action: null,
+    information:
+      "L'allongement de la durée de vie des produits est une approche essentielle pour promouvoir la durabilité et la satisfaction des clients.\n\nCela peut inclure des solutions telles que la maintenance préventive, la réparation et la revente des produits.\n\nCes actions visent à réduire le gaspillage et l'impact environnemental tout en offrant une valeur ajoutée aux consommateurs.",
+    children: [
+      {
+        id: "1039",
+        value: "Oui",
+        id_action: 263,
+        done: true,
+        information: null,
+        children: [
+          {
+            id: "1040",
+            value:
+              "Votre entreprise développe-t-elle des produits évolutifs, réparables, modulaires, aptes aux mises à jour/réactualisations pour prolonger leur durée de vie et minimiser les besoins de nouvelles matières premières ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise conçoit des produits qui sont évolutifs, réparables, modulaires ou aptes à recevoir des mises à jour pour prolonger leur durée de vie.\n\nCes caractéristiques permettent de minimiser l'utilisation de nouvelles matières premières en favorisant la réutilisation et l'adaptabilité des produits au fil du temps.\n\nActions possibles :\n\n• Design modulaire : Concevoir des produits avec des composants modulaires qui peuvent être facilement remplacés ou mis à jour sans nécessiter le remplacement complet du produit.\n\n• Compatibilité des mises à jour : Offrir des mises à jour logicielles ou matérielles qui prolongent la durée de vie des produits sans qu'il soit nécessaire d'en acheter de nouveaux.\n\n• Réparabilité intégrée : Faciliter la réparation des produits en utilisant des pièces standardisées et en offrant des instructions claires pour le remplacement des composants défectueux.\n\n• Revalorisation des produits : Créer des programmes permettant aux clients de renvoyer leurs produits pour des mises à jour ou des améliorations, prolongeant ainsi leur durée de vie utile.",
+            children: [
+              {
+                id: "1041",
+                value: "Oui",
+                id_action: 247,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1042",
+                    value:
+                      "Veuillez préciser comment la conception de vos produits permet de les rendre évolutifs, réparables, modulaires ou aptes aux mises à jour/réactualisations :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1044",
+                value: "Non",
+                id_action: 247,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1045",
+            value:
+              "Votre entreprise conçoit-elle ses produits pour maximiser leur robustesse et leur fiabilité, garantissant ainsi une utilisation durable et pérenne ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si vos produits sont conçus pour maximiser leur robustesse et leur fiabilité, garantissant ainsi une utilisation durable et à long terme.\n\nUne conception robuste réduit les risques de panne et limite la nécessité de remplacer fréquemment les produits, contribuant ainsi à la durabilité.\n\nActions possibles :\n\n• Tests de durabilité : Soumettre vos produits à des tests rigoureux pour garantir leur robustesse et leur résistance à l'usure dans diverses conditions d'utilisation.\n\n• Sélection de matériaux résistants : Utiliser des matériaux de haute qualité et résistants aux chocs, à l'eau ou à d'autres conditions extrêmes.\n\n• Garantie de fiabilité : Offrir des garanties solides qui témoignent de la confiance que vous avez dans la durabilité de vos produits.\n\n• Documentation technique : Fournir des guides techniques expliquant les meilleures pratiques pour maintenir la robustesse et la fiabilité des produits au fil du temps.",
+            children: [
+              {
+                id: "1046",
+                value: "Oui",
+                id_action: 248,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1047",
+                    value:
+                      "Veuillez préciser de quelle manière la conception de vos produits permet de maximiser leur robustesse :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1049",
+                value: "Non",
+                id_action: 248,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1051",
+            value:
+              "Les matériaux utilisés dans vos produits sont-ils choisis en fonction de leur durabilité et de leur capacité à résister à l'usure ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si vous choisissez les matériaux de vos produits en fonction de leur durabilité et de leur capacité à résister à l'usure.\n\nLa sélection de matériaux durables est essentielle pour prolonger la durée de vie des produits et réduire les besoins en remplacements fréquents.\n\nActions possibles :\n\n• Choix de matériaux durables : Utiliser des matériaux reconnus pour leur longévité, tels que des métaux résistants à la corrosion, des plastiques renforcés ou des textiles techniques durables.\n\n• Certification des matériaux : Rechercher des certifications qui garantissent la durabilité des matériaux utilisés, comme les labels de résistance à l'usure ou à l'abrasion.\n\n• Tests de vieillissement : Réaliser des tests de vieillissement accéléré pour évaluer la durabilité des matériaux sous différentes conditions.\n\n• Innovation en matériaux : Investir dans la recherche de nouveaux matériaux qui combinent durabilité et faible impact environnemental.",
+            children: [
+              {
+                id: "1052",
+                value: "Oui",
+                id_action: 249,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1053",
+                    value:
+                      "Veuillez préciser comment les matériaux sélectionnés pour vos produits sont choisis pour garantir leur durabilité et leur résistance à l'usure :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1055",
+                value: "Non",
+                id_action: 249,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1056",
+            value:
+              "Privilégiez-vous des esthétiques ou styles intemporels dans la conception de vos produits afin de réduire le besoin de remplacement dû aux changements de mode ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si vous privilégiez des esthétiques ou styles intemporels dans la conception de vos produits.\n\nOpter pour des designs intemporels permet de réduire le besoin de remplacer les produits simplement en raison des changements de mode, favorisant ainsi une consommation plus durable.\n\nActions possibles :\n\n• Design intemporel : Concevoir des produits avec des lignes classiques et des couleurs neutres qui résistent aux tendances de mode passagères.\n\n• Valorisation du minimalisme : Promouvoir des designs minimalistes qui ne se démodent pas et qui s'intègrent dans divers styles d'intérieurs ou d'usages.\n\n• Partenariats avec des designers : Collaborer avec des designers pour créer des produits qui allient esthétique durable et fonctionnalité, assurant leur attrait à long terme.\n\n• Promotion de la longévité esthétique : Communiquer avec les consommateurs sur les avantages d'un design intemporel qui évite l'obsolescence esthétique.",
+            children: [
+              {
+                id: "1057",
+                value: "Oui",
+                id_action: 250,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1058",
+                    value:
+                      "Veuillez préciser comment la conception de vos produits intègre des esthétiques ou styles intemporels pour réduire le besoin de remplacement lié aux évolutions de la mode",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1060",
+                value: "Non",
+                id_action: 250,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1061",
+            value:
+              "Votre entreprise réutilise-t-elle des composants ou utilise-t-elle les mêmes matériaux et pièces standardisées pour plusieurs produits afin de réduire les coûts, faciliter la production et simplifier les mises à jour ou le reconditionnement ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise réutilise des composants ou utilise des matériaux et pièces standardisées pour plusieurs produits.\n\nCette approche réduit les coûts, facilite la production, et simplifie les mises à jour ou le reconditionnement, contribuant ainsi à la durabilité des produits.\n\nActions possibles :\n\n• Standardisation des pièces : Utiliser des pièces et composants standardisés qui peuvent être interchangeables entre différents produits, simplifiant ainsi les réparations et mises à jour.\n\n• Réutilisation des composants : Intégrer des composants réutilisés ou reconditionnés dans la production de nouveaux produits pour réduire les besoins en nouvelles matières premières.\n\n• Optimisation des chaînes d'approvisionnement : Tirer parti des économies d'échelle en utilisant les mêmes matériaux pour plusieurs lignes de produits, réduisant ainsi les coûts et l'empreinte carbone.",
+            children: [
+              {
+                id: "1062",
+                value: "Oui",
+                id_action: 251,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1063",
+                    value:
+                      "Veuillez préciser comment votre entreprise réutilise des composants ou utilise les mêmes matériaux et pièces standardisées pour plusieurs produits :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1065",
+                value: "Non",
+                id_action: 251,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1066",
+            value:
+              "Vos produits sont-ils conçus pour être facilement réparables et disposent-ils d'informations facilitant leur réparation ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si vos produits sont conçus pour être facilement réparables et s'ils disposent d'informations claires pour faciliter leur réparation.\n\nLa réparabilité est un élément clé pour prolonger la durée de vie des produits et réduire les déchets.\n\nActions possibles :\n\n• Conception pour la réparabilité : Créer des produits avec des pièces facilement accessibles et remplaçables, en minimisant l'utilisation d'adhésifs ou de composants intégrés.\n\n• Guides de réparation : Fournir des manuels de réparation détaillés et des tutoriels vidéo pour guider les utilisateurs dans le processus de réparation.\n\n• Partenariats avec des ateliers de réparation : Collaborer avec des ateliers de réparation locaux pour offrir des services de réparation certifiés.\n\n• Certification de réparabilité : Obtenir des certifications qui attestent de la réparabilité de vos produits, telles que les labels \"Réparable\" ou \"Facile à réparer\".",
+            children: [
+              {
+                id: "1067",
+                value: "Oui",
+                id_action: 252,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1068",
+                    value:
+                      "Veuillez préciser la part de vos produits conçus pour être facilement réparables :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "numeric",
+                    id_kpis: [147],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1070",
+                value: "Non",
+                id_action: 252,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1071",
+            value:
+              "Vos produits disposent-ils de pièces détachées disponibles à long terme, au-delà des contraintes légales ou des pratiques du marché (plus de 10 ans) ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise s'engage à rendre disponibles des pièces détachées pour ses produits sur une période longue, allant au-delà des contraintes légales ou des pratiques courantes du marché.\n\nCette disponibilité permet aux consommateurs de réparer leurs produits plutôt que de les remplacer.\n\nActions possibles :\n\n• Engagement à long terme : Assurer la disponibilité des pièces détachées pour une période prolongée, garantissant ainsi la possibilité de réparer les produits pendant de nombreuses années.\n\n• Stockage et distribution des pièces : Mettre en place un système efficace de stockage et de distribution des pièces détachées pour répondre aux besoins des clients dans la durée.\n\n• Transparence sur la disponibilité : Informer les consommateurs de la disponibilité à long terme des pièces détachées au moment de l'achat du produit.\n\n• Partenariats pour les pièces : Collaborer avec des fournisseurs de pièces détachées pour garantir une production continue et un approvisionnement fiable des composants nécessaires.",
+            children: [
+              {
+                id: "1072",
+                value: "Oui",
+                id_action: 253,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1073",
+                    value:
+                      "Quelle est la part de vos produits disposant de pièces détachées dont la disponibilité est garantie à long terme (+ de 10 ans) ?",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "numeric",
+                    id_kpis: [148],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1075",
+                value: "Non",
+                id_action: 253,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1076",
+            value:
+              "Votre entreprise fournit-elle des guides ou documents pour favoriser l'autoréparation des produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise fournit des guides ou documents destinés à favoriser l'autoréparation des produits par les utilisateurs.\n\nL'autoréparation permet de prolonger la durée de vie des produits tout en réduisant les coûts et l'empreinte écologique.\n\nActions possibles :\n\n• Manuels d'autoréparation : Créer et distribuer des manuels d'autoréparation clairs et détaillés, disponibles en ligne ou avec le produit.\n\n• Tutoriels vidéo : Produire des tutoriels vidéo pour guider les utilisateurs étape par étape dans le processus de réparation.\n\n• Plateformes de support : Mettre en place des forums ou des plateformes en ligne où les utilisateurs peuvent poser des questions et partager leurs expériences de réparation.\n\n• Partenariats éducatifs : Collaborer avec des associations ou des organismes pour organiser des ateliers d'autoréparation et sensibiliser à l'importance de la réparation.",
+            children: [
+              {
+                id: "1077",
+                value: "Oui",
+                id_action: 254,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1078",
+                    value:
+                      "Quelle est la part de vos produits disposant de guides ou de documents facilitant l'autoréparation ?",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "numeric",
+                    id_kpis: [149],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1080",
+                value: "Non",
+                id_action: 254,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1081",
+            value:
+              "Votre entreprise sensibilise-t-elle les utilisateurs au bon entretien de ses produits à travers des guides d'entretien ou des documents d'accompagnement pour encourager des écogestes et lutter contre l'obsolescence d'usage ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise sensibilise les utilisateurs au bon entretien de ses produits à travers des guides d'entretien ou des documents d'accompagnement.\n\nUn bon entretien permet de prolonger la durée de vie des produits et de lutter contre l'obsolescence d'usage.\n\nActions possibles :\n\n• Guides d'entretien : Fournir des guides d'entretien détaillés qui expliquent comment prendre soin des produits pour en maximiser la durée de vie.\n\n• Conseils pratiques : Offrir des conseils pratiques sur les écogestes à adopter pour maintenir les produits en bon état, tels que le nettoyage, le stockage et l'utilisation correcte.\n\n• Campagnes de sensibilisation : Lancer des campagnes de sensibilisation pour éduquer les consommateurs sur l'importance de l'entretien régulier et des petites réparations.\n\n• Support en ligne : Mettre à disposition des ressources en ligne, telles que des FAQ, des articles de blog et des vidéos, pour guider les utilisateurs dans l'entretien de leurs produits.",
+            children: [
+              {
+                id: "1082",
+                value: "Oui",
+                id_action: 255,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1083",
+                    value:
+                      "Quel est le pourcentage de vos produits disposant de guides d'entretien ou de contenu sur les écogestes permettant de lutter contre l'obsolescence d'usage ?",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "numeric",
+                    id_kpis: [150],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1085",
+                value: "Non",
+                id_action: 255,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1086",
+            value:
+              "Offrez-vous des services de maintenance préventive, des services de réparation ou des partenariats avec des ateliers de réparation pour assurer la longévité de vos produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise offre des services de maintenance préventive, des services de réparation ou collabore avec des ateliers de réparation pour assurer la longévité de vos produits.\n\nCes services permettent de prévenir les pannes, de réparer les produits en cas de besoin et de maximiser leur durée de vie.\n\nActions possibles :\n\n• Services de maintenance préventive : Proposer des services de maintenance préventive régulière pour détecter et corriger les problèmes avant qu'ils ne deviennent critiques.\n\n• Réseau d'ateliers de réparation : Mettre en place un réseau d'ateliers de réparation certifiés où les clients peuvent faire réparer leurs produits en toute confiance.\n\n• Réparation à domicile : Offrir des services de réparation à domicile pour les produits volumineux ou complexes.\n\n• Offres de maintenance avec garantie : Intégrer des offres de maintenance et de réparation dans les garanties prolongées pour inciter les clients à entretenir leurs produits régulièrement.",
+            children: [
+              {
+                id: "1087",
+                value: "Oui",
+                id_action: 256,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1088",
+                    value:
+                      "Veuillez préciser les services de maintenance préventive, de réparation ou les partenariats avec des ateliers de réparation que vous offrez afin d'assurer la longévité de vos produits/services :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1090",
+                value: "Non",
+                id_action: 256,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1091",
+            value:
+              "Proposez-vous des services de réemploi, réutilisation ou reconditionnement pour prolonger la durée de vie des produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise propose des services de réemploi, de réutilisation ou de reconditionnement pour prolonger la durée de vie des produits.\n\nCes services permettent de donner une seconde vie aux produits usagés, réduisant ainsi le besoin de nouvelles ressources et les déchets.\n\nActions possibles :\n\n• Programmes de reconditionnement : Mettre en place des programmes de reconditionnement où les produits retournés sont remis à neuf et revendus à des prix réduits.\n\n• Services de réemploi : Proposer des services qui encouragent la réutilisation des produits ou de leurs composants, comme la récupération de pièces détachées.\n\n• Incitations pour la réutilisation : Offrir des réductions ou des crédits d'achat pour les clients qui retournent leurs anciens produits pour réemploi ou reconditionnement.\n\n• Collaboration avec des organisations : Collaborer avec des associations ou des entreprises spécialisées dans le réemploi pour maximiser l'impact de ces initiatives.",
+            children: [
+              {
+                id: "1092",
+                value: "Oui",
+                id_action: 257,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1093",
+                    value:
+                      "Veuillez préciser les services liés au réemploi, à la réutilisation ou au reconditionnement que vous proposez pour prolonger la durée de vie de vos produits :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1095",
+                value: "Non",
+                id_action: 257,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1096",
+            value:
+              "Votre entreprise a-t-elle un service après-vente dans chaque pays de commercialisation pour soutenir la durabilité de ses produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise dispose d'un service après-vente dans chaque pays de commercialisation pour soutenir la durabilité de ses produits.\n\nUn service après-vente localisé permet de garantir un support efficace pour les réparations, les pièces détachées et les conseils d'entretien.\n\nActions possibles :\n\n• Implantation de services après-vente : Mettre en place des services après-vente dans tous les pays où vos produits sont commercialisés, offrant un support local rapide et efficace.\n\n• Formation des techniciens : Former des techniciens locaux pour assurer la réparation et la maintenance des produits conformément aux standards de qualité.\n\n• Support multilingue : Offrir un support client dans les langues locales pour faciliter les échanges et la résolution des problèmes.\n\n• Partenariats locaux : Collaborer avec des partenaires locaux pour étendre la couverture des services après-vente et garantir une prise en charge rapide des besoins des clients.",
+            children: [
+              {
+                id: "1097",
+                value: "Oui",
+                id_action: 258,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1098",
+                value: "Non",
+                id_action: 258,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1099",
+            value:
+              "Disposez-vous d'un programme de reprise ou de partenariats qui participent à la récupération, le reconditionnement ou le remanufacturing des produits en fin de vie ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise dispose d'un programme de reprise ou de partenariats qui participent à la récupération, au reconditionnement ou au remanufacturing des produits en fin de vie.\n\nCes initiatives permettent de réduire les déchets et de valoriser les produits usagés en leur donnant une nouvelle vie.\n\nActions possibles :\n\n• Programme de reprise : Mettre en place un programme où les clients peuvent retourner leurs produits en fin de vie en échange d'une compensation ou d'une réduction sur un nouvel achat.\n\n• Partenariats pour le reconditionnement : Collaborer avec des entreprises spécialisées dans le reconditionnement pour traiter les produits récupérés et les remettre sur le marché.\n\n• Recyclage des matériaux : S'assurer que les produits non réutilisables sont recyclés de manière responsable, en récupérant les matériaux pour une nouvelle utilisation.\n\n• Communication sur la reprise : Informer les clients des avantages de ces programmes de reprise et de leur contribution à la réduction des déchets.",
+            children: [
+              {
+                id: "1100",
+                value: "Oui",
+                id_action: 259,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1101",
+                    value:
+                      "Veuillez détailler les programmes de reprise ou les partenariats que vous avez mis en place pour la récupération, le reconditionnement ou le remanufacturing des produits en fin de vie :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1103",
+                value: "Non",
+                id_action: 259,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1104",
+            value:
+              "Proposez-vous des garanties longue durée (au-delà de 10 ans) pour vos produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise propose des garanties longue durée, au-delà de 10 ans, pour ses produits.\n\nOffrir une garantie longue durée est un gage de confiance dans la qualité et la durabilité des produits et incite les consommateurs à investir dans des produits durables.\n\nActions possibles :\n\n• Élargissement de la garantie : Proposer des garanties qui couvrent une période de plus de 10 ans, incluant les réparations, les remplacements et le support technique.\n\n• Extensions de garantie : Offrir des extensions de garantie à un coût réduit pour encourager les clients à protéger leurs investissements à long terme.\n\n• Communication sur la durabilité : Utiliser la garantie longue durée comme un argument de vente pour démontrer l'engagement de votre entreprise en faveur de la qualité et de la durabilité.\n\n• Support après-garantie : Fournir un support continu même après l'expiration de la garantie pour renforcer la relation avec le client et la durabilité du produit.",
+            children: [
+              {
+                id: "1105",
+                value: "Oui",
+                id_action: 260,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1106",
+                    value:
+                      "Quelle est la part de vos produits disposant de garanties longue durée (au-delà de 10 ans) ?",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "numeric",
+                    id_kpis: [151],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1108",
+                value: "Non",
+                id_action: 260,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1109",
+            value:
+              "Avez-vous mis en place un service d'achat/revente dédié à la seconde main pour encourager la réutilisation des produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise a mis en place un service d'achat/revente dédié à la seconde main pour encourager la réutilisation des produits.\n\nLe marché de la seconde main permet de prolonger la durée de vie des produits et de réduire le besoin de nouvelles productions, contribuant ainsi à une consommation plus durable.\n\nActions possibles :\n\n• Plateforme de revente : Créer une plateforme en ligne ou un espace physique dédié à la revente des produits d'occasion de votre marque.\n\n• Service de reprise : Offrir un service où les clients peuvent vendre leurs anciens produits à votre entreprise pour qu'ils soient revendus après inspection et reconditionnement.\n\n• Certifications de seconde main : Proposer des produits d'occasion avec une certification de qualité et une garantie, rassurant les clients sur leur état et leur durabilité.\n\n• Promotion de la seconde main : Sensibiliser les clients aux avantages de l'achat de produits d'occasion, tant pour leur budget que pour l'environnement.",
+            children: [
+              {
+                id: "1110",
+                value: "Oui",
+                id_action: 261,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1111",
+                value: "Non",
+                id_action: 261,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1112",
+            value:
+              "Avez-vous mesuré la durabilité ou la réparabilité de vos produits/services ?",
+            id_action: null,
+            information:
+              'Sélectionnez cette option si votre entreprise a mis en place des mesures pour évaluer la durabilité ou la réparabilité de ses produits ou services.\n\nLa mesure de ces aspects est essentielle pour identifier les points d\'amélioration, renforcer la qualité des produits, et garantir qu\'ils répondent aux attentes des consommateurs en matière de durabilité.\n\nActions possibles :\n\n• Tests de durabilité : Réaliser des tests rigoureux pour évaluer la durée de vie de vos produits sous diverses conditions d\'utilisation.\n\n• Évaluation de la réparabilité : Analyser la réparabilité de vos produits en tenant compte de la disponibilité des pièces détachées, de la facilité de démontage et du coût des réparations.\n\n• Labels et certifications : Obtenir des labels ou certifications qui attestent de la durabilité ou de la réparabilité de vos produits, comme le label "Long Time" ou "Facile à Réparer".\n\n• Amélioration continue : Utiliser les résultats des mesures de durabilité et de réparabilité pour améliorer continuellement la conception de vos produits et services.',
+            children: [
+              {
+                id: "1113",
+                value: "Oui",
+                id_action: 262,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1114",
+                    value:
+                      "Comment avez-vous mesuré la durabilité/réparabilité de vos produits/services ?",
+                    id_action: null,
+                    information: null,
+                    children: [
+                      {
+                        id: "1115",
+                        value:
+                          "Évaluation de la durabilité à l'aide de l'indice de durabilité des produits",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "1116",
+                        value:
+                          "Évaluation de la réparabilité à l'aide de l'indice de réparabilité",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "1117",
+                        value: "Tests de résistance à l'usure",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "1118",
+                        value:
+                          "Lutte contre l'obsolescence (programmée/logicielle/perçue)",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [],
+                        type: "reponse",
+                      },
+                      {
+                        id: "1119",
+                        value: "Autre(s)",
+                        id_action: null,
+                        done: false,
+                        information: null,
+                        children: [
+                          {
+                            id: "1120",
+                            value: "Veuillez préciser :",
+                            id_action: null,
+                            information: null,
+                            children: [],
+                            type: "question",
+                            inputType: "text",
+                            id_kpis: [],
+                          },
+                        ],
+                        type: "reponse",
+                      },
+                    ],
+                    type: "question",
+                    inputType: "multiple",
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1122",
+                value: "Non",
+                id_action: 262,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+        ],
+        type: "reponse",
+      },
+      {
+        id: "1123",
+        value: "Non",
+        id_action: 263,
+        done: false,
+        information: null,
+        children: [],
+        type: "reponse",
+      },
+    ],
+    type: "question",
+    inputType: "single",
+  },
+  {
+    id: "1124",
+    value:
+      "Votre entreprise met-elle en place des solutions visant à faciliter la recyclabilité de ses produits/services ?",
+    ids_secteurs: [
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 29,
+    ],
+    id_action: null,
+    information:
+      "Sélectionnez cette option si votre entreprise met en place des solutions concrètes pour faciliter la recyclabilité de ses produits ou services.\n\nCela implique des actions dès la conception des produits, le choix des matériaux, jusqu'à la fin de vie des produits pour s'assurer qu'ils peuvent être recyclés efficacement. En améliorant la recyclabilité, vous contribuez à la réduction des déchets et à la promotion d'une économie circulaire.",
+    children: [
+      {
+        id: "1125",
+        value: "Oui",
+        id_action: 278,
+        done: true,
+        information: null,
+        children: [
+          {
+            id: "1126",
+            value:
+              "Votre entreprise applique-t-elle les principes Cradle-to-Cradle dans la conception de ses produits, en veillant à ce que tous les matériaux utilisés puissent être recyclés ou réutilisés sans générer de déchets ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise applique les principes Cradle-to-Cradle dans la conception de ses produits, assurant que tous les matériaux utilisés sont soit recyclables, soit réutilisables sans générer de déchets.\n\nLe principe Cradle-to-Cradle vise à créer des cycles de matériaux en boucle fermée où aucun déchet n'est produit.\n\nActions possibles :\n\n• Design circulaire : Concevoir des produits où tous les matériaux peuvent être réintégrés dans un cycle technique (recyclage) ou biologique (compostage) après usage.\n\n• Certification Cradle-to-Cradle : Obtenir une certification Cradle-to-Cradle pour vos produits afin de valider leur recyclabilité et réutilisabilité.\n\n• Sélection de matériaux sûrs : Choisir des matériaux non toxiques et sûrs pour l'environnement et la santé humaine, facilitant leur réutilisation.\n\n• Innovation en matériaux : Collaborer avec des fournisseurs pour développer ou adopter des matériaux qui s'intègrent parfaitement dans les cycles de réutilisation.",
+            children: [
+              {
+                id: "1127",
+                value: "Oui",
+                id_action: 264,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1128",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1130",
+                value: "Non",
+                id_action: 264,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1131",
+            value:
+              "Vos produits sont-ils conçus pour permettre la séparabilité des pièces pour le recyclage ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si vos produits sont conçus pour permettre la séparabilité facile des pièces, facilitant ainsi le recyclage.\n\nLa séparabilité est cruciale pour s'assurer que les différents matériaux peuvent être triés et recyclés de manière efficace.\n\nActions possibles :\n\n• Design modulaire : Créer des produits avec des composants facilement démontables, sans l'utilisation d'adhésifs permanents ou de fixations complexes.\n\n• Instructions de démontage : Fournir des instructions claires pour le démontage des produits, facilitant ainsi le recyclage par les utilisateurs ou les centres de traitement.\n\n• Utilisation de fixations réversibles : Préférer l'utilisation de vis, clips ou autres systèmes réversibles qui permettent de séparer les matériaux sans les endommager.\n\n• Collaboration avec les recycleurs : Travailler avec des recycleurs pour s'assurer que la conception des produits facilite réellement le tri et le recyclage des matériaux.",
+            children: [
+              {
+                id: "1132",
+                value: "Oui",
+                id_action: 265,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1133",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [152],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1135",
+                value: "Non",
+                id_action: 265,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1136",
+            value:
+              "Prenez-vous en compte la séparabilité des composants dans la conception de vos produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si vous prenez en compte la séparabilité des composants dès la phase de conception de vos produits.\n\nEn facilitant la séparabilité, vous contribuez à améliorer la recyclabilité globale des produits et à maximiser la récupération des matériaux.\n\nActions possibles :\n\n• Design pour le démontage : Intégrer le principe du \"design pour le démontage\" dès le début du processus de conception pour faciliter la séparation des composants.\n\n• Réduction des matériaux composites : Minimiser l'utilisation de matériaux composites difficiles à séparer pour favoriser la recyclabilité des composants individuels.\n\n• Formations en écoconception : Former vos équipes de conception sur l'importance de la séparabilité des composants pour le recyclage.\n\n• Outils de simulation : Utiliser des logiciels de simulation pour évaluer et améliorer la séparabilité des composants dans les phases de conception.",
+            children: [
+              {
+                id: "1137",
+                value: "Oui",
+                id_action: 266,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1138",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1140",
+                value: "Non",
+                id_action: 266,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1141",
+            value:
+              "Votre entreprise évalue-t-elle la recyclabilité des produits existants pour en améliorer le design ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise évalue régulièrement la recyclabilité des produits existants pour en améliorer le design.\n\nL'évaluation de la recyclabilité permet d'identifier les points faibles dans la conception actuelle et de les corriger pour maximiser la récupération des matériaux en fin de vie.\n\nActions possibles :\n\n• Audits de recyclabilité : Réaliser des audits de recyclabilité sur vos produits pour identifier les obstacles au recyclage et proposer des améliorations.\n\n• Révisions de conception : Mettre à jour les conceptions existantes pour améliorer la recyclabilité, par exemple en remplaçant les matériaux difficiles à recycler ou en simplifiant le démontage.\n\n• Collaboration avec les recycleurs : Collaborer avec les acteurs du recyclage pour tester la recyclabilité des produits et ajuster leur design en conséquence.\n\n• Benchmarking : Comparer la recyclabilité de vos produits avec celle des produits concurrents pour identifier des opportunités d'amélioration.",
+            children: [
+              {
+                id: "1142",
+                value: "Oui",
+                id_action: 267,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1143",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1145",
+                value: "Non",
+                id_action: 267,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1146",
+            value:
+              "Votre entreprise a-t-elle mis en place des mesures pour réduire la présence de perturbateurs du recyclage dans ses produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise a mis en place des mesures pour réduire ou éliminer les perturbateurs du recyclage dans ses produits.\n\nLes perturbateurs du recyclage sont des éléments qui compliquent ou empêchent le recyclage efficace des matériaux.\n\nActions possibles :\n\n• Identification des perturbateurs : Analyser vos produits pour identifier les matériaux ou composants qui perturbent le processus de recyclage.\n\n• Substitution des matériaux : Remplacer les matériaux perturbateurs par des alternatives plus compatibles avec le recyclage.\n\n• Élimination des revêtements nocifs : Réduire ou éliminer les revêtements, adhésifs, ou finitions qui compliquent le recyclage.\n\n• Collaboration avec les fournisseurs : Travailler avec vos fournisseurs pour réduire la présence de perturbateurs du recyclage dans les matériaux fournis.",
+            children: [
+              {
+                id: "1147",
+                value: "Oui",
+                id_action: 268,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1148",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1150",
+                value: "Non",
+                id_action: 268,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1151",
+            value:
+              "Avez-vous identifié et réduit les substances préoccupantes dans vos produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise a identifié et réduit la présence de substances préoccupantes dans ses produits.\n\nCes substances peuvent inclure des produits chimiques dangereux ou des matériaux qui posent des risques pour la santé humaine ou l'environnement et compliquent le recyclage.\n\nActions possibles :\n\n• Inventaire des substances : Réaliser un inventaire complet des substances chimiques utilisées dans vos produits pour identifier celles qui sont préoccupantes.\n\n• Substitution proactive : Remplacer les substances préoccupantes par des alternatives plus sûres et plus faciles à recycler.\n\n• Conformité réglementaire : Assurer que vos produits sont conformes aux réglementations environnementales telles que REACH ou RoHS, en limitant ou en éliminant les substances préoccupantes.\n\n• Transparence sur les substances : Communiquer de manière transparente avec les consommateurs et les partenaires sur les substances présentes dans vos produits et les efforts pour les réduire.",
+            children: [
+              {
+                id: "1152",
+                value: "Oui",
+                id_action: 269,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1153",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1155",
+                value: "Non",
+                id_action: 269,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1156",
+            value:
+              "Votre entreprise prend-elle des mesures pour simplifier et réduire la diversité des matériaux utilisés dans ses produits afin de faciliter leur recyclage ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise prend des mesures pour simplifier et réduire la diversité des matériaux utilisés dans ses produits.\n\nRéduire le nombre de matériaux différents dans un produit facilite le tri et le recyclage en fin de vie.\n\nActions possibles :\n\n• Rationalisation des matériaux : Standardiser les matériaux utilisés dans vos produits pour réduire la complexité du recyclage.\n\n• Design monomatériau : Développer des produits utilisant principalement un seul type de matériau pour simplifier le recyclage.\n\n• Formation des équipes de conception : Former vos équipes de design à l'importance de la réduction de la diversité des matériaux pour faciliter le recyclage.\n\n• Optimisation des matériaux : Travailler avec les fournisseurs pour développer des matériaux polyvalents qui peuvent être utilisés dans plusieurs produits, réduisant ainsi la diversité matérielle.",
+            children: [
+              {
+                id: "1157",
+                value: "Oui",
+                id_action: 270,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1158",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1160",
+                value: "Non",
+                id_action: 270,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1161",
+            value:
+              "Rationalisez-vous et mutualisez-vous l'utilisation des matières (comme les plastiques) et des composants pour faciliter le recyclage ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise rationalise et mutualise l'utilisation des matières (comme les plastiques) et des composants pour faciliter le recyclage.\n\nMutualiser les matériaux et composants permet d'améliorer la recyclabilité en simplifiant les processus de tri et de traitement.\n\nActions possibles :\n\n• Standardisation des plastiques : Utiliser des plastiques standardisés qui sont plus facilement recyclables et largement acceptés dans les filières de recyclage.\n\n• Harmonisation des composants : Concevoir des composants qui peuvent être utilisés dans plusieurs produits, facilitant leur recyclage en fin de vie.\n\n• Réduction des polymères : Limiter le nombre de types de polymères dans un produit pour simplifier le tri et le recyclage.\n\n• Collaboration inter-services : Encourager la collaboration entre les équipes de design, production et recyclage pour mutualiser les matériaux utilisés dans différents produits.",
+            children: [
+              {
+                id: "1162",
+                value: "Oui",
+                id_action: 271,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1163",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1165",
+                value: "Non",
+                id_action: 271,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1166",
+            value:
+              "Avez-vous réduit ou supprimé l'utilisation de substances (comme les solvants, RFB, etc.) dans vos produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise a réduit ou supprimé l'utilisation de substances telles que les solvants, les retardateurs de flamme bromés (RFB) ou autres substances préoccupantes dans ses produits.\n\nLa réduction de ces substances facilite le recyclage et diminue les impacts environnementaux négatifs.\n\nActions possibles :\n\n• Élimination des solvants toxiques : Remplacer les solvants nocifs par des alternatives plus écologiques dans la production de vos produits.\n\n• Substitution des RFB : Éliminer les retardateurs de flamme bromés et autres substances chimiques dangereuses de vos produits, en utilisant des alternatives sûres et recyclables.\n\n• Conception sans substances préoccupantes : Intégrer des critères de réduction des substances préoccupantes dès la phase de conception des produits.\n\n• Certification et conformité : Assurer la conformité aux normes et certifications qui limitent l'utilisation de substances préoccupantes dans les produits.",
+            children: [
+              {
+                id: "1167",
+                value: "Oui",
+                id_action: 272,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1168",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1170",
+                value: "Non",
+                id_action: 272,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1171",
+            value:
+              "Votre entreprise respecte-t-elle les exigences REACH (ou RoHS si concerné) pour les substances chimiques dans ses produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise respecte les exigences REACH (Réglementation de l'UE sur les produits chimiques) ou RoHS (Restriction of Hazardous Substances) pour les substances chimiques dans ses produits.\n\nLe respect de ces réglementations garantit que vos produits sont exempts de substances dangereuses et que leur recyclage est sécurisé.\n\nActions possibles :\n\n• Conformité REACH/RoHS : Veiller à ce que tous les produits soient conformes aux exigences REACH et RoHS, réduisant ainsi l'utilisation de substances dangereuses.\n\n• Audits de conformité : Réaliser des audits réguliers pour s'assurer que tous les matériaux et composants respectent les réglementations REACH et RoHS.\n\n• Communication avec les fournisseurs : Collaborer étroitement avec vos fournisseurs pour garantir que les matériaux fournis sont conformes aux exigences REACH et RoHS.\n\n• Mise à jour des processus : Adapter vos processus de production pour éliminer ou réduire l'utilisation de substances chimiques restreintes par REACH ou RoHS.",
+            children: [
+              {
+                id: "1172",
+                value: "Oui",
+                id_action: 273,
+                done: true,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+              {
+                id: "1173",
+                value: "Non",
+                id_action: 273,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1174",
+            value:
+              "Collaborez-vous avec vos fournisseurs pour sensibiliser et évaluer les matières qui perturbent le recyclage ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise collabore avec ses fournisseurs pour sensibiliser et évaluer les matières qui perturbent le recyclage.\n\nUne collaboration étroite avec les fournisseurs permet d'identifier et de réduire les matériaux problématiques en amont, facilitant ainsi le recyclage en fin de vie.\n\nActions possibles :\n\n• Dialogue avec les fournisseurs : Engager un dialogue continu avec vos fournisseurs pour les sensibiliser aux matériaux qui perturbent le recyclage et trouver des alternatives.\n\n• Évaluation des matières premières : Mettre en place des critères stricts pour évaluer les matières premières en fonction de leur recyclabilité.\n\n• Partage des bonnes pratiques : Partager avec vos fournisseurs les meilleures pratiques pour réduire l'impact des matériaux perturbateurs sur le recyclage.\n\n• Programmes de substitution : Collaborer avec les fournisseurs pour développer ou adopter des matériaux qui ne perturbent pas les processus de recyclage.",
+            children: [
+              {
+                id: "1175",
+                value: "Oui",
+                id_action: 274,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1176",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1178",
+                value: "Non",
+                id_action: 274,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1179",
+            value:
+              "Développez-vous et sélectionnez-vous des produits monomatières pour simplifier le recyclage ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise développe et sélectionne des produits monomatières pour simplifier le recyclage.\n\nLes produits monomatières, composés d'un seul type de matériau, sont plus faciles à recycler car ils ne nécessitent pas de séparation des matériaux.\n\nActions possibles :\n\n• Design monomatière : Concevoir des produits composés d'un seul matériau ou d'un nombre très limité de matériaux pour faciliter le recyclage.\n\n• Matériaux recyclables : Sélectionner des matériaux monomatières qui sont largement acceptés dans les filières de recyclage.\n\n• Tests de recyclabilité : Tester régulièrement les produits monomatières pour s'assurer qu'ils sont effectivement faciles à recycler.\n\n• Promotion de l'option monomatière : Encourager vos équipes de design à prioriser les solutions monomatières lors de la conception de nouveaux produits.",
+            children: [
+              {
+                id: "1180",
+                value: "Oui",
+                id_action: 275,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1181",
+                    value: "Veuillez préciser :",
+                    id_action: null,
+                    information: null,
+                    children: [],
+                    type: "question",
+                    inputType: "text",
+                    id_kpis: [],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1183",
+                value: "Non",
+                id_action: 275,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+          {
+            id: "1184",
+            value:
+              "Choisissez-vous des emballages recyclables pour vos produits ?",
+            id_action: null,
+            information:
+              "Sélectionnez cette option si votre entreprise choisit systématiquement des emballages recyclables pour ses produits.\n\nL'utilisation d'emballages recyclables réduit l'impact environnemental et facilite la gestion des déchets par les consommateurs.\n\nActions possibles :\n\n• Emballages en matériaux recyclables : Utiliser des matériaux d'emballage qui sont entièrement recyclables, tels que le carton, le verre, ou certains plastiques.\n\n• Certification des emballages : Obtenir des certifications pour vos emballages, attestant de leur recyclabilité.\n\n• Design sans perturbateurs : Concevoir des emballages sans perturbateurs du recyclage, tels que des revêtements plastiques complexes ou des encres non recyclables.\n\n• Sensibilisation des consommateurs : Informer les consommateurs sur la recyclabilité de vos emballages et leur fournir des instructions claires pour leur tri correct.",
+            children: [
+              {
+                id: "1185",
+                value: "Oui",
+                id_action: 276,
+                done: true,
+                information: null,
+                children: [
+                  {
+                    id: "1186",
+                    value:
+                      "Quelle est la part d'emballages en matériaux recyclables utilisés par votre entreprise ?",
+                    id_action: null,
+                    information:
+                      "La question sur les emballages en matériaux recyclables concerne l'utilisation de matériaux qui, après usage, peuvent être traités pour être réintégrés dans le cycle de production sous forme de nouveaux emballages ou produits similaires.\n\nCela inclut des matériaux comme le plastique, le carton, le verre, etc. L'objectif est de limiter l'utilisation de ressources vierges et de favoriser un cycle fermé de réutilisation des matériaux.",
+                    children: [],
+                    type: "question",
+                    inputType: "numeric",
+                    id_kpis: [153],
+                  },
+                ],
+                type: "reponse",
+              },
+              {
+                id: "1188",
+                value: "Non",
+                id_action: 276,
+                done: false,
+                information: null,
+                children: [],
+                type: "reponse",
+              },
+            ],
+            type: "question",
+            inputType: "single",
+          },
+        ],
+        type: "reponse",
+      },
+      {
+        id: "1189",
+        value: "Non",
+        id_action: 278,
         done: false,
         information: null,
         children: [],

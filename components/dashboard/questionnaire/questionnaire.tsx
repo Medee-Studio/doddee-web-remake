@@ -13,13 +13,14 @@ import {  ChevronRight, ChevronLeft, Info, CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { QuestionTree, QuestionNode, FormAnswer, QuestionnaireState, KpiData } from "@/types/esg-form";
+import { QuestionTree, QuestionNode, FormAnswer, QuestionnaireState, KpiData, QuestionnaireType } from "@/types";
 import { createClient } from "@/lib/supabase/client";
 import { saveQuestionnaireData } from "@/lib/supabase/queries";
 import { toast } from "sonner";
 
 interface QuestionnaireProps {
   questionTree: QuestionTree;
+  questionnaireType: QuestionnaireType;
 }
 
 /**
@@ -43,7 +44,7 @@ interface QuestionnaireProps {
  * - Step 1, Question 1: "1-1" → Answer stored as {questionKey: "1-1", answer: "Oui"} (separate from "0-1")
  * - Step 1, Question 3: "1-3" → Answer stored as {questionKey: "1-3", answer: "Non"} (separate from "0-3")
  */
-export default function Questionnaire({ questionTree }: QuestionnaireProps) {
+export default function Questionnaire({ questionTree, questionnaireType }: QuestionnaireProps) {
   const [state, setState] = useState<QuestionnaireState>({
     answers: [],
     valide_id_actions: [],
@@ -58,10 +59,11 @@ export default function Questionnaire({ questionTree }: QuestionnaireProps) {
 
   const handleQuestionnaireComplete = async (finalState: QuestionnaireState) => {
     console.log("Questionnaire terminé avec l'état:", finalState);
+    console.log("Type de questionnaire:", questionnaireType);
     
     try {
       const supabase = createClient();
-      const result = await saveQuestionnaireData(supabase, finalState);
+      const result = await saveQuestionnaireData(supabase, finalState, questionnaireType);
       
       if ('success' in result) {
         toast.success(result.success);
