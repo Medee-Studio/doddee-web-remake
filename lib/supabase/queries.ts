@@ -1027,5 +1027,114 @@ export async function createUserStripeCustomer(
     return null;
   }
   return data;
+}
 
+interface QuestionnaireData {
+  answers: Array<{
+    questionKey: string;
+    questionText: string;
+    answer: string | number | string[];
+  }>;
+  valide_id_actions: number[];
+  disponible_id_actions: number[];
+  kpis: Array<{
+    questionId: string;
+    questionText: string;
+    kpiId: number;
+    answer: string | number | string[];
+  }>;
+}
+
+export async function saveQuestionnaireData(
+  supabaseClient: SupabaseClient,
+  questionnaireData: QuestionnaireData
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  const user = await getUser(supabase);
+  
+  if (!user) {
+    return { error: 'Utilisateur non authentifié.' };
+  }
+
+  try {
+    // 1. Insert actions with status "valide"
+    if (questionnaireData.valide_id_actions.length > 0) {
+      const valideActions = questionnaireData.valide_id_actions.map(actionId => ({
+        user_id_moral: user.id,
+        id_action: actionId,
+        action_status: 'valide'
+      }));
+
+      const { error: valideActionsError } = await supabase
+        .from('utilisateurs_moraux_actions')
+        .insert(valideActions);
+
+      if (valideActionsError) {
+        console.error('Error inserting valide actions:', valideActionsError.message);
+        return { error: 'Erreur lors de l\'enregistrement des actions validées.' };
+      }
+    }
+
+    // 2. Insert actions with status "disponible"
+    if (questionnaireData.disponible_id_actions.length > 0) {
+      const disponibleActions = questionnaireData.disponible_id_actions.map(actionId => ({
+        user_id_moral: user.id,
+        id_action: actionId,
+        action_status: 'disponible'
+      }));
+
+      const { error: disponibleActionsError } = await supabase
+        .from('utilisateurs_moraux_actions')
+        .insert(disponibleActions);
+
+      if (disponibleActionsError) {
+        console.error('Error inserting disponible actions:', disponibleActionsError.message);
+        return { error: 'Erreur lors de l\'enregistrement des actions disponibles.' };
+      }
+    }
+
+    // 3. Insert KPIs
+    if (questionnaireData.kpis.length > 0) {
+      const kpiInserts = questionnaireData.kpis.map(kpi => ({
+        user_id_moral: user.id,
+        id_kpi: kpi.kpiId,
+        question: kpi.questionText,
+        answer: kpi.answer.toString() // Convert to string as per table schema
+      }));
+
+      const { error: kpisError } = await supabase
+        .from('utilisateurs_moraux_kpis')
+        .insert(kpiInserts);
+
+      if (kpisError) {
+        console.error('Error inserting KPIs:', kpisError.message);
+        return { error: 'Erreur lors de l\'enregistrement des KPIs.' };
+      }
+    }
+
+    // 4. Insert form answers
+    if (questionnaireData.answers.length > 0) {
+      const answerInserts = questionnaireData.answers.map(answer => ({
+        user_id_moral: user.id,
+        question: answer.questionText,
+        answer: Array.isArray(answer.answer) 
+          ? answer.answer.join(', ') // Convert array to comma-separated string
+          : answer.answer.toString()
+      }));
+
+      const { error: answersError } = await supabase
+        .from('utilisateurs_moraux_environnement_response')
+        .insert(answerInserts);
+
+      if (answersError) {
+        console.error('Error inserting answers:', answersError.message);
+        return { error: 'Erreur lors de l\'enregistrement des réponses.' };
+      }
+    }
+
+    return { success: 'Questionnaire sauvegardé avec succès.' };
+  } catch (error) {
+    console.error('Unexpected error in saveQuestionnaireData:', error);
+    return { error: 'Une erreur inattendue s\'est produite lors de la sauvegarde.' };
+  }
 }
