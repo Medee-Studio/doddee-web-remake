@@ -36,6 +36,7 @@ import { createClient } from "@/lib/supabase/client";
 import { submitCompleteProfile } from "@/lib/supabase/queries";
 import { toast } from "sonner";
 import Image from "next/image";
+import mascotte from "@/public/mascotte.png";
 import {
   labels,
   secteurs,
@@ -47,7 +48,6 @@ import {
 import { useRouter } from "next/navigation";
 import { AddressInput } from "@/components/ui/address-input";
 
-// Zod schema
 const completeProfileSchema = z.object({
   // Step 1: Company Info
   raison_sociale: z.string().min(1, "La raison sociale est requise"),
@@ -163,7 +163,6 @@ export function CompleteProfileForm() {
       const result = await submitCompleteProfile(supabase, formData);
 
       if ("success" in result) {
-        // Update user metadata
         const { error: updateError } = await supabase.auth.updateUser({
           data: { profile_completed: true },
         });
@@ -355,9 +354,9 @@ export function CompleteProfileForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Votre fonction</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    {...(field.value && field.value !== "Selectionnez votre fonction" && { value: field.value })}
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ""}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -376,25 +375,24 @@ export function CompleteProfileForm() {
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="secteur"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Secteur principal</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                       setSelectedSector(value);
-                      
                       form.setValue("sous_secteur", "");
-                    }} 
-                    {...(field.value && field.value !== "" && { value: field.value })}
+                    }}
+                    value={field.value || ""}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez un secteur" />
+                        <SelectValue  />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -411,33 +409,33 @@ export function CompleteProfileForm() {
             />
 
             {selectedSector && (
-                              <FormField
-                  control={form.control}
-                  name="sous_secteur"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Sous-secteur</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        {...(field.value && field.value !== "" && { value: field.value })}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Sélectionnez un sous-secteur" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {(sous_secteurs[selectedSector] || []).map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="sous_secteur"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sous-secteur</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue  />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {(sous_secteurs[selectedSector] || []).map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
           </div>
         );
@@ -577,12 +575,10 @@ export function CompleteProfileForm() {
         </Card>
       </div>
 
-      {/* Mascotte & Info Section - 1/3 width */}
       <div className="lg:col-span-1 bg-[#ebfaff] p-8 flex flex-col justify-center items-center">
-        {/* Mascotte */}
         <div className="text-center mb-8">
           <Image
-            src={require("@/public/mascotte.png")}
+            src={mascotte}
             alt="Mascotte"
             width={160}
             height={160}
@@ -597,7 +593,6 @@ export function CompleteProfileForm() {
           </p>
         </div>
 
-        {/* Progress Indicators */}
         <div className="space-y-4">
           {steps.map((step) => (
             <div key={step.id} className="flex items-center space-x-3">
