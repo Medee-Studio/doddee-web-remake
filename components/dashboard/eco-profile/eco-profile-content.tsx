@@ -21,13 +21,7 @@ export default async function EcoProfileContent() {
     return redirectToPath(redirectPath);
   }
 
-  // Check if user has completed signup
-  const { data: signupFinished } = await supabase
-    .from("utilisateurs_moraux")
-    .select("signup_finished")
-    .eq("user_id_moral", uuid);
-
-  if (signupFinished && !signupFinished[0]?.["signup_finished"]) {
+  if (!user.data.session?.user.user_metadata.profile_completed) {
     const redirectPath = getStatusRedirect(
       "/dashboard",
       "Pas si vite !",
@@ -53,6 +47,9 @@ export default async function EcoProfileContent() {
       ...userLabelsAndEcoProfile["profile"],
       user_id_moral: uuid,
     };
+
+    console.log(profile);
+    console.log(labels);
 
     return (
       <>

@@ -963,6 +963,13 @@ export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, 
 }
 
 export async function getUserByStripeCustomerId(supabaseClient: SupabaseClient, customerId: string) {
+  console.log('[WEBHOOK] getUserByStripeCustomerId called with:', { customerId });
+  
+  if (!customerId) {
+    console.error('[WEBHOOK] getUserByStripeCustomerId: customerId is required');
+    return null;
+  }
+
   const supabase = supabaseClient;
   const { data, error } = await supabase
     .from('users')
@@ -971,11 +978,25 @@ export async function getUserByStripeCustomerId(supabaseClient: SupabaseClient, 
     .single();
 
   if (error) {
-    if (error.code !== 'PGRST116') { 
-        console.error('Error fetching user by Stripe customer ID:', error.message);
+    if (error.code === 'PGRST116') {
+      console.log('[WEBHOOK] getUserByStripeCustomerId: No user found for Stripe customer:', customerId);
+    } else {
+      console.error('[WEBHOOK] getUserByStripeCustomerId: Database error:', {
+        code: error.code,
+        message: error.message,
+        customerId
+      });
     }
     return null;
   }
+  
+  console.log('[WEBHOOK] getUserByStripeCustomerId: User found:', {
+    userId: data.id,
+    email: data.email,
+    currentPlan: data.plan_name,
+    currentStatus: data.subscription_status
+  });
+  
   return data;
 }
 
@@ -989,6 +1010,16 @@ export async function updateUserSubscription(
     subscription_status: string;
   }
 ) {
+  console.log('[WEBHOOK] updateUserSubscription called with:', {
+    userId,
+    subscriptionData
+  });
+  
+  if (!userId) {
+    console.error('[WEBHOOK] updateUserSubscription: userId is required');
+    return null;
+  }
+
   const supabase = supabaseClient;
   const { data, error } = await supabase
     .from('users')
@@ -1003,9 +1034,22 @@ export async function updateUserSubscription(
     .single();
 
   if (error) {
-    console.error('Error updating user subscription:', error.message);
+    console.error('[WEBHOOK] updateUserSubscription: Database error:', {
+      code: error.code,
+      message: error.message,
+      userId,
+      subscriptionData
+    });
     return null;
   }
+  
+  console.log('[WEBHOOK] updateUserSubscription: Successfully updated user:', {
+    userId,
+    newPlan: data.plan_name,
+    newStatus: data.subscription_status,
+    stripeSubscriptionId: data.stripe_subscription_id
+  });
+  
   return data;
 }
 
