@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -59,6 +59,7 @@ const completeProfileSchema = z.object({
     .min(9, "Le SIREN doit contenir 9 chiffres")
     .max(9, "Le SIREN ne doit pas dépasser 9 chiffres"),
   adresse: z.string().min(1, "L'adresse est requise"),
+  coordonnees: z.array(z.number()).length(2),
   annee_de_creation: z.coerce
     .number()
     .min(1800, "Année invalide")
@@ -100,6 +101,7 @@ export function CompleteProfileForm() {
       tel: "",
       siren: "",
       adresse: "",
+      coordonnees: [],
       annee_de_creation: new Date().getFullYear(),
       labels: [],
       secteur: "",
@@ -116,6 +118,14 @@ export function CompleteProfileForm() {
       stock: false,
     },
   });
+
+  // Sync selectedSector with form data
+  useEffect(() => {
+    const secteurValue = form.watch("secteur");
+    if (secteurValue && secteurValue !== selectedSector) {
+      setSelectedSector(secteurValue);
+    }
+  }, [form.watch("secteur"), selectedSector]);
 
   const nextStep = async () => {
     let isValid = false;
@@ -267,6 +277,9 @@ export function CompleteProfileForm() {
                     <AddressInput
                       value={field.value}
                       onChange={field.onChange}
+                      onCoordinatesChange={(coordinates) => {
+                        form.setValue("coordonnees", coordinates);
+                      }}
                       placeholder="Entrez votre adresse"
                     />
                   </FormControl>
@@ -311,16 +324,17 @@ export function CompleteProfileForm() {
                   </FormLabel>
                   <div className="mt-4 overflow-y-auto rounded-md border p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {labels.map((label) => (
+                      {labels.map((label, index) => (
                         <FormItem
-                          key={label}
+                          key={`label-${index}-${label}`}
                           className="flex flex-row items-start space-x-3 space-y-0 p-3 rounded-md border"
                         >
                           <FormControl>
                             <Checkbox
-                              checked={field.value?.includes(label)}
+                              id={`label-checkbox-${index}`}
+                              checked={Array.isArray(field.value) && field.value.includes(label)}
                               onCheckedChange={(checked) => {
-                                const currentValues = field.value || [];
+                                const currentValues = Array.isArray(field.value) ? field.value : [];
                                 if (checked) {
                                   field.onChange([...currentValues, label]);
                                 } else {
@@ -334,7 +348,10 @@ export function CompleteProfileForm() {
                               className="border-[#cbd5e1] data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                             />
                           </FormControl>
-                          <FormLabel className="text-sm font-normal text-[#64748b] leading-relaxed cursor-pointer">
+                          <FormLabel 
+                            htmlFor={`label-checkbox-${index}`}
+                            className="text-sm font-normal text-[#64748b] leading-relaxed cursor-pointer"
+                          >
                             {label}
                           </FormLabel>
                         </FormItem>
@@ -356,13 +373,13 @@ export function CompleteProfileForm() {
               name="fonction"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Votre fonction</FormLabel>
+                  <FormLabel htmlFor="fonction-select">Votre fonction</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value === "" ? undefined : field.value}
+                    value={field.value || undefined}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger id="fonction-select">
                         <SelectValue placeholder="Sélectionnez votre fonction" />
                       </SelectTrigger>
                     </FormControl>
@@ -384,18 +401,18 @@ export function CompleteProfileForm() {
               name="secteur"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Secteur principal</FormLabel>
+                  <FormLabel htmlFor="secteur-select">Secteur principal</FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                       setSelectedSector(value);
                       form.setValue("sous_secteur", "");
                     }}
-                    defaultValue={field.value === "" ? undefined : field.value}
+                    value={field.value || undefined}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue  placeholder="Sélectionnez votre secteur" />
+                      <SelectTrigger id="secteur-select">
+                        <SelectValue placeholder="Sélectionnez votre secteur" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -417,14 +434,14 @@ export function CompleteProfileForm() {
                 name="sous_secteur"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sous-secteur</FormLabel>
+                    <FormLabel htmlFor="sous-secteur-select">Sous-secteur</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value === "" ? undefined : field.value}
+                      value={field.value || undefined}
                     >
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue  placeholder="Sélectionnez votre sous-secteur"/>
+                        <SelectTrigger id="sous-secteur-select">
+                          <SelectValue placeholder="Sélectionnez votre sous-secteur"/>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

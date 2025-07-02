@@ -1,26 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Address } from "@/types";
 
-export const AddressInput = ({ value, onChange, placeholder }: {
+export const AddressInput = ({ value, onChange, onCoordinatesChange, placeholder }: {
   value: string;
   onChange: (value: string) => void;
+  onCoordinatesChange?: (coordinates: [number, number]) => void;
   placeholder?: string;
 }) => {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<Address[]>([]);
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setQuery(newValue);
-    onChange(newValue);
+  // Update query when value prop changes
+  useEffect(() => {
+    setQuery(value);
+  }, [value]);
 
-    if (newValue.length > 2) {
+  const fetchSuggestions = async (searchValue: string) => {
+    if (searchValue.length > 2) {
       try {
         const response = await fetch(
-          `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(newValue)}`
+          `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(searchValue)}`
         );
         const data: { features: Address[] } = await response.json();
         setSuggestions(data.features);
@@ -33,12 +36,57 @@ export const AddressInput = ({ value, onChange, placeholder }: {
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setQuery(newValue);
+
+    // Clear existing timer
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+
+    // Set new timer for debounced onChange and API call
+    const timer = setTimeout(() => {
+      onChange(newValue);
+      // Clear coordinates when manually typing (not selecting from suggestions)
+      if (onCoordinatesChange) {
+        onCoordinatesChange([]);
+      }
+      fetchSuggestions(newValue);
+    }, 300); // 300ms debounce
+
+    setDebounceTimer(timer);
+  };
+
   const handleSelectAddress = (address: Address) => {
     const addressLabel = address.properties.label;
+    const coordinates = address.geometry.coordinates as [number, number];
+    
     setQuery(addressLabel);
     onChange(addressLabel);
+    
+    // Pass coordinates to parent if callback provided
+    if (onCoordinatesChange) {
+      onCoordinatesChange(coordinates);
+    }
+    
     setSuggestions([]);
+    
+    // Clear debounce timer when user selects an address
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+      setDebounceTimer(null);
+    }
   };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+    };
+  }, [debounceTimer]);
 
   return (
     <div className="relative">
