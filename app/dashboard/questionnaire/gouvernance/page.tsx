@@ -4,12 +4,8 @@ import QuestionnaireSkeleton from "@/components/dashboard/questionnaire/question
 
 export default function GouvernancePage() {
   return (
-
-
-
-      <Suspense fallback={<QuestionnaireSkeleton />}>
-        <QuestionnaireDataWrapper questionnaireType="gouvernance" />
-      </Suspense>
-    
+    <Suspense fallback={<QuestionnaireSkeleton />}>
+      <QuestionnaireDataWrapper questionnaireType="gouvernance" />
+    </Suspense>
   );
 }

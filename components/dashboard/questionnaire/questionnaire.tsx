@@ -137,7 +137,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
     }
   }, [rebuildQuestionList, questionTree]);
 
-  const handleAnswer = (questionKey: string, value: string | number | string[], inputType: string) => {
+  const handleAnswer = (questionKey: string, value: string | number | string[]) => {
     // Extract question ID from the key format "{step}-{id}"
     // This ensures uniqueness even if same question IDs appear in different steps
     // Example: "0-1" (step 0, question 1) vs "1-1" (step 1, question 1)
@@ -268,7 +268,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
         return (
           <RadioGroup
             value={currentAnswer?.answer as string || ""}
-            onValueChange={(value) => handleAnswer(questionKey, value, "single")}
+            onValueChange={(value) => handleAnswer(questionKey, value)}
             className="space-y-3"
           >
             {question.children.map((child) => (
@@ -305,7 +305,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
                     const newValues = checked
                       ? [...selectedValues, child.value]
                       : selectedValues.filter(v => v !== child.value);
-                    handleAnswer(questionKey, newValues, "multiple");
+                    handleAnswer(questionKey, newValues);
                   }}
                 />
                 <Label htmlFor={`${questionKey}-${child.id}`} className="cursor-pointer flex-1">
@@ -332,7 +332,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
             type="number"
             placeholder="Entrez un nombre"
             value={currentAnswer?.answer as number || ""}
-            onChange={(e) => handleAnswer(questionKey, parseFloat(e.target.value) || 0, "numeric")}
+            onChange={(e) => handleAnswer(questionKey, parseFloat(e.target.value) || 0)}
             className="max-w-md"
           />
         );
@@ -342,7 +342,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
           <Textarea
             placeholder="Entrez votre réponse"
             value={currentAnswer?.answer as string || ""}
-            onChange={(e) => handleAnswer(questionKey, e.target.value, "text")}
+            onChange={(e) => handleAnswer(questionKey, e.target.value)}
             className="max-w-md"
           />
         );
@@ -369,7 +369,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
                 onSelect={(date) => {
                   if (date) {
                     const year = date.getFullYear();
-                    handleAnswer(questionKey, year, "year");
+                    handleAnswer(questionKey, year);
                   }
                 }}
                 captionLayout="dropdown"
@@ -388,7 +388,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
           <Input
             placeholder="Entrez votre réponse"
             value={currentAnswer?.answer as string || ""}
-            onChange={(e) => handleAnswer(questionKey, e.target.value, "text")}
+            onChange={(e) => handleAnswer(questionKey, e.target.value)}
             className="max-w-md"
           />
         );
