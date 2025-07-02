@@ -808,3 +808,224 @@ export async function upsertKpis(
     return { error: 'Une erreur inattendue s\'est produite.' };
   }
 }
+
+
+export interface CompleteProfileData {
+  raison_sociale: string;
+  tel: string;
+  siren: string;
+  adresse: string;
+  annee_de_creation: number;
+  labels: string[];
+  coordonnees: number[];
+  secteur: string;
+  sous_secteur: string;
+  fonction: string;
+  flotte_vehicule: boolean;
+  plus_de_un_salarie: boolean;
+  locaux: boolean;
+  parc_informatique: boolean;
+  site_web: boolean;
+  site_de_production: boolean;
+  approvisionnement: boolean;
+  distribution: boolean;
+  stock: boolean;
+}
+
+export async function submitCompleteProfile(
+  supabaseClient: SupabaseClient,
+  data: CompleteProfileData
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  
+  const { data: result, error } = await supabase.rpc('create_complete_profile', {
+    p_raison_sociale: data.raison_sociale,
+    p_tel: data.tel,
+    p_siren: data.siren,
+    p_adresse: data.adresse,
+    p_annee_de_creation: data.annee_de_creation,
+    p_labels: data.labels,
+    p_coordinates: data.coordonnees,
+    p_secteur_id: parseInt(data.secteur),
+    p_sous_secteur_id: parseInt(data.sous_secteur),
+    p_fonction: data.fonction,
+    p_flotte_vehicule: data.flotte_vehicule,
+    p_plus_de_un_salarie: data.plus_de_un_salarie,
+    p_locaux: data.locaux,
+    p_parc_informatique: data.parc_informatique,
+    p_site_web: data.site_web,
+    p_site_de_production: data.site_de_production,
+    p_approvisionnement: data.approvisionnement,
+    p_distribution: data.distribution,
+    p_stock: data.stock
+  });
+
+  console.log('🔍 [submitCompleteProfile] Result:', result);
+
+  if (error) {
+    console.error('Error creating complete profile:', error);
+    return { error: error.message };
+  }
+
+  return { success: 'Complete profile created successfully' };
+
+// USER SUBSCRIPTION FUNCTIONS
+export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, userId?: string) {
+  console.log('[QUERY] getUserSubscriptionStatus called with userId:', userId);
+  
+  const supabase = supabaseClient;
+  
+  // Verify supabase client is properly provided
+  if (!supabase || !supabase.auth) {
+    console.error('[QUERY] Invalid Supabase client provided');
+    return {
+      stripe_customer_id: null,
+      stripe_subscription_id: null,
+      stripe_product_id: null,
+      plan_name: 'gratuit',
+      subscription_status: 'active'
+    };
+  }
+  
+  let idToFetch = userId;
+  
+  if (!idToFetch) {
+    console.log('[QUERY] No userId provided, fetching from auth...');
+    const authUser = await getUser(supabase);
+    console.log('[QUERY] Auth user retrieved:', authUser ? { id: authUser.id, email: authUser.email } : 'null');
+    
+    if (!authUser) {
+      console.log('[QUERY] No authenticated user found, returning default free plan');
+      return {
+        stripe_customer_id: null,
+        stripe_subscription_id: null,
+        stripe_product_id: null,
+        plan_name: 'gratuit',
+        subscription_status: 'active'
+      };
+    }
+    idToFetch = authUser.id;
+  }
+
+  console.log('[QUERY] Fetching subscription for user ID:', idToFetch);
+
+  try {
+    const { data: userProfile, error } = await supabase
+      .from('users')
+      .select('stripe_customer_id, stripe_subscription_id, stripe_product_id, plan_name, subscription_status')
+      .eq('id', idToFetch)
+      .single();
+
+    console.log('[QUERY] Database query completed:', {
+      error: error ? { code: error.code, message: error.message } : null,
+      data: userProfile
+    });
+
+    if (error) {
+      if (error.code !== 'PGRST116') { 
+        console.error('[QUERY] Error fetching user subscription:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          userId: idToFetch
+        });
+      } else {
+        console.log('[QUERY] User not found in database (PGRST116), returning default free plan');
+      }
+      // Return default subscription for free plan
+      return {
+        stripe_customer_id: null,
+        stripe_subscription_id: null,
+        stripe_product_id: null,
+        plan_name: 'gratuit',
+        subscription_status: 'active'
+      };
+    }
+    
+    console.log('[QUERY] User subscription data retrieved successfully:', userProfile);
+    return userProfile;
+  } catch (error) {
+    console.error('[QUERY] Unexpected error in getUserSubscriptionStatus:', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      userId: idToFetch
+    });
+    // Return default subscription for free plan
+    return {
+      stripe_customer_id: null,
+      stripe_subscription_id: null,
+      stripe_product_id: null,
+      plan_name: 'gratuit',
+      subscription_status: 'active'
+    };
+  }
+}
+
+export async function getUserByStripeCustomerId(supabaseClient: SupabaseClient, customerId: string) {
+  const supabase = supabaseClient;
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('stripe_customer_id', customerId)
+    .single();
+
+  if (error) {
+    if (error.code !== 'PGRST116') { 
+        console.error('Error fetching user by Stripe customer ID:', error.message);
+    }
+    return null;
+  }
+  return data;
+}
+
+export async function updateUserSubscription(
+  supabaseClient: SupabaseClient,
+  userId: string, 
+  subscriptionData: {
+    stripe_subscription_id: string | null;
+    stripe_product_id: string | null;
+    plan_name: string | null;
+    subscription_status: string;
+  }
+) {
+  const supabase = supabaseClient;
+  const { data, error } = await supabase
+    .from('users')
+    .update({
+      stripe_subscription_id: subscriptionData.stripe_subscription_id,
+      stripe_product_id: subscriptionData.stripe_product_id,
+      plan_name: subscriptionData.plan_name,
+      subscription_status: subscriptionData.subscription_status,
+    })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating user subscription:', error.message);
+    return null;
+  }
+  return data;
+}
+
+export async function createUserStripeCustomer(
+  supabaseClient: SupabaseClient,
+  userId: string,
+  stripeCustomerId: string
+) {
+  const supabase = supabaseClient;
+  const { data, error } = await supabase
+    .from('users')
+    .update({ stripe_customer_id: stripeCustomerId })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating user Stripe customer:', error.message);
+    return null;
+  }
+  return data;
+
+}

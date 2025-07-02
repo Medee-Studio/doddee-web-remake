@@ -1,6 +1,6 @@
 import { z, ZodTypeDef } from 'zod';
 import { TeamDataWithMembers, User } from '@/lib/supabase/schema';
-import { getTeamForUser, getUser } from '@/lib/supabase/queries';
+import { getTeamForUser, getUser, getUserProfile } from '@/lib/supabase/queries';
 import { redirect } from 'next/navigation';
 import { createClient } from '../supabase/server';
 
@@ -41,15 +41,18 @@ export function validatedActionWithUser<S extends z.ZodType<unknown, ZodTypeDef,
 ) {
   return async (prevState: ActionState, formData: FormData): Promise<TResult | { error: string }> => {
     const supabase = await createClient();
-    const user = await getUser(supabase);
-    if (!user) {
+    const authUser = await getUser(supabase);
+    if (!authUser) {
       throw new Error('User is not authenticated');
     }
-    if (!user.role) {
-      throw new Error('User role is not defined');
-    }
-    if (!user.email) {
+    if (!authUser.email) {
       throw new Error('User email is not defined');
+    }
+
+    // Get the full user profile from database with subscription properties
+    const userProfile = await getUserProfile(supabase, authUser.id);
+    if (!userProfile) {
+      throw new Error('User profile not found');
     }
 
     const result = schema.safeParse(Object.fromEntries(formData));
@@ -57,14 +60,7 @@ export function validatedActionWithUser<S extends z.ZodType<unknown, ZodTypeDef,
       return { error: result.error.errors[0].message };
     }
 
-    // Ensure the user object conforms to the expected type after checks
-    const validatedUser = {
-      id: user.id,
-      email: user.email, // Known to be defined here
-      role: user.role,   // Known to be defined here
-    };
-
-    return action(result.data, formData, validatedUser);
+    return action(result.data, formData, userProfile);
   };
 }
 
