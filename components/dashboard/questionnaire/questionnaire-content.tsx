@@ -4,6 +4,7 @@ import Questionnaire from "@/components/dashboard/questionnaire/questionnaire";
 import { UtilisateurMorauxSecteurAndCategory } from "@/lib/supabase/queries";
 import { buildEnvironmentQuestionnaire, getQuestionnaireInfo } from "@/lib/form-data/esg/environnement/questionnaire-builder";
 import { buildGouvernanceQuestionnaire, getGouvernanceQuestionnaireInfo } from "@/lib/form-data/esg/gouvernance/questionnaire-builder";
+import { buildSocialQuestionnaire, getSocialQuestionnaireInfo } from "@/lib/form-data/esg/social/questionnaire-builder";
 import { QuestionnaireType } from "@/types";
 import { QuestionTree } from "@/types/esg-form";
 
@@ -21,9 +22,7 @@ export default function QuestionnaireContent({ userData, questionnaireType }: Qu
       case "gouvernance":
         return buildGouvernanceQuestionnaire(userData);
       case "social":
-        // TODO: Implement social questionnaire builder
-        console.warn("Social questionnaire builder not yet implemented");
-        return [];
+        return buildSocialQuestionnaire(userData);
       default:
         console.warn(`Unknown questionnaire type: ${type}`);
         return [];
@@ -38,12 +37,7 @@ export default function QuestionnaireContent({ userData, questionnaireType }: Qu
       case "gouvernance":
         return getGouvernanceQuestionnaireInfo(userData);
       case "social":
-        // TODO: Implement social questionnaire info
-        return {
-          sections: ["Social questionnaire (not implemented)"],
-          totalQuestions: 0,
-          categoryStatus: {}
-        };
+        return getSocialQuestionnaireInfo(userData);
       default:
         return {
           sections: [`Unknown questionnaire type: ${type}`],
