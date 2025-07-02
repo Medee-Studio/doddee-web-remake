@@ -1137,4 +1137,63 @@ export async function saveQuestionnaireData(
     console.error('Unexpected error in saveQuestionnaireData:', error);
     return { error: 'Une erreur inattendue s\'est produite lors de la sauvegarde.' };
   }
+  }
+
+// Type for combined sector and category data
+export interface UtilisateurMorauxSecteurAndCategory {
+  sous_secteur_id: number | null;
+  categories: {
+    id: number;
+    user_id: string;
+    flotte_vehicule: boolean | null;
+    plus_de_un_salarie: boolean | null;
+    locaux: boolean | null;
+    parc_informatique: boolean | null;
+    site_web: boolean | null;
+    site_de_production: boolean | null;
+    approvisionnement: boolean | null;
+    distribution: boolean | null;
+    stock: boolean | null;
+  } | null;
+}
+
+export async function getUtilisateurMorauxSecteurAndCategory(supabaseClient: SupabaseClient): Promise<UtilisateurMorauxSecteurAndCategory | null> {
+  const supabase = supabaseClient;
+  
+  // Get the current user first
+  const authUser = await getUser(supabaseClient);
+  if (!authUser) {
+    console.error('No authenticated user found');
+    return null;
+  }
+
+  // Get sous_secteur_id from utilisateurs_moraux
+  const { data: moralData, error: moralError } = await supabase
+    .from('utilisateurs_moraux')
+    .select('sous_secteur_id')
+    .eq('user_id_moral', authUser.id)
+    .single();
+
+  if (moralError) {
+    if (moralError.code !== 'PGRST116') {
+      console.error('Error fetching user moral data:', moralError.message);
+    }
+    return null;
+  }
+
+  // Get all data from utilisateurs_moraux_categories
+  const { data: categoriesData, error: categoriesError } = await supabase
+    .from('utilisateurs_moraux_categories')
+    .select('*')
+    .eq('user_id', authUser.id)
+    .single();
+
+  if (categoriesError && categoriesError.code !== 'PGRST116') {
+    console.error('Error fetching user categories data:', categoriesError.message);
+  }
+
+  return {
+    sous_secteur_id: moralData?.sous_secteur_id || null,
+    categories: categoriesData || null
+  };
 }

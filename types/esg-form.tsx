@@ -6,7 +6,7 @@ export interface QuestionNode {
   information?: string | null;
   children: QuestionNode[];
   type?: "question" | "reponse";
-  inputType?: "single" | "multiple" | "numeric" | "text";
+  inputType?: "single" | "multiple" | "numeric" | "text" | "year";
   id_kpis?: number[];
   done?: boolean;
 }

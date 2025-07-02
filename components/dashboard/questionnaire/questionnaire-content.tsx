@@ -1,0 +1,59 @@
+"use client";
+
+import Questionnaire from "@/components/dashboard/questionnaire/questionnaire";
+import { UtilisateurMorauxSecteurAndCategory } from "@/lib/supabase/queries";
+import { buildEnvironmentQuestionnaire, getQuestionnaireInfo } from "@/lib/form-data/esg/environnement/questionnaire-builder";
+
+interface QuestionnaireContentProps {
+  userData: UtilisateurMorauxSecteurAndCategory | null;
+}
+
+export default function QuestionnaireContent({ userData }: QuestionnaireContentProps) {
+  // Build dynamic questionnaire based on user data
+  const dynamicQuestionnaire = buildEnvironmentQuestionnaire(userData);
+  const questionnaireInfo = getQuestionnaireInfo(userData);
+
+  return (
+    <div className="container mx-auto py-6 px-4">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Questionnaire Environnement</h1>
+        <p className="text-muted-foreground mt-2">
+          Évaluez les pratiques environnementales de votre entreprise
+        </p>
+        {userData && (
+          <div className="mt-4 p-4 bg-muted/50 rounded-md">
+            <h2 className="text-sm font-medium mb-2">Informations utilisateur (Debug):</h2>
+            <p className="text-xs">Sous-secteur ID: {userData.sous_secteur_id || "Non défini"}</p>
+            
+            <div className="mt-3">
+              <h3 className="text-xs font-medium mb-1">Questionnaires inclus:</h3>
+              <div className="space-y-1">
+                {questionnaireInfo.sections.map((section, index) => (
+                  <p key={index} className="text-xs text-muted-foreground">• {section}</p>
+                ))}
+              </div>
+              <p className="text-xs mt-2 font-medium">Total: {questionnaireInfo.totalQuestions} questions</p>
+            </div>
+
+            <div className="mt-3">
+              <h3 className="text-xs font-medium mb-1">Statut des catégories:</h3>
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                {Object.entries(questionnaireInfo.categoryStatus).map(([key, value]) => (
+                  <p key={key} className="text-muted-foreground">
+                    {key}: <span className={value === true ? "text-green-600" : value === false ? "text-red-600" : "text-gray-500"}>
+                      {value === null ? "null" : value.toString()}
+                    </span>
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Questionnaire 
+        questionTree={dynamicQuestionnaire} 
+      />
+    </div>
+  );
+} 

@@ -9,8 +9,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {  ChevronRight, ChevronLeft, Info } from "lucide-react";
+import {  ChevronRight, ChevronLeft, Info, CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { QuestionTree, QuestionNode, FormAnswer, QuestionnaireState, KpiData } from "@/types/esg-form";
 import { createClient } from "@/lib/supabase/client";
 import { saveQuestionnaireData } from "@/lib/supabase/queries";
@@ -341,6 +343,42 @@ export default function Questionnaire({ questionTree }: QuestionnaireProps) {
             onChange={(e) => handleAnswer(questionKey, e.target.value, "text")}
             className="max-w-md"
           />
+        );
+
+      case "year":
+        const selectedYear = currentAnswer?.answer as number;
+        const selectedDate = selectedYear ? new Date(selectedYear, 0, 1) : undefined;
+        
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-64 justify-start text-left font-normal"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedYear ? selectedYear : "Sélectionnez une année"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => {
+                  if (date) {
+                    const year = date.getFullYear();
+                    handleAnswer(questionKey, year, "year");
+                  }
+                }}
+                captionLayout="dropdown"
+                fromYear={1900}
+                toYear={new Date().getFullYear() + 10}
+                classNames={{
+                  dropdown_root: "relative",
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         );
 
       default:
