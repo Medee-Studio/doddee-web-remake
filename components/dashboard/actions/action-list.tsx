@@ -11,7 +11,7 @@ export default function ActionsList({ actions }: { actions: UserAction[] }) {
           Actions en cours
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-full">
         {actions && actions.length > 0 ? (
           <div className="space-y-4">
             {actions.slice(0, 5).map((action) => (
@@ -65,7 +65,7 @@ export default function ActionsList({ actions }: { actions: UserAction[] }) {
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
+          <div className="flex flex-col items-center justify-center py-8 text-center h-full">
             <Clock className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-sm text-muted-foreground">
               Aucune action en cours pour le moment.
