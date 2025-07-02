@@ -246,7 +246,7 @@ export async function createUserCheckoutSession({
       planId
     });
     
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: any = {
       payment_method_types: ['card'],
       line_items: [
         {
@@ -257,9 +257,7 @@ export async function createUserCheckoutSession({
       mode: 'subscription',
       success_url: `${process.env.BASE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.BASE_URL}/dashboard/subscription?canceled=true`,
-      customer: userProfile?.stripe_customer_id || undefined,
       client_reference_id: user.id,
-      customer_email: user.email,
       allow_promotion_codes: true,
       subscription_data: {
         metadata: {
@@ -271,7 +269,16 @@ export async function createUserCheckoutSession({
         plan_id: planId,
         user_id: user.id
       }
-    });
+    };
+
+    // Only include customer OR customer_email, not both
+    if (userProfile?.stripe_customer_id) {
+      sessionParams.customer = userProfile.stripe_customer_id;
+    } else {
+      sessionParams.customer_email = user.email;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     console.log('[STRIPE] Stripe session created successfully:', {
       sessionId: session.id,
@@ -312,29 +319,83 @@ export async function handleUserSubscriptionChange(
   const subscriptionId = subscription.id;
   const status = subscription.status;
   const planId = subscription.metadata?.plan_id;
+  const userId = subscription.metadata?.user_id;
+
+  console.log('[WEBHOOK] handleUserSubscriptionChange started:', {
+    subscriptionId,
+    customerId,
+    status,
+    planId,
+    userId,
+    hasMetadata: !!subscription.metadata
+  });
 
   const supabase = await createClient();
   const user = await getUserByStripeCustomerId(supabase, customerId);
 
   if (!user) {
-    console.error('User not found for Stripe customer:', customerId);
+    console.error('[WEBHOOK] handleUserSubscriptionChange: User not found for Stripe customer:', {
+      customerId,
+      subscriptionId,
+      status,
+      planId,
+      userId
+    });
     return;
   }
 
+  let updateResult;
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
-    await updateUserSubscription(supabase, user.id, {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Updating to active subscription:', {
+      userId: user.id,
+      planId,
+      status,
+      productId: plan?.product
+    });
+    
+    updateResult = await updateUserSubscription(supabase, user.id, {
       stripe_subscription_id: subscriptionId,
       stripe_product_id: plan?.product as string,
       plan_name: planId || 'unknown',
       subscription_status: status
     });
   } else if (status === 'canceled' || status === 'unpaid') {
-    await updateUserSubscription(supabase, user.id, {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Updating to canceled subscription:', {
+      userId: user.id,
+      status,
+      previousPlan: planId
+    });
+    
+    updateResult = await updateUserSubscription(supabase, user.id, {
       stripe_subscription_id: null,
       stripe_product_id: null,
       plan_name: 'gratuit',
       subscription_status: 'canceled'
+    });
+  } else {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Unhandled subscription status:', {
+      status,
+      subscriptionId,
+      userId: user.id
+    });
+    return;
+  }
+
+  if (!updateResult) {
+    console.error('[WEBHOOK] handleUserSubscriptionChange: Failed to update user subscription in database:', {
+      userId: user.id,
+      subscriptionId,
+      status,
+      planId
+    });
+  } else {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Successfully processed subscription change:', {
+      userId: user.id,
+      subscriptionId,
+      status,
+      newPlan: updateResult.plan_name,
+      newStatus: updateResult.subscription_status
     });
   }
 }
