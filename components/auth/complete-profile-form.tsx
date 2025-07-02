@@ -160,6 +160,8 @@ export function CompleteProfileForm() {
       const formData = form.getValues();
       const supabase = createClient();
 
+      console.log(formData);
+      {/* TODO: Add a loading state 
       const result = await submitCompleteProfile(supabase, formData);
 
       if ("success" in result) {
@@ -178,6 +180,7 @@ export function CompleteProfileForm() {
       } else {
         toast.error(result.error || "Une erreur est survenue");
       }
+        */}
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Une erreur est survenue lors de la soumission");
@@ -356,7 +359,7 @@ export function CompleteProfileForm() {
                   <FormLabel>Votre fonction</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value || ""}
+                    defaultValue={field.value === "" ? undefined : field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -388,11 +391,11 @@ export function CompleteProfileForm() {
                       setSelectedSector(value);
                       form.setValue("sous_secteur", "");
                     }}
-                    value={field.value || ""}
+                    defaultValue={field.value === "" ? undefined : field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue  />
+                        <SelectValue  placeholder="Sélectionnez votre secteur" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -417,11 +420,11 @@ export function CompleteProfileForm() {
                     <FormLabel>Sous-secteur</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      value={field.value || ""}
+                      defaultValue={field.value === "" ? undefined : field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue  />
+                          <SelectValue  placeholder="Sélectionnez votre sous-secteur"/>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
