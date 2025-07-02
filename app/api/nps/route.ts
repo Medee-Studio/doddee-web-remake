@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { npsResponses } from '@/lib/supabase/schema';
 
 function getClientIP(request: NextRequest): string {
   // Try Vercel headers first
