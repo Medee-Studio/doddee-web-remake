@@ -32,14 +32,14 @@ export default function RessourceInterneCard({
 
   const [direction, setDirection] = useState(1); // 1 for forward, -1 for backward
 
-  const handleForward = (newValue: number) => {
+  const handleForward = useCallback((newValue: number) => {
     if (newValue == cours.length) {
       setCoursState("finished");
     } else {
       setCurrentIndex(newValue);
       setDirection(1);
     }
-  };
+  }, [cours.length]);
 
   const handleBackward = (newValue: number) => {
     setCurrentIndex(newValue);
@@ -60,7 +60,7 @@ export default function RessourceInterneCard({
     setTimeout(() => {
       setIsScrolling(false);
     }, scrollCooldown);
-  }, [isScrolling, currentIndex, scrollCooldown]);
+  }, [isScrolling, currentIndex, scrollCooldown, handleForward]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLParagraphElement>(null);

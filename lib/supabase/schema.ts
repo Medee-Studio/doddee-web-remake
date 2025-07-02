@@ -19,6 +19,11 @@ const authUsers = pgTable('users', { id: uuid('id').primaryKey() }, () => {
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().references(() => authUsers.id, { onDelete: 'cascade' }),
   email: varchar('email', { length: 255 }).notNull(),
+  stripeCustomerId: text('stripe_customer_id').unique(),
+  stripeSubscriptionId: text('stripe_subscription_id').unique(),
+  stripeProductId: text('stripe_product_id'),
+  planName: varchar('plan_name', { length: 50 }).default('gratuit'),
+  subscriptionStatus: varchar('subscription_status', { length: 20 }).default('active'),
 });
 
 export const teams = pgTable('teams', {

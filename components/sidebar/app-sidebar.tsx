@@ -9,6 +9,7 @@ import {
   Calendar,
   Megaphone,
   Plus,
+  CreditCard,
 } from "lucide-react"
 
 import { NavMain, type NavItem } from "./nav-main"
@@ -60,6 +61,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/dashboard/kpis",
       icon: BarChart3,
       isActive: pathname === "/dashboard/kpis",
+    },
+    {
+      title: "Abonnement",
+      url: "/dashboard/subscription",
+      icon: CreditCard,
+      isActive: pathname === "/dashboard/subscription",
     }
   ]
 

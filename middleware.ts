@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-// import { verifyToken } from './lib/auth/session'
+import { PROTECTED_ROUTES, hasRouteAccess } from '@/lib/subscription/utils'
+import { verifyToken } from './lib/auth/session'
 
 // Protected routes that require authentication
 // const protectedRoutes = ['/dashboard', '/auth/change-password', '/auth/complete-profile']
@@ -48,18 +49,16 @@ export async function middleware(request: NextRequest) {
   
   try {
     let user = null
-    // let isTokenValid = false
+    let isTokenValid = false
 
     // COMMENTED OUT JWT VERIFICATION
-    // const accessTokenCookie = request.cookies.get('sb-access-token')
-    // if (accessTokenCookie?.value) {
-    //   const tokenPayload = await verifyToken(accessTokenCookie.value)
-    //   if (tokenPayload) {
-    //     isTokenValid = true
-    //     // We can potentially use tokenPayload for a quick user check,
-    //     // but Supabase's getSession() is more comprehensive for user metadata.
-    //   }
-    // }
+    const accessTokenCookie = request.cookies.get('sb-access-token')
+    if (accessTokenCookie?.value) {
+      const tokenPayload = await verifyToken(accessTokenCookie.value)
+      if (tokenPayload) {
+        isTokenValid = true
+      }
+    }
 
     // Always get session from Supabase as the source of truth for user object and full session state
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
@@ -79,8 +78,11 @@ export async function middleware(request: NextRequest) {
     if ((isProtectedRoute || pathname === '/') && !user) {
       const url = request.nextUrl.clone()
       url.pathname = '/auth/login'
-      // REMOVED JWT-related error messages since JWT verification is commented out
-      if (pathname === '/auth/change-password') {
+      if (!isTokenValid && accessTokenCookie?.value) { // Token was present but invalid
+        url.searchParams.set('message', 'Votre session a expiré. Veuillez vous reconnecter.')        
+        // response.cookies.delete('sb-access-token')
+        // response.cookies.delete('sb-refresh-token')
+      } else if (pathname === '/auth/change-password') {
         url.searchParams.set('message', 'Veuillez vous connecter pour changer votre mot de passe.')
       } else if (pathname.startsWith('/dashboard')) {
         url.searchParams.set('message', 'Veuillez vous connecter pour accéder à cette page.')
@@ -128,6 +130,44 @@ export async function middleware(request: NextRequest) {
       const { first_name, last_name, profile_completed } = user.user_metadata || {}
       if ((first_name && last_name) || profile_completed) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+    }
+
+    // CASE 5: Check subscription access for premium routes
+    if (user && isProtectedRoute && Object.keys(PROTECTED_ROUTES).some(route => pathname.startsWith(route))) {
+      try {
+        // Get user subscription from database
+        const { data: userProfile } = await supabase
+          .from('users')
+          .select('plan_name, subscription_status')
+          .eq('id', user.id)
+          .single()
+
+        const userPlan = userProfile?.plan_name || 'gratuit'
+        const subscriptionStatus = userProfile?.subscription_status || 'active'
+        
+        // Check if user has access to this route
+        if (subscriptionStatus === 'active' || subscriptionStatus === 'trialing') {
+          if (!hasRouteAccess(userPlan as any, pathname)) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/dashboard/subscription'
+            url.searchParams.set('upgrade', 'true')
+            url.searchParams.set('route', pathname)
+            return NextResponse.redirect(url)
+          }
+        } else if (subscriptionStatus === 'canceled' || subscriptionStatus === 'unpaid') {
+          // If subscription is not active and trying to access premium route
+          const premiumRoute = Object.keys(PROTECTED_ROUTES).find(route => pathname.startsWith(route))
+          if (premiumRoute) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/dashboard/subscription'
+            url.searchParams.set('reactivate', 'true')
+            return NextResponse.redirect(url)
+          }
+        }
+      } catch (error) {
+        console.error('Error checking subscription access:', error)
+        // Allow access on error to prevent site breakage
       }
     }
 

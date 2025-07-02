@@ -22,6 +22,7 @@ import { getEcoProfileById } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 import { Facebook, Handshake, Instagram, Linkedin } from "lucide-react";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -64,9 +65,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       <div>
         <div className="flex flex-row items-center space-x-2 justify-center">
           {data.logo_organisation && (
-            <img
+            <Image
               alt="logo"
               src={data.logo_organisation}
+              width={80}
+              height={80}
               className="w-20 h-auto"
             />
           )}
