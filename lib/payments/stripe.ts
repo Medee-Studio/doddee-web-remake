@@ -246,7 +246,7 @@ export async function createUserCheckoutSession({
       planId
     });
     
-    const sessionParams: any = {
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card'],
       line_items: [
         {
