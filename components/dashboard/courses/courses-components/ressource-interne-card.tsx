@@ -183,7 +183,7 @@ export default function RessourceInterneCard({
             <AnimatePresence mode="wait">
               {currentCoursElement.type === "html_content" ? (
                 <Card className="flex-1 mx-4 md:mx-8">
-                  <CardContent className="h-full">
+                  <CardContent className="h-full flex items-center justify-center">
                     <motion.div
                       key={currentIndex}
                       ref={contentRef}
@@ -191,7 +191,7 @@ export default function RessourceInterneCard({
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: direction > 0 ? -40 : 40, opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="prose prose-slate max-w-none h-full overflow-y-auto scrollbar-hidden text-sm md:text-base leading-relaxed"
+                      className="prose prose-slate max-w-[1000px] mx-auto h-full overflow-y-auto scrollbar-hidden text-sm md:text-base leading-relaxed flex flex-col justify-center w-full text-center"
                       dangerouslySetInnerHTML={{
                         __html: sanitize(currentCoursElement.content, {
                           allowedTags: [

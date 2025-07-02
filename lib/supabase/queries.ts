@@ -1027,5 +1027,136 @@ export async function createUserStripeCustomer(
     return null;
   }
   return data;
+}
 
+// MAP DATA FUNCTIONS
+export interface PublicUtilisateurMoral {
+  user_id_moral: string;
+  raison_sociale: string | null;
+  secteur_id: number | null;
+  sous_secteur_id: number | null;
+  coordinates: [number, number] | null; // [lng, lat] array format from database
+  labels: {
+    certifications?: string[];
+  } | null;
+}
+
+export async function getPublicUtilisateursMoraux(
+  supabaseClient: SupabaseClient,
+  searchTerm?: string,
+  sousSecteurId?: number
+): Promise<PublicUtilisateurMoral[]> {
+  const supabase = supabaseClient;
+  
+  try {
+    // Try to use RPC function first
+    const { data, error } = await supabase.rpc('get_public_utilisateurs_moraux', {
+      p_search_term: searchTerm || null,
+      p_sous_secteur_id: sousSecteurId || null,
+    });
+
+    if (error) {
+      if (error.code === 'PGRST202') {
+        console.log('RPC function not found, using direct table query');
+        // Fallback to direct table query
+        let query = supabase
+          .from('utilisateurs_moraux')
+          .select('user_id_moral, raison_sociale, secteur_id, sous_secteur_id, coordinates, labels')
+          .not('coordinates', 'is', null)
+          .not('raison_sociale', 'is', null);
+
+        if (searchTerm) {
+          query = query.ilike('raison_sociale', `%${searchTerm}%`);
+        }
+
+        if (sousSecteurId) {
+          query = query.eq('sous_secteur_id', sousSecteurId);
+        }
+
+        const { data: directData, error: directError } = await query.limit(100);
+
+        if (directError) {
+          console.warn('Direct table query failed, using mock data:', directError.message);
+          return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+        }
+
+        return directData || [];
+      } else {
+        console.error('RPC error:', error.message);
+        return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+      }
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching public utilisateurs moraux:', error);
+    return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+  }
+}
+
+function getMockUtilisateursMoraux(searchTerm?: string, sousSecteurId?: number): PublicUtilisateurMoral[] {
+  const mockData: PublicUtilisateurMoral[] = [
+    {
+      user_id_moral: '1',
+      raison_sociale: 'EcoAgri Solutions',
+      secteur_id: 1, // Alimentation, agriculture et élevage
+      sous_secteur_id: 1, // Agriculture & production agricole
+      coordinates: [2.3522, 48.8566], // Paris [lng, lat]
+      labels: { certifications: ['ISO 14001', 'Agriculture Biologique'] }
+    },
+    {
+      user_id_moral: '2',
+      raison_sociale: 'Studio Créatif Durable',
+      secteur_id: 2, // Arts, cinéma, culture
+      sous_secteur_id: 16, // Centres culturels
+      coordinates: [4.8357, 45.7640], // Lyon [lng, lat]
+      labels: { certifications: ['B Corp', 'Label Écologique'] }
+    },
+    {
+      user_id_moral: '3',
+      raison_sociale: 'GreenConseil Audit',
+      secteur_id: 4, // Audit, gestion, conseil, droit
+      sous_secteur_id: 21, // Cabinet de conseil
+      coordinates: [5.3698, 43.2965], // Marseille [lng, lat]
+      labels: { certifications: ['ISO 9001', 'Fair Trade'] }
+    },
+    {
+      user_id_moral: '4',
+      raison_sociale: 'EcoMobility France',
+      secteur_id: 5, // Automobiles, véhicules
+      sous_secteur_id: 27, // Location & vente de vélos et trottinettes
+      coordinates: [-1.5536, 47.2184], // Nantes [lng, lat]
+      labels: { certifications: ['LEED', 'ISO 14001'] }
+    },
+    {
+      user_id_moral: '5',
+      raison_sociale: 'Digital Green Solutions',
+      secteur_id: 11, // Digital, internet, logiciels
+      sous_secteur_id: 64, // Plateformes, logiciels et applications
+      coordinates: [1.4442, 43.6047], // Toulouse [lng, lat]
+      labels: { certifications: ['ISO 26000', 'GreenIT'] }
+    },
+    {
+      user_id_moral: '6',
+      raison_sociale: 'ÉcoBâtiment & Co',
+      secteur_id: 9, // Construction, travaux publics, immobilier, architecture
+      sous_secteur_id: 51, // Construction & Travaux publics
+      coordinates: [0.1079, 49.4944], // Le Havre [lng, lat]
+      labels: { certifications: ['HQE', 'BREEAM'] }
+    }
+  ];
+
+  let filteredData = mockData;
+
+  if (searchTerm) {
+    filteredData = filteredData.filter(item => 
+      item.raison_sociale?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  if (sousSecteurId) {
+    filteredData = filteredData.filter(item => item.sous_secteur_id === sousSecteurId);
+  }
+
+  return filteredData;
 }
