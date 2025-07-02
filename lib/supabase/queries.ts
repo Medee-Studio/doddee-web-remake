@@ -868,7 +868,7 @@ export async function submitCompleteProfile(
   }
 
   return { success: 'Complete profile created successfully' };
-
+}
 // USER SUBSCRIPTION FUNCTIONS
 export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, userId?: string) {
   console.log('[QUERY] getUserSubscriptionStatus called with userId:', userId);
