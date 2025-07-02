@@ -170,8 +170,6 @@ export function CompleteProfileForm() {
       const formData = form.getValues();
       const supabase = createClient();
 
-      console.log(formData);
-      {/* TODO: Add a loading state 
       const result = await submitCompleteProfile(supabase, formData);
 
       if ("success" in result) {
@@ -190,7 +188,7 @@ export function CompleteProfileForm() {
       } else {
         toast.error(result.error || "Une erreur est survenue");
       }
-        */}
+    
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Une erreur est survenue lors de la soumission");
@@ -205,6 +203,7 @@ export function CompleteProfileForm() {
         return (
           <div className="space-y-6">
             <FormField
+              key={`${currentStep}-raison_sociale`}
               control={form.control}
               name="raison_sociale"
               render={({ field }) => (
@@ -225,6 +224,7 @@ export function CompleteProfileForm() {
             />
 
             <FormField
+              key={`${currentStep}-tel`}
               control={form.control}
               name="tel"
               render={({ field }) => (
@@ -246,6 +246,7 @@ export function CompleteProfileForm() {
             />
 
             <FormField
+              key={`${currentStep}-siren`}
               control={form.control}
               name="siren"
               render={({ field }) => (
@@ -266,6 +267,7 @@ export function CompleteProfileForm() {
             />
 
             <FormField
+              key={`${currentStep}-adresse`}
               control={form.control}
               name="adresse"
               render={({ field }) => (
@@ -289,6 +291,7 @@ export function CompleteProfileForm() {
             />
 
             <FormField
+              key={`${currentStep}-annee_de_creation`}
               control={form.control}
               name="annee_de_creation"
               render={({ field }) => (
@@ -315,6 +318,7 @@ export function CompleteProfileForm() {
         return (
           <div className="space-y-6">
             <FormField
+              key={`${currentStep}-${form.watch("labels")}`}
               control={form.control}
               name="labels"
               render={({ field }) => (
@@ -369,6 +373,8 @@ export function CompleteProfileForm() {
         return (
           <div className="space-y-4">
             <FormField
+
+              key={`${currentStep}-${form.watch("fonction")}`}
               control={form.control}
               name="fonction"
               render={({ field }) => (
@@ -398,6 +404,7 @@ export function CompleteProfileForm() {
 
             <FormField
               control={form.control}
+              key={`${currentStep}-${"secteur"}`}
               name="secteur"
               render={({ field }) => (
                 <FormItem>
@@ -430,6 +437,7 @@ export function CompleteProfileForm() {
 
             {selectedSector && (
               <FormField
+              key={`${currentStep}-${"sous_secteur"}`}
                 control={form.control}
                 name="sous_secteur"
                 render={({ field }) => (

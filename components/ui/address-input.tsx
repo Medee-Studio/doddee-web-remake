@@ -50,7 +50,7 @@ export const AddressInput = ({ value, onChange, onCoordinatesChange, placeholder
       onChange(newValue);
       // Clear coordinates when manually typing (not selecting from suggestions)
       if (onCoordinatesChange) {
-        onCoordinatesChange([]);
+        onCoordinatesChange([0, 0]);
       }
       fetchSuggestions(newValue);
     }, 300); // 300ms debounce

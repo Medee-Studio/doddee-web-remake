@@ -816,6 +816,7 @@ export interface CompleteProfileData {
   adresse: string;
   annee_de_creation: number;
   labels: string[];
+  coordonnees: number[];
   secteur: string;
   sous_secteur: string;
   fonction: string;
@@ -843,6 +844,7 @@ export async function submitCompleteProfile(
     p_adresse: data.adresse,
     p_annee_de_creation: data.annee_de_creation,
     p_labels: data.labels,
+    p_coordinates: data.coordonnees,
     p_secteur_id: parseInt(data.secteur),
     p_sous_secteur_id: parseInt(data.sous_secteur),
     p_fonction: data.fonction,
