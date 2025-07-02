@@ -11,7 +11,7 @@ import {
   createUserStripeCustomer,
   getUserSubscriptionStatus
 } from '@/lib/supabase/queries';
-import { createClient } from '../supabase/server';
+import { createClient, createServiceRoleClient } from '../supabase/server';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-04-30.basil'
@@ -125,7 +125,7 @@ export async function handleSubscriptionChange(
   const subscriptionId = subscription.id;
   const status = subscription.status;
 
-  const supabase = await createClient();
+  const supabase = createServiceRoleClient();
 
   const team = await getTeamByStripeCustomerId(supabase, customerId);
 
@@ -330,11 +330,42 @@ export async function handleUserSubscriptionChange(
     hasMetadata: !!subscription.metadata
   });
 
-  const supabase = await createClient();
-  const user = await getUserByStripeCustomerId(supabase, customerId);
+  const supabase = createServiceRoleClient();
+  
+  // First try to find user by user_id from metadata (more reliable)
+  let user = null;
+  if (userId) {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Attempting lookup by user_id from metadata:', userId);
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    
+    if (error) {
+      console.log('[WEBHOOK] handleUserSubscriptionChange: User lookup by ID failed:', {
+        userId,
+        error: error.message
+      });
+    } else {
+      user = data;
+      console.log('[WEBHOOK] handleUserSubscriptionChange: User found by ID:', {
+        userId: user.id,
+        email: user.email,
+        currentPlan: user.plan_name,
+        currentStatus: user.subscription_status
+      });
+    }
+  }
+  
+  // Fallback to Stripe customer ID lookup if user not found by ID
+  if (!user) {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Falling back to Stripe customer ID lookup');
+    user = await getUserByStripeCustomerId(supabase, customerId);
+  }
 
   if (!user) {
-    console.error('[WEBHOOK] handleUserSubscriptionChange: User not found for Stripe customer:', {
+    console.error('[WEBHOOK] handleUserSubscriptionChange: User not found by either method:', {
       customerId,
       subscriptionId,
       status,
@@ -401,7 +432,7 @@ export async function handleUserSubscriptionChange(
 }
 
 export async function handleUserCheckoutComplete(session: Stripe.Checkout.Session) {
-  const supabase = await createClient();
+  const supabase = createServiceRoleClient();
   
   if (!session.customer || !session.client_reference_id) {
     console.error('Missing customer or client_reference_id in checkout session');
