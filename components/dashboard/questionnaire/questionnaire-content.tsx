@@ -3,7 +3,9 @@
 import Questionnaire from "@/components/dashboard/questionnaire/questionnaire";
 import { UtilisateurMorauxSecteurAndCategory } from "@/lib/supabase/queries";
 import { buildEnvironmentQuestionnaire, getQuestionnaireInfo } from "@/lib/form-data/esg/environnement/questionnaire-builder";
+import { buildGouvernanceQuestionnaire, getGouvernanceQuestionnaireInfo } from "@/lib/form-data/esg/gouvernance/questionnaire-builder";
 import { QuestionnaireType } from "@/types";
+import { QuestionTree } from "@/types/esg-form";
 
 interface QuestionnaireContentProps {
   userData: UtilisateurMorauxSecteurAndCategory | null;
@@ -11,9 +13,48 @@ interface QuestionnaireContentProps {
 }
 
 export default function QuestionnaireContent({ userData, questionnaireType }: QuestionnaireContentProps) {
-  // Build dynamic questionnaire based on user data (for now only environment is implemented)
-  const dynamicQuestionnaire = buildEnvironmentQuestionnaire(userData);
-  const questionnaireInfo = getQuestionnaireInfo(userData);
+  // Build dynamic questionnaire based on user data and questionnaire type
+  const buildQuestionnaireByType = (type: QuestionnaireType, userData: UtilisateurMorauxSecteurAndCategory | null): QuestionTree => {
+    switch (type) {
+      case "environnement":
+        return buildEnvironmentQuestionnaire(userData);
+      case "gouvernance":
+        return buildGouvernanceQuestionnaire(userData);
+      case "social":
+        // TODO: Implement social questionnaire builder
+        console.warn("Social questionnaire builder not yet implemented");
+        return [];
+      default:
+        console.warn(`Unknown questionnaire type: ${type}`);
+        return [];
+    }
+  };
+
+  // Get questionnaire info based on type
+  const getQuestionnaireInfoByType = (type: QuestionnaireType, userData: UtilisateurMorauxSecteurAndCategory | null) => {
+    switch (type) {
+      case "environnement":
+        return getQuestionnaireInfo(userData);
+      case "gouvernance":
+        return getGouvernanceQuestionnaireInfo(userData);
+      case "social":
+        // TODO: Implement social questionnaire info
+        return {
+          sections: ["Social questionnaire (not implemented)"],
+          totalQuestions: 0,
+          categoryStatus: {}
+        };
+      default:
+        return {
+          sections: [`Unknown questionnaire type: ${type}`],
+          totalQuestions: 0,
+          categoryStatus: {}
+        };
+    }
+  };
+
+  const dynamicQuestionnaire = buildQuestionnaireByType(questionnaireType, userData);
+  const questionnaireInfo = getQuestionnaireInfoByType(questionnaireType, userData);
 
   // Get questionnaire title based on type
   const getQuestionnaireTitle = (type: QuestionnaireType): string => {

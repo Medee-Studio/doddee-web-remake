@@ -9568,7 +9568,6 @@ export const et: QuestionTree = [
     type: "question",
     inputType: "single",
   },
-
   {
     id: "1016",
     value:
