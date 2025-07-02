@@ -46,7 +46,6 @@ import {
 } from "@/lib/form-data/complete-profile";
 import { useRouter } from "next/navigation";
 import { AddressInput } from "@/components/ui/address-input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Zod schema
 const completeProfileSchema = z.object({
@@ -163,22 +162,22 @@ export function CompleteProfileForm() {
 
       const result = await submitCompleteProfile(supabase, formData);
 
-      // Update user metadata
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: { profile_completed: true },
-      });
+      if ("success" in result) {
+        // Update user metadata
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { profile_completed: true },
+        });
 
-      if (updateError) {
-        toast.error("Erreur lors de la finalisation du profil.");
-        return;
-      }
+        if (updateError) {
+          toast.error("Erreur lors de la finalisation du profil.");
+          return;
+        }
 
-      if ("success" in result ) {
         toast.success("Profil complété avec succès!");
         // Redirect to dashboard or next page
         router.push("/dashboard");
       } else {
-        toast.error("Une erreur est survenue");
+        toast.error(result.error || "Une erreur est survenue");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -308,8 +307,8 @@ export function CompleteProfileForm() {
                   <FormLabel className="text-sm font-medium text-[#64748b]">
                     Sélectionnez vos labels et certifications
                   </FormLabel>
-                  <ScrollArea className="mt-4 max-h-72 rounded-md border">
-                    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="mt-4 overflow-y-auto rounded-md border p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {labels.map((label) => (
                         <FormItem
                           key={label}
@@ -339,7 +338,7 @@ export function CompleteProfileForm() {
                         </FormItem>
                       ))}
                     </div>
-                  </ScrollArea>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -352,17 +351,46 @@ export function CompleteProfileForm() {
           <div className="space-y-4">
             <FormField
               control={form.control}
+              name="fonction"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Votre fonction</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    {...(field.value && field.value !== "Selectionnez votre fonction" && { value: field.value })}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionnez votre fonction" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {fonctions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
               name="secteur"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Secteur principal</FormLabel>
-                  <Select
+                  <Select 
                     onValueChange={(value) => {
                       field.onChange(value);
                       setSelectedSector(value);
+                      
                       form.setValue("sous_secteur", "");
-                    }}
-                    defaultValue={field.value}
+                    }} 
+                    {...(field.value && field.value !== "" && { value: field.value })}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -382,61 +410,35 @@ export function CompleteProfileForm() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="sous_secteur"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sous-secteur</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez un sous-secteur" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {(sous_secteurs[selectedSector] || []).map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="fonction"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Votre fonction</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionnez votre fonction" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {fonctions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {selectedSector && (
+                              <FormField
+                  control={form.control}
+                  name="sous_secteur"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sous-secteur</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        {...(field.value && field.value !== "" && { value: field.value })}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionnez un sous-secteur" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {(sous_secteurs[selectedSector] || []).map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            )}
           </div>
         );
 
@@ -491,7 +493,7 @@ export function CompleteProfileForm() {
   const currentStepData = steps.find((step) => step.id === currentStep);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 min-h-screen">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 h-screen">
       {/* Form Section - 2/3 width */}
       <div className="lg:col-span-2 p-8 overflow-y-auto">
         {/* Step Navigation */}
@@ -549,7 +551,7 @@ export function CompleteProfileForm() {
             <Form {...form}>
               <form className="space-y-8">
                 {renderStepContent()}
-                
+
                 <div className="flex items-center justify-between pt-8 border-t border-[#cbd5e1]">
                   <Button
                     type="button"
@@ -564,7 +566,7 @@ export function CompleteProfileForm() {
                     type="button"
                     onClick={nextStep}
                     disabled={isSubmitting}
-                    className="bg-primary hover:bg-primary/90 text-white px-8 py-2 rounded-full"
+                    className="bg-primary hover:bg-primary/90 text-white"
                   >
                     {currentStep === 4 ? "Terminer" : "Suivant"}
                   </Button>
@@ -576,7 +578,7 @@ export function CompleteProfileForm() {
       </div>
 
       {/* Mascotte & Info Section - 1/3 width */}
-      <div className="lg:col-span-1 bg-[#ebfaff] p-8 flex flex-col justify-center">
+      <div className="lg:col-span-1 bg-[#ebfaff] p-8 flex flex-col justify-center items-center">
         {/* Mascotte */}
         <div className="text-center mb-8">
           <Image

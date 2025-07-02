@@ -857,6 +857,8 @@ export async function submitCompleteProfile(
     p_stock: data.stock
   });
 
+  console.log('🔍 [submitCompleteProfile] Result:', result);
+
   if (error) {
     console.error('Error creating complete profile:', error);
     return { error: error.message };
