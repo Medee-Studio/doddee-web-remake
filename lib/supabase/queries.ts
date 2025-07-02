@@ -809,6 +809,66 @@ export async function upsertKpis(
   }
 }
 
+
+export interface CompleteProfileData {
+  raison_sociale: string;
+  tel: string;
+  siren: string;
+  adresse: string;
+  annee_de_creation: number;
+  labels: string[];
+  coordonnees: number[];
+  secteur: string;
+  sous_secteur: string;
+  fonction: string;
+  flotte_vehicule: boolean;
+  plus_de_un_salarie: boolean;
+  locaux: boolean;
+  parc_informatique: boolean;
+  site_web: boolean;
+  site_de_production: boolean;
+  approvisionnement: boolean;
+  distribution: boolean;
+  stock: boolean;
+}
+
+export async function submitCompleteProfile(
+  supabaseClient: SupabaseClient,
+  data: CompleteProfileData
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  
+  const { data: result, error } = await supabase.rpc('create_complete_profile', {
+    p_raison_sociale: data.raison_sociale,
+    p_tel: data.tel,
+    p_siren: data.siren,
+    p_adresse: data.adresse,
+    p_annee_de_creation: data.annee_de_creation,
+    p_labels: data.labels,
+    p_coordinates: data.coordonnees,
+    p_secteur_id: parseInt(data.secteur),
+    p_sous_secteur_id: parseInt(data.sous_secteur),
+    p_fonction: data.fonction,
+    p_flotte_vehicule: data.flotte_vehicule,
+    p_plus_de_un_salarie: data.plus_de_un_salarie,
+    p_locaux: data.locaux,
+    p_parc_informatique: data.parc_informatique,
+    p_site_web: data.site_web,
+    p_site_de_production: data.site_de_production,
+    p_approvisionnement: data.approvisionnement,
+    p_distribution: data.distribution,
+    p_stock: data.stock
+  });
+
+  console.log('🔍 [submitCompleteProfile] Result:', result);
+
+  if (error) {
+    console.error('Error creating complete profile:', error);
+    return { error: error.message };
+  }
+
+  return { success: 'Complete profile created successfully' };
+
 // USER SUBSCRIPTION FUNCTIONS
 export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, userId?: string) {
   console.log('[QUERY] getUserSubscriptionStatus called with userId:', userId);
@@ -967,4 +1027,5 @@ export async function createUserStripeCustomer(
     return null;
   }
   return data;
+
 }
