@@ -20,6 +20,7 @@ export interface Kpi {
   kpi_type: 'environnement' | 'social' | 'gouvernance';
   kpi_value: number | string;
   kpi_label: string;
+  kpi_unit: string;
 }
 
 // Types for Actions System
