@@ -24,12 +24,18 @@ export async function fetchActionsWithObjectifsAndEnjeux(
   const { data, error } = await supabase.rpc(
     "fetch_actions_disponible_with_objectifs_and_enjeux",
   );
-
+  console.log("data", data);
   if (error) {
     console.error("Error fetching actions:", error);
     return null;
   } else {
-    return { data };
+    // Transform the RPC response to match the expected format
+    const transformedData = {
+      actions: data.actions || [],
+      objectifs: data.objectifs || [],
+      enjeux: data.enjeux || [],
+    };
+    return { data: [transformedData] };
   }
 }
 

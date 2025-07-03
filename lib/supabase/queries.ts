@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
-import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType } from '@/types';
+import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType, Action } from '@/types';
 import { cache } from 'react';
 
 // Define types for RPC data structures
@@ -1408,4 +1408,154 @@ function getMockUtilisateursMoraux(searchTerm?: string, sousSecteurId?: number):
   }
 
   return filteredData;
+
+
+}
+
+// PDF Report Data Types and Functions
+export interface QuestionnaireResponse {
+  id: number;
+  user_id_moral: string;
+  question: string;
+  answer: string;
+  created_at: string;
+}
+
+export interface ReportData {
+  userProfile: EnterpriseInfo | null;
+  responses: QuestionnaireResponse[];
+  actions: Action[];
+  reportType: 'environnement' | 'social' | 'gouvernance';
+}
+
+// Query functions for PDF report data
+export async function getEnvironnementResponses(supabaseClient: SupabaseClient): Promise<QuestionnaireResponse[]> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux_environnement_response')
+    .select('*')
+    .eq('user_id_moral', session.user.id)
+    .order('created_at', { ascending: true });
+
+  if (queryError) {
+    console.error('Error fetching environnement responses:', queryError);
+    throw new Error('Failed to fetch environnement responses');
+  }
+
+  return data || [];
+}
+
+export async function getSocialResponses(supabaseClient: SupabaseClient): Promise<QuestionnaireResponse[]> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux_social_response')
+    .select('*')
+    .eq('user_id_moral', session.user.id)
+    .order('created_at', { ascending: true });
+
+  if (queryError) {
+    console.error('Error fetching social responses:', queryError);
+    throw new Error('Failed to fetch social responses');
+  }
+
+  return data || [];
+}
+
+export async function getGouvernanceResponses(supabaseClient: SupabaseClient): Promise<QuestionnaireResponse[]> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux_gouvernance_response')
+    .select('*')
+    .eq('user_id_moral', session.user.id)
+    .order('created_at', { ascending: true });
+
+  if (queryError) {
+    console.error('Error fetching gouvernance responses:', queryError);
+    throw new Error('Failed to fetch gouvernance responses');
+  }
+
+  return data || [];
+}
+
+// Enterprise information interface
+export interface EnterpriseInfo {
+  raison_sociale: string | null;
+  tel: string | null;
+  siren: string | null;
+  adresse: string | null;
+  annee_de_creation: number | null;
+  labels: any | null;
+}
+
+export async function getEnterpriseInfo(supabaseClient: SupabaseClient): Promise<EnterpriseInfo | null> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux')
+    .select('raison_sociale, tel, siren, adresse, annee_de_creation, labels')
+    .eq('user_id_moral', session.user.id)
+    .single();
+
+  if (queryError) {
+    console.error('Error fetching enterprise info:', queryError);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getReportData(
+  supabaseClient: SupabaseClient, 
+  reportType: 'environnement' | 'social' | 'gouvernance'
+): Promise<ReportData> {
+  // Get enterprise information from utilisateurs_moraux table
+  const enterpriseInfo = await getEnterpriseInfo(supabaseClient);
+  
+  // Get user moral data for actions
+  const userMoralData = await getUserMoralData(supabaseClient);
+  
+  // Get questionnaire responses based on type
+  let responses: QuestionnaireResponse[] = [];
+  switch (reportType) {
+    case 'environnement':
+      responses = await getEnvironnementResponses(supabaseClient);
+      break;
+    case 'social':
+      responses = await getSocialResponses(supabaseClient);
+      break;
+    case 'gouvernance':
+      responses = await getGouvernanceResponses(supabaseClient);
+      break;
+  }
+
+  // Get actions filtered by type
+  const allActions = userMoralData?.actions || [];
+  const filteredActions = allActions.filter((action: Action) => action.action_type === reportType);
+
+  return {
+    userProfile: enterpriseInfo,
+    responses,
+    actions: filteredActions,
+    reportType
+  };
+
 }

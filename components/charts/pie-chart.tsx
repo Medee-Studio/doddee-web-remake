@@ -19,6 +19,8 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Label, Pie, PieChart } from "recharts";
+import { Button } from "../ui/button";
+import { PDFReportWrapper } from "../reports/pdf-report-wrapper";
 
 const chartConfig = {
   disponible: {
@@ -136,10 +138,10 @@ export function DashboardPieChart({
             <Link
               href={
                 title == "♻️ Environnement"
-                  ? "/dashboard/esg/environnement"
+                  ? "/dashboard/questionnaire/environnement"
                   : title == "🤝🏼 Social"
-                    ? "/dashboard/esg/social"
-                    : "/dashboard/esg/gouvernance"
+                    ? "/dashboard/questionnaire/social"
+                    : "/dashboard/questionnaire/gouvernance"
               }
               passHref
             >
@@ -163,14 +165,28 @@ export function DashboardPieChart({
         className={`flex flex-col items-center pb-4 px-4 ${!data && "pt-0"}`}
       >
         <CardTitle>{title}</CardTitle>
-        {!showForm ? (
+        {!showForm && (
+          <div className="flex flex-col items-center">
           <CardDescription className="text-xs text-center">
             {data.filter((item) => item.action_status === "valide").length}{" "}
             action(s) validée(s) sur un total de {data.length} action(s)
           </CardDescription>
-        ) : (
-          <p></p>
-        )}
+          {
+            title !== "Global" && (
+              <PDFReportWrapper 
+                reportType={
+                  title === "♻️ Environnement" 
+                    ? "environnement" 
+                    : title === "🤝🏼 Social" 
+                      ? "social" 
+                      : "gouvernance"
+                }
+                className="mt-4"
+              />
+            )
+          }
+          </div>
+            )}
       </CardHeader>
     </Card>
   );
