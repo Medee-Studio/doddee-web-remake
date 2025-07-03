@@ -625,17 +625,35 @@ export async function upsertEcoProfile(
   supabase: SupabaseClient,
   profile: EcoProfile
 ): Promise<ActionResult> {
-  const { error } = await supabase
-    .from("eco_profiles")
-    .upsert(profile)
-    .eq("user_id_moral", profile.user_id_moral);
-
-  if (error) {
-    console.error('Error upserting eco profile:', error.message);
-    return { error: 'Impossible de sauvegarder votre profil écologique.' };
+  const userResponse = await supabase.auth.getUser();
+  if (userResponse.error) {
+    return { error: "Erreur d'authentification" };
   }
 
-  return { success: 'Votre profil écologique a été sauvegardé avec succès.' };
+  const userId = userResponse.data.user.id;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { raison_sociale, logo_organisation, ...restOfProfile } = profile;
+
+  // RLS on 'eco_profils' ensures users can only update their own profile
+  const { error } = await supabase
+    .from("eco_profils")
+    .upsert(
+      {
+        id: userId,
+        ...restOfProfile,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "id" }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error upserting eco profile:", error);
+    return { error: "Erreur lors de la mise à jour de l'éco-profil" };
+  }
+
+  return { success: "Éco-profil mis à jour avec succès" };
 }
 
 // KPI Queries - Debug function to check what exists in database
@@ -1073,7 +1091,6 @@ export async function createUserStripeCustomer(
   return data;
 }
 
-
 interface QuestionnaireData {
   answers: Array<{
     questionKey: string;
@@ -1392,6 +1409,7 @@ function getMockUtilisateursMoraux(searchTerm?: string, sousSecteurId?: number):
 
   return filteredData;
 
+
 }
 
 // PDF Report Data Types and Functions
@@ -1539,4 +1557,5 @@ export async function getReportData(
     actions: filteredActions,
     reportType
   };
+
 }
