@@ -1716,6 +1716,7 @@ export async function getUserMoralPJs(
     `)
     .eq('id_utilisateur_moral_action', idUtilisateurMoralAction);
 
+    
   if (error) {
     console.error('Error fetching user moral PJs:', error.message);
     return [];
@@ -1790,4 +1791,202 @@ export async function getPJFileUrl(
   }
 
   return data.signedUrl;
+}
+
+// New KPI Queries for the user's specific table structure
+export interface UserKpiWithDetails {
+  id: number;
+  id_kpi: number;
+  user_id_moral: string;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+  next_ask: string | null;
+  kpi_details: {
+    id_kpi: number;
+    nom: string;
+    recurrence: string | null;
+    type: string;
+    kpi_type: string;
+    unit: string | null;
+  };
+  all_responses?: Array<{
+    id: number;
+    answer: string;
+    created_at: string;
+    updated_at: string;
+  }>;
+}
+
+export async function getUserKpisWithDetails(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .select(`
+      *,
+      kpi_details:kpis!inner(
+        id_kpi,
+        nom,
+        recurrence,
+        type,
+        kpi_type,
+        unit
+      )
+    `)
+    .eq('user_id_moral', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user KPIs with details:', error);
+    return null;
+  }
+
+  return data as UserKpiWithDetails[];
+}
+
+export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return null;
+  }
+
+  // Get only the user's KPI responses with their KPI details
+  const { data, error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .select(`
+      id,
+      id_kpi,
+      user_id_moral,
+      question,
+      answer,
+      created_at,
+      updated_at,
+      next_ask,
+      kpi_details:kpis!inner(
+        id_kpi,
+        nom,
+        recurrence,
+        type,
+        kpi_type,
+        unit
+      )
+    `)
+    .eq('user_id_moral', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user KPIs:', error);
+    return null;
+  }
+
+  if (!data) {
+    return [];
+  }
+
+  // Group by KPI ID to get all responses for each KPI
+  const kpiMap = new Map<number, UserKpiWithDetails>();
+  
+  data.forEach((response: any) => {
+    const kpiId = response.id_kpi;
+    if (!kpiMap.has(kpiId)) {
+      // Create new entry with latest response as main data
+      kpiMap.set(kpiId, {
+        id: response.id,
+        id_kpi: response.id_kpi,
+        user_id_moral: response.user_id_moral,
+        question: response.question,
+        answer: response.answer,
+        created_at: response.created_at,
+        updated_at: response.updated_at,
+        next_ask: response.next_ask,
+        kpi_details: response.kpi_details,
+        all_responses: []
+      } as UserKpiWithDetails);
+    }
+    
+    // Add this response to the all_responses array
+    const kpiEntry = kpiMap.get(kpiId)!;
+    kpiEntry.all_responses!.push({
+      id: response.id,
+      answer: response.answer,
+      created_at: response.created_at,
+      updated_at: response.updated_at,
+    });
+  });
+
+  return Array.from(kpiMap.values());
+}
+
+export async function addKpiResponse(
+  supabase: SupabaseClient,
+  kpiId: number,
+  question: string,
+  answer: string
+): Promise<ActionResult> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return { error: 'Utilisateur non authentifié.' };
+  }
+
+  const { error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .insert({
+      id_kpi: kpiId,
+      user_id_moral: user.id,
+      question: question,
+      answer: answer,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error('Error adding KPI response:', error);
+    return { error: 'Erreur lors de l\'ajout de la réponse.' };
+  }
+
+  return { success: 'Réponse ajoutée avec succès.' };
+}
+
+export function canAddNewKpiResponse(kpi: UserKpiWithDetails): boolean {
+  const { kpi_details, created_at } = kpi;
+  
+  // If type is "ponctuel" OR recurrence is "ponctuel", always allow new responses
+  if (kpi_details.type === 'ponctuel' || kpi_details.recurrence === 'ponctuel') {
+    return true;
+  }
+  
+  // If type is "numeric", check recurrence
+  if (kpi_details.type === 'numeric') {
+    // If recurrence is null, cannot ask again
+    if (!kpi_details.recurrence) {
+      return false;
+    }
+    
+    const lastResponseDate = new Date(created_at);
+    const now = new Date();
+    
+    switch (kpi_details.recurrence) {
+      case 'mensuel':
+        // Check if it's been at least a month since last response
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        return lastResponseDate <= oneMonthAgo;
+        
+      case 'annuel':
+        // Check if it's been at least a year since last response
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        return lastResponseDate <= oneYearAgo;
+        
+      default:
+        return false;
+    }
+  }
+  
+  return false;
 }

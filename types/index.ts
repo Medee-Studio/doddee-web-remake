@@ -302,8 +302,35 @@ export interface PJ {
 export interface UserMoralPJ {
   id: number;
   id_utilisateur_moral_action: number;
-  id_pj: number;
+  id_pj: number | null;
   path_to_pj: string | null;
   status: string | null;
-  pj: PJ;
+  pj: PJ | null;
+}
+
+// New KPI Types for the user's specific table structure
+export interface UserKpiWithDetails {
+  id: number;
+  id_kpi: number;
+  user_id_moral: string;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+  next_ask: string | null;
+  kpi_details: {
+    id_kpi: number;
+    nom: string;
+    recurrence: string | null;
+    type: string;
+    kpi_type: string;
+    unit: string | null;
+  };
+  all_responses?: Array<{
+    id: number;
+    answer: string;
+    
+    created_at: string;
+    updated_at: string;
+  }>;
 } 

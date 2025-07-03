@@ -4,8 +4,8 @@ import { PROTECTED_ROUTES, hasRouteAccess } from '@/lib/subscription/utils'
 import { verifyToken } from './lib/auth/session'
 
 // Protected routes that require authentication
-// const protectedRoutes = ['/dashboard', '/auth/change-password', '/auth/complete-profile']
-const protectedRoutes = ['/dashboard', '/auth/change-password']
+ const protectedRoutes = ['/dashboard', '/auth/change-password', '/auth/complete-profile']
+
 
 // Auth routes that should redirect to dashboard when authenticated
 const authRoutes = ['/auth/login', '/auth/signup']

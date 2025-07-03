@@ -874,7 +874,6 @@ export const st: QuestionTree = [
     type: "question",
     inputType: "single",
   },
-
   {
     id: "100",
     value:
@@ -3155,7 +3154,7 @@ export const st: QuestionTree = [
       {
         id: "356",
         value: "Oui",
-        id_action: 402,
+        id_action: 400,
         done: true,
         information:
           "Sélectionnez cette option si votre entreprise, ou vous en tant que dirigeant, avez déjà participé à une formation sur la transition énergétique, au bilan carbone, ou à d'autres sujets liés à la gestion environnementale.\n \n Cela inclut des sessions de formation, des ateliers et des MOOC visant à améliorer la compréhension et la gestion liée au changement climatique.",
@@ -3165,7 +3164,7 @@ export const st: QuestionTree = [
       {
         id: "357",
         value: "Non",
-        id_action: 402,
+        id_action: 400,
         done: false,
         information: null,
         children: [],
