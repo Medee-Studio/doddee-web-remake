@@ -122,6 +122,7 @@ export interface PlanActionData {
 }
 
 export interface UserActionData {
+  id_utilisateur_moral_action: number;
   deadline: string;
   action_status: 'disponible' | 'en_cours_validation' | 'en_cours' | 'valide';
 }
@@ -290,3 +291,19 @@ export interface RadioOption {
 export * from './esg-form';
 
 export type QuestionnaireType = "environnement" | "social" | "gouvernance"; 
+
+// Types for PJs (Pièces Justificatives) System
+export interface PJ {
+  id_pj: number;
+  titre: string;
+  description: string;
+}
+
+export interface UserMoralPJ {
+  id: number;
+  id_utilisateur_moral_action: number;
+  id_pj: number;
+  path_to_pj: string | null;
+  status: string | null;
+  pj: PJ;
+} 

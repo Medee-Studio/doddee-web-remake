@@ -12,7 +12,7 @@ import {
 import { whichActionStatusIcon } from "@/components/dashboard/actions/actions-components/action-status-icon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileUploadModal } from "@/components/common/file-upload-modal";
+import { JustificationModal } from "@/components/common/justification-modal";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
@@ -60,7 +60,7 @@ export default function CardRow({
               {whichActionStatusIcon(action.user_action_data.action_status)}
             </div>
             {action.user_action_data.action_status == "en_cours" && (
-              <FileUploadModal action={action.action_data} />
+              <JustificationModal action={action} />
             )}
             <div className="flex flex-row">
               <Separator orientation="vertical" className="h-full mx-3" />

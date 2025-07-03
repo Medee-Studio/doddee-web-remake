@@ -517,10 +517,10 @@ export function AccountForm({ user }: { user: User }) {
                       <br/>
                       <span className="font-medium underline">contact@doddee.fr</span>
                     
-                    <div className="text-sm">
+                    <span className="text-sm">
                       Notre équipe traitera votre demande dans les plus brefs délais. 
                       Cette action est irréversible et toutes vos données seront définitivement supprimées.
-                    </div>
+                    </span>
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex justify-end gap-2">
@@ -529,7 +529,7 @@ export function AccountForm({ user }: { user: User }) {
                   </Button>
                   <Button 
                     onClick={() => window.open('mailto:contact@doddee.fr?subject=Demande de suppression de compte')}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-primary hover:bg-primary/90"
                   >
                     <Mail className="h-4 w-4 mr-2" />
                     Envoyer un email

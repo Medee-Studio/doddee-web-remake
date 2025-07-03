@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
-import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType, Action } from '@/types';
+import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType, Action, PJ, UserMoralPJ } from '@/types';
 import { cache } from 'react';
 
 // Define types for RPC data structures
@@ -437,7 +437,7 @@ export const getUserMoralData = cache(async (supabase: SupabaseClient) => {
     if (rpcError) {
       throw new Error("Failed to get user moral data");
     }
-
+    console.log("userMoralData", userMoralData)
     return userMoralData;
   } else {
     throw new Error("No active session found");
@@ -473,6 +473,7 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
       .from("utilisateurs_moraux_actions")
       .select(
         `
+        id,
         id_action,
         action_status,
         deadline,
@@ -489,49 +490,12 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
 
     if (queryError) {
       console.warn("Database query failed, using mock data:", queryError.message);
-      
-      // Return mock data for demonstration purposes when tables don't exist
-      const mockActions: PlanAction[] = [
-        {
-          action_data: {
-            id: 1,
-            nom_action: "Mise en place d'un programme de recyclage",
-            action_type: 'environnement',
-          },
-          user_action_data: {
-            deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-            action_status: 'en_cours',
-          },
-        },
-        {
-          action_data: {
-            id: 2,
-            nom_action: "Formation du personnel sur la diversité",
-            action_type: 'social',
-          },
-          user_action_data: {
-            deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
-            action_status: 'en_cours_validation',
-          },
-        },
-        {
-          action_data: {
-            id: 3,
-            nom_action: "Audit de transparence financière",
-            action_type: 'gouvernance',
-          },
-          user_action_data: {
-            deadline: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(), // 21 days from now
-            action_status: 'valide',
-          },
-        },
-      ];
-      
-      return mockActions;
+      return [];
     }
 
     // Define the query result type
     interface QueryResult {
+      id?: number;
       id_action?: number;
       action_status?: string;
       deadline?: string;
@@ -577,12 +541,13 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
             action_type: validActionType,
           },
           user_action_data: {
+            id_utilisateur_moral_action: item.id || 0,
             deadline: item.deadline || '',
             action_status: validActionStatus,
           },
         };
       })
-      .filter((item) => item.action_data.id !== 0); // Filter out invalid items
+      .filter((item) => item.action_data.id !== 0 && item.user_action_data.id_utilisateur_moral_action !== 0); // Filter out invalid items
 
     return transformedActions;
   } catch (queryError) {
@@ -1704,4 +1669,125 @@ export async function uploadCompanyLogo(
 
   // Return just the filename since we use from('logos') to specify the bucket
   return { success: true, filePath: fileName };
+}
+
+// PJs (Pièces Justificatives) related functions
+export async function getActionPJs(
+  supabaseClient: SupabaseClient,
+  actionId: number
+): Promise<PJ[]> {
+  const { data, error } = await supabaseClient
+    .from('actions_pjs')
+    .select(`
+      id_pj,
+      pjs (
+        id_pj,
+        titre,
+        description
+      )
+    `)
+    .eq('id_action', actionId);
+
+  if (error) {
+    console.error('Error fetching action PJs:', error.message);
+    return [];
+  }
+
+  return data?.map((item: any) => item.pjs).filter(Boolean) || [];
+}
+
+export async function getUserMoralPJs(
+  supabaseClient: SupabaseClient,
+  idUtilisateurMoralAction: number
+): Promise<UserMoralPJ[]> {
+  const { data, error } = await supabaseClient
+    .from('utilisateurs_moraux_pjs')
+    .select(`
+      id,
+      id_utilisateur_moral_action,
+      id_pj,
+      path_to_pj,
+      status,
+      pjs (
+        id_pj,
+        titre,
+        description
+      )
+    `)
+    .eq('id_utilisateur_moral_action', idUtilisateurMoralAction);
+
+  if (error) {
+    console.error('Error fetching user moral PJs:', error.message);
+    return [];
+  }
+
+  return data?.map((item: any) => ({
+    id: item.id,
+    id_utilisateur_moral_action: item.id_utilisateur_moral_action,
+    id_pj: item.id_pj,
+    path_to_pj: item.path_to_pj,
+    status: item.status,
+    pj: item.pjs
+  })) || [];
+}
+
+export async function uploadPJFile(
+  supabaseClient: SupabaseClient,
+  file: File,
+  idUtilisateurMoralAction: number,
+  idPJ: number
+): Promise<{ success: boolean; filePath?: string; error?: string }> {
+  try {
+    const fileExtension = file.name.split('.').pop();
+    const fileName = `${idUtilisateurMoralAction}_${idPJ}_${Date.now()}.${fileExtension}`;
+
+    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+      .from('pjs')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('Error uploading PJ file:', uploadError);
+      return { success: false, error: uploadError.message };
+    }
+
+    // Update the utilisateurs_moraux_pjs table with the file path
+    const { error: updateError } = await supabaseClient
+      .from('utilisateurs_moraux_pjs')
+      .update({
+        path_to_pj: uploadData.path,
+      })
+      .eq('id_utilisateur_moral_action', idUtilisateurMoralAction)
+      .eq('id_pj', idPJ);
+
+      
+
+    if (updateError) {
+      console.error('Error updating PJ record:', updateError);
+      return { success: false, error: updateError.message };
+    }
+
+    return { success: true, filePath: uploadData.path };
+  } catch (error) {
+    console.error('Error in uploadPJFile:', error);
+    return { success: false, error: 'Unexpected error occurred' };
+  }
+}
+
+export async function getPJFileUrl(
+  supabaseClient: SupabaseClient,
+  filePath: string
+): Promise<string | null> {
+  const { data, error } = await supabaseClient.storage
+    .from('pjs')
+    .createSignedUrl(filePath, 3600); // 1 hour expiry
+
+  if (error) {
+    console.error('Error creating signed URL for PJ:', error);
+    return null;
+  }
+
+  return data.signedUrl;
 }
