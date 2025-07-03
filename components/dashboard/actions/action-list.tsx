@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ActionsList({ actions }: { actions: UserAction[] }) {
   return (
-    <Card className="w-full h-full">
+    <Card className="w-full max-h-[400px] overflow-y-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />

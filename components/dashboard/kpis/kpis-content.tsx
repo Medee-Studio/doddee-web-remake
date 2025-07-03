@@ -5,20 +5,9 @@ import { KpiCard } from "@/components/dashboard/kpis/kpi-card";
 
 export default async function KpisContent() {
   const supabase = await createClient();
-  const user = await getUser(supabase);
-
-  if (!user) {
-    return (
-      <>
-        <PageHeader title="Indicateurs de performance (KPIs)" />
-        <div className="p-6">
-          <p className="text-muted-foreground">Vous devez être connecté pour voir vos KPIs.</p>
-        </div>
-      </>
-    );
-  }
 
   const kpis = await getAllKpisForUser(supabase);
+  console.log("kpis", kpis);
 
   return (
     <>
