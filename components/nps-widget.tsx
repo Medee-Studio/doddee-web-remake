@@ -46,7 +46,8 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
       setIsSubmitting(false);
     }
   };
-  
+
+
   if (hasSubmitted) {
     return (
       <Card className="w-full bg-green-50 border-green-200">
@@ -95,7 +96,10 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
           </div>
 
           <div className="text-center">
+
+
             <div className="text-2xl font-bold mb-2">{score[0]}</div>            
+
           </div>
         </div>
 
@@ -115,6 +119,7 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
             {isSubmitting ? "Envoi en cours..." : "Envoyer mon évaluation"}
           </Button>
         </div>
+
       </CardContent>
     </Card>
   );
