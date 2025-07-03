@@ -347,20 +347,58 @@ export async function handleUserSubscriptionChange(
     return;
   }
 
+  let updateResult;
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
-    await updateUserSubscription(supabase, user.id, {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Updating to active subscription:', {
+      userId: user.id,
+      planId,
+      status,
+      productId: plan?.product
+    });
+    
+    updateResult = await updateUserSubscription(supabase, user.id, {
       stripe_subscription_id: subscriptionId,
       stripe_product_id: plan?.product as string,
       plan_name: planId || 'unknown',
       subscription_status: status
     });
   } else if (status === 'canceled' || status === 'unpaid') {
-    await updateUserSubscription(supabase, user.id, {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Updating to canceled subscription:', {
+      userId: user.id,
+      status,
+      previousPlan: planId
+    });
+    
+    updateResult = await updateUserSubscription(supabase, user.id, {
       stripe_subscription_id: null,
       stripe_product_id: null,
       plan_name: 'gratuit',
       subscription_status: 'canceled'
+    });
+  } else {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Unhandled subscription status:', {
+      status,
+      subscriptionId,
+      userId: user.id
+    });
+    return;
+  }
+
+  if (!updateResult) {
+    console.error('[WEBHOOK] handleUserSubscriptionChange: Failed to update user subscription in database:', {
+      userId: user.id,
+      subscriptionId,
+      status,
+      planId
+    });
+  } else {
+    console.log('[WEBHOOK] handleUserSubscriptionChange: Successfully processed subscription change:', {
+      userId: user.id,
+      subscriptionId,
+      status,
+      newPlan: updateResult.plan_name,
+      newStatus: updateResult.subscription_status
     });
   }
 }

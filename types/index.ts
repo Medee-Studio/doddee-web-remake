@@ -194,3 +194,99 @@ export interface UserMoralData {
   kpis: any[];
   nps: NPSData;
 } 
+
+// Types for Address API
+export interface Address {
+  type: string;
+  properties: {
+    id: string;
+    label: string;
+    name: string;
+    postcode: string;
+    citycode: string;
+    x: number;
+    y: number;
+    city: string;
+    context: string;
+    type: string;
+    importance: number;
+  };
+  geometry: {
+    type: string;
+    coordinates: [number, number];
+  };
+}
+
+// Complete Profile Form Types
+export interface CompleteProfileFormData {
+  // Step 1: Company Info
+  raison_sociale: string;
+  tel: string;
+  siren: string;
+  adresse: string;
+  annee_de_creation: number;
+  
+  // Step 2: Labels
+  labels: string[];
+  
+  // Step 3: Sector and Function
+  secteur: string;
+  sous_secteur: string;
+  fonction: string;
+  
+  // Step 4: Categories
+  flotte_vehicule: boolean;
+  plus_de_un_salarie: boolean;
+  locaux: boolean;
+  parc_informatique: boolean;
+  site_web: boolean;
+  site_de_production: boolean;
+  approvisionnement: boolean;
+  distribution: boolean;
+  stock: boolean;
+}
+
+export interface CompleteProfileStep {
+  id: number;
+  title: string;
+  description: string;
+  type: 'form' | 'checkbox' | 'select' | 'radio';
+  fields?: FormField[];
+  checkboxOptions?: CheckboxOption[];
+  radioQuestions?: RadioQuestion[];
+}
+
+export interface FormField {
+  name: string;
+  label: string;
+  type: string;
+  placeholder?: string;
+  required: boolean;
+  options?: SelectOption[];
+}
+
+export interface SelectOption {
+  value: string;
+  label: string;
+  children?: SelectOption[];
+}
+
+export interface CheckboxOption {
+  id: number;
+  label: string;
+}
+
+export interface RadioQuestion {
+  name: string;
+  label: string;
+  options: RadioOption[];
+}
+
+export interface RadioOption {
+  label: string;
+  value: string;
+}
+
+export * from './esg-form';
+
+export type QuestionnaireType = "environnement" | "social" | "gouvernance"; 

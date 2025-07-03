@@ -46,7 +46,7 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
       setIsSubmitting(false);
     }
   };
-
+  
   if (hasSubmitted) {
     return (
       <Card className="w-full bg-green-50 border-green-200">
