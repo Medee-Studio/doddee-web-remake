@@ -1672,6 +1672,12 @@ export async function uploadCompanyLogo(
 }
 
 // PJs (Pièces Justificatives) related functions
+// Interface for the actions_pjs query result
+interface ActionPJQueryResult {
+  id_pj: number;
+  pjs: PJ[];
+}
+
 export async function getActionPJs(
   supabaseClient: SupabaseClient,
   actionId: number
@@ -1693,7 +1699,17 @@ export async function getActionPJs(
     return [];
   }
 
-  return data?.map((item: any) => item.pjs).filter(Boolean) || [];
+  return data?.flatMap((item: ActionPJQueryResult) => item.pjs).filter(Boolean) || [];
+}
+
+// Interface for the utilisateurs_moraux_pjs query result
+interface UserMoralPJQueryResult {
+  id: number;
+  id_utilisateur_moral_action: number;
+  id_pj: number | null;
+  path_to_pj: string | null;
+  status: string | null;
+  pjs: PJ[] | null;
 }
 
 export async function getUserMoralPJs(
@@ -1722,13 +1738,13 @@ export async function getUserMoralPJs(
     return [];
   }
 
-  return data?.map((item: any) => ({
+  return data?.map((item: UserMoralPJQueryResult) => ({
     id: item.id,
     id_utilisateur_moral_action: item.id_utilisateur_moral_action,
     id_pj: item.id_pj,
     path_to_pj: item.path_to_pj,
     status: item.status,
-    pj: item.pjs
+    pj: item.pjs && item.pjs.length > 0 ? item.pjs[0] : null
   })) || [];
 }
 
@@ -1888,10 +1904,30 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
     return [];
   }
 
+  // Interface for the KPI query response
+  interface KpiQueryResponse {
+    id: number;
+    id_kpi: number;
+    user_id_moral: string;
+    question: string;
+    answer: string;
+    created_at: string;
+    updated_at: string;
+    next_ask: string | null;
+    kpi_details: {
+      id_kpi: number;
+      nom: string;
+      recurrence: string | null;
+      type: string;
+      kpi_type: string;
+      unit: string | null;
+    }[];
+  }
+
   // Group by KPI ID to get all responses for each KPI
   const kpiMap = new Map<number, UserKpiWithDetails>();
   
-  data.forEach((response: any) => {
+  data.forEach((response: KpiQueryResponse) => {
     const kpiId = response.id_kpi;
     if (!kpiMap.has(kpiId)) {
       // Create new entry with latest response as main data
@@ -1904,7 +1940,7 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
         created_at: response.created_at,
         updated_at: response.updated_at,
         next_ask: response.next_ask,
-        kpi_details: response.kpi_details,
+        kpi_details: response.kpi_details[0], // Take the first element of the array
         all_responses: []
       } as UserKpiWithDetails);
     }
@@ -1968,7 +2004,6 @@ export function canAddNewKpiResponse(kpi: UserKpiWithDetails): boolean {
     }
     
     const lastResponseDate = new Date(created_at);
-    const now = new Date();
     
     switch (kpi_details.recurrence) {
       case 'mensuel':

@@ -120,12 +120,13 @@ export function CompleteProfileForm() {
   });
 
   // Sync selectedSector with form data
+  const secteurValue = form.watch("secteur");
+  
   useEffect(() => {
-    const secteurValue = form.watch("secteur");
     if (secteurValue && secteurValue !== selectedSector) {
       setSelectedSector(secteurValue);
     }
-  }, [form.watch("secteur"), selectedSector]);
+  }, [secteurValue, selectedSector]);
 
   const nextStep = async () => {
     let isValid = false;

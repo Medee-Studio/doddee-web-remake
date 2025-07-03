@@ -28,7 +28,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const { id } = await params;
   const supabase = await createClient();
   const data = await getEcoProfileById(supabase, id);
-  console.log("data", data);
+  
   if (!data || !data.url_unique) {
     notFound();
   }

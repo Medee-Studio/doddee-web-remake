@@ -254,7 +254,7 @@ export function KpiCard({ kpi }: KpiCardProps) {
                   className="w-full"
                 >
                   <TrendingUp className="h-4 w-4 mr-2" />
-                  Voir l'évolution
+                  Voir l&apos;évolution
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-4xl">
@@ -276,7 +276,7 @@ export function KpiCard({ kpi }: KpiCardProps) {
                           tick={{ fontSize: 12 }}
                         />
                         <Tooltip 
-                          formatter={(value: any, name: string) => [
+                          formatter={(value: number) => [
                             value,
                             kpi.kpi_details.unit ? `${kpi.kpi_details.unit}` : 'Valeur'
                           ]}
@@ -297,7 +297,7 @@ export function KpiCard({ kpi }: KpiCardProps) {
                     </ResponsiveContainer>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    <p>Graphique montrant l'évolution de "{kpi.kpi_details.nom}" dans le temps.</p>
+                    <p>Graphique montrant l&apos;évolution de &ldquo;{kpi.kpi_details.nom}&rdquo; dans le temps.</p>
                     {kpi.kpi_details.unit && (
                       <p>Unité: {kpi.kpi_details.unit}</p>
                     )}

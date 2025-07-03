@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +29,7 @@ export function JustificationModal({ action }: JustificationModalProps) {
   const [userPJs, setUserPJs] = useState<UserMoralPJ[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchPJsData = async () => {
+  const fetchPJsData = useCallback(async () => {
     setIsLoading(true);
     try {
       const supabase = createClient();
@@ -48,13 +48,13 @@ export function JustificationModal({ action }: JustificationModalProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [action.action_data.id, action.user_action_data.id_utilisateur_moral_action]);
 
   useEffect(() => {
     if (isOpen) {
       fetchPJsData();
     }
-  }, [isOpen, action.action_data.id, action.user_action_data.id_utilisateur_moral_action]);
+  }, [isOpen, fetchPJsData]);
 
   const handleUploadSuccess = () => {
     // Refresh the PJs data after successful upload
