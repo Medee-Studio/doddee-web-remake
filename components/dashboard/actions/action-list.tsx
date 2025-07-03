@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ActionsList({ actions }: { actions: UserAction[] }) {
   return (
-    <Card className="xl:w-full xl:h-full">
+    <Card className="w-full h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
@@ -14,9 +14,9 @@ export default function ActionsList({ actions }: { actions: UserAction[] }) {
       <CardContent className="h-full">
         {actions && actions.length > 0 ? (
           <div className="space-y-4">
-            {actions.slice(0, 5).map((action) => (
+            {actions.slice(0, 5).map((action, index) => (
               <div
-                key={action.id}
+                key={`${action.id}-${action.action_status}-${index}`}
                 className="flex items-start gap-3 p-3 rounded-lg border bg-card"
               >
                 <div className="flex-1 space-y-1">
@@ -30,6 +30,9 @@ export default function ActionsList({ actions }: { actions: UserAction[] }) {
                       {action.action_type}
                     </span>
                   </div>
+                  <p className="text-sm font-medium line-clamp-2">
+                    {action.nom_action}
+                  </p>
                   {action.enjeu && (
                     <p className="text-sm text-muted-foreground">
                       {action.enjeu.nom_enjeu}

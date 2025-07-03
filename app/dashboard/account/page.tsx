@@ -8,8 +8,6 @@ export default async function AccountPage() {
     const supabase = await createClient()
     
     // Get the currently logged in user
-    // const { data: { user }, error } = await supabase.auth.getUser()
-    // do not fetch user from server, get it from the session
     const session = await supabase.auth.getSession()
     const user = session.data.session?.user
     

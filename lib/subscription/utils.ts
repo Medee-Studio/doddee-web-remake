@@ -44,9 +44,14 @@ export const PLAN_FEATURES = {
 } as const;
 
 // Routes that require specific plans
+{/*
 export const PROTECTED_ROUTES = {
   '/dashboard/eco-profile': ['eco-profile', 'la-totale'],
   '/dashboard/courses': ['cours', 'la-totale'],
+} as const;
+*/}
+export const PROTECTED_ROUTES = {
+
 } as const;
 
 /**

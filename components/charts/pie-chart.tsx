@@ -19,7 +19,6 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Label, Pie, PieChart } from "recharts";
-import { Button } from "../ui/button";
 import { PDFReportWrapper } from "../reports/pdf-report-wrapper";
 
 const chartConfig = {

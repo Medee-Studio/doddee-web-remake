@@ -11,6 +11,11 @@ interface PDFReportWrapperProps {
   className?: string;
 }
 
+type PDFDownloadButtonComponent = React.ComponentType<{ 
+  reportData: ReportData; 
+  className?: string; 
+}>;
+
 export const PDFReportWrapper: React.FC<PDFReportWrapperProps> = ({ 
   reportType, 
   className = "" 
@@ -18,7 +23,7 @@ export const PDFReportWrapper: React.FC<PDFReportWrapperProps> = ({
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [PDFComponent, setPDFComponent] = useState<any>(null);
+  const [PDFComponent, setPDFComponent] = useState<PDFDownloadButtonComponent | null>(null);
   const [isClient, setIsClient] = useState(false);
 
   // Ensure we're on the client side
