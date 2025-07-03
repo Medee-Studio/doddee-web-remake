@@ -321,112 +321,46 @@ export async function handleUserSubscriptionChange(
   const planId = subscription.metadata?.plan_id;
   const userId = subscription.metadata?.user_id;
 
-  console.log('[WEBHOOK] handleUserSubscriptionChange started:', {
-    subscriptionId,
-    customerId,
-    status,
-    planId,
-    userId,
-    hasMetadata: !!subscription.metadata
-  });
-
   const supabase = createServiceRoleClient();
   
   // First try to find user by user_id from metadata (more reliable)
   let user = null;
   if (userId) {
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Attempting lookup by user_id from metadata:', userId);
     const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
       .single();
     
-    if (error) {
-      console.log('[WEBHOOK] handleUserSubscriptionChange: User lookup by ID failed:', {
-        userId,
-        error: error.message
-      });
-    } else {
+    if (!error) {
       user = data;
-      console.log('[WEBHOOK] handleUserSubscriptionChange: User found by ID:', {
-        userId: user.id,
-        email: user.email,
-        currentPlan: user.plan_name,
-        currentStatus: user.subscription_status
-      });
     }
   }
   
   // Fallback to Stripe customer ID lookup if user not found by ID
   if (!user) {
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Falling back to Stripe customer ID lookup');
     user = await getUserByStripeCustomerId(supabase, customerId);
   }
 
   if (!user) {
-    console.error('[WEBHOOK] handleUserSubscriptionChange: User not found by either method:', {
-      customerId,
-      subscriptionId,
-      status,
-      planId,
-      userId
-    });
+    console.error('User not found for subscription:', subscriptionId);
     return;
   }
 
-  let updateResult;
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Updating to active subscription:', {
-      userId: user.id,
-      planId,
-      status,
-      productId: plan?.product
-    });
-    
-    updateResult = await updateUserSubscription(supabase, user.id, {
+    await updateUserSubscription(supabase, user.id, {
       stripe_subscription_id: subscriptionId,
       stripe_product_id: plan?.product as string,
       plan_name: planId || 'unknown',
       subscription_status: status
     });
   } else if (status === 'canceled' || status === 'unpaid') {
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Updating to canceled subscription:', {
-      userId: user.id,
-      status,
-      previousPlan: planId
-    });
-    
-    updateResult = await updateUserSubscription(supabase, user.id, {
+    await updateUserSubscription(supabase, user.id, {
       stripe_subscription_id: null,
       stripe_product_id: null,
       plan_name: 'gratuit',
       subscription_status: 'canceled'
-    });
-  } else {
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Unhandled subscription status:', {
-      status,
-      subscriptionId,
-      userId: user.id
-    });
-    return;
-  }
-
-  if (!updateResult) {
-    console.error('[WEBHOOK] handleUserSubscriptionChange: Failed to update user subscription in database:', {
-      userId: user.id,
-      subscriptionId,
-      status,
-      planId
-    });
-  } else {
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Successfully processed subscription change:', {
-      userId: user.id,
-      subscriptionId,
-      status,
-      newPlan: updateResult.plan_name,
-      newStatus: updateResult.subscription_status
     });
   }
 }

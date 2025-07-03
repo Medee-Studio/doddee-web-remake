@@ -108,7 +108,7 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
 
           <div className="text-center">
             <div className="text-2xl font-bold mb-2">{score[0]}</div>
-            <div className={`text-sm font-medium ${getScoreColor(score[0])}`}>
+            <div className={`text-lg font-medium ${getScoreColor(score[0])}`}>
               {getScoreLabel(score[0])}
             </div>
           </div>
@@ -129,14 +129,6 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
           >
             {isSubmitting ? "Envoi en cours..." : "Envoyer mon évaluation"}
           </Button>
-        </div>
-
-        <div className="text-xs text-center text-muted-foreground">
-          <p>
-            <strong>Comment calculer le NPS ?</strong><br />
-            Le NPS est calculé en soustrayant le pourcentage de détracteurs (0-6) 
-            du pourcentage de promoteurs (9-10).
-          </p>
         </div>
       </CardContent>
     </Card>
