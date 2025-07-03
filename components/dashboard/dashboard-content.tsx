@@ -1,17 +1,19 @@
 import ActionsList from "@/components/dashboard/actions/action-list";
 import { CardTitle } from "@/components/ui/card";
 import KpisCards from "@/components/dashboard/kpis-cards";
+import NPSCard from "@/components/dashboard/nps-card";
 import { DashboardPieChart } from "@/components/charts/pie-chart";
 import { DashboardRadarChart } from "@/components/charts/radar-chart";
 import { PageHeader } from "@/components/common/page-header";
-import { Action, UserAction } from "@/types";
+import { Action, UserAction, UserMoralData } from "@/types";
 import { getUserMoralData } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardContent() {
   const supabase = await createClient();
-  const userData = await getUserMoralData(supabase);
+  const userData = await getUserMoralData(supabase) as UserMoralData;
   const actions = userData["actions"];
+  const npsData = userData["nps"];
 
   const environnement = actions?.filter(
     (el: Action) => el["action_type"] == "environnement",
@@ -41,19 +43,26 @@ export default async function DashboardContent() {
       </div>
       <CardTitle>Vos indicateurs d&apos;impact RSE</CardTitle>
       <KpisCards kpis={kpis} />
-      <div className="flex flex-col xl:flex-row space-x-0 space-y-6 xl:space-x-6 xl:space-y-0">
-        {actions && <DashboardRadarChart data={actions} />}
-        {
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
+        {actions && (
+          <div className="md:col-span-2 xl:col-span-2">
+            <DashboardRadarChart data={actions} />
+          </div>
+        )}
+        <div className="md:col-span-2 xl:col-span-2">
           <ActionsList
-            actions={actions?.filter((action: UserAction) => {
-              if (action.action_status == "en_cours") {
-                const deadline = new Date(action.deadline);
-                const currentDate = new Date();
-                return deadline > currentDate;
-              }
+            actions={(actions ?? []).filter((action): action is UserAction => {
+              if (action.action_status !== "en_cours") return false;
+              const userAction = action as UserAction;
+              if (!userAction.deadline) return false;
+              return new Date(userAction.deadline) > new Date();
             })}
           />
-        }
+        </div>
+        <div className="col-span-1 md:col-span-1 lg:col-span-2 xl:col-span-1">
+          <NPSCard npsData={npsData} />
+        </div>
       </div>
       </div>
     </>

@@ -321,57 +321,29 @@ export async function handleUserSubscriptionChange(
   const planId = subscription.metadata?.plan_id;
   const userId = subscription.metadata?.user_id;
 
-  console.log('[WEBHOOK] handleUserSubscriptionChange started:', {
-    subscriptionId,
-    customerId,
-    status,
-    planId,
-    userId,
-    hasMetadata: !!subscription.metadata
-  });
-
   const supabase = createServiceRoleClient();
   
   // First try to find user by user_id from metadata (more reliable)
   let user = null;
   if (userId) {
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Attempting lookup by user_id from metadata:', userId);
     const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
       .single();
     
-    if (error) {
-      console.log('[WEBHOOK] handleUserSubscriptionChange: User lookup by ID failed:', {
-        userId,
-        error: error.message
-      });
-    } else {
+    if (!error) {
       user = data;
-      console.log('[WEBHOOK] handleUserSubscriptionChange: User found by ID:', {
-        userId: user.id,
-        email: user.email,
-        currentPlan: user.plan_name,
-        currentStatus: user.subscription_status
-      });
     }
   }
   
   // Fallback to Stripe customer ID lookup if user not found by ID
   if (!user) {
-    console.log('[WEBHOOK] handleUserSubscriptionChange: Falling back to Stripe customer ID lookup');
     user = await getUserByStripeCustomerId(supabase, customerId);
   }
 
   if (!user) {
-    console.error('[WEBHOOK] handleUserSubscriptionChange: User not found by either method:', {
-      customerId,
-      subscriptionId,
-      status,
-      planId,
-      userId
-    });
+    console.error('User not found for subscription:', subscriptionId);
     return;
   }
 
