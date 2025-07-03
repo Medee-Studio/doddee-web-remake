@@ -618,7 +618,27 @@ export async function getEcoProfileById(supabase: SupabaseClient, profileId: str
     return null;
   }
 
-  return data as EcoProfileWithActions;
+  const profile = data as EcoProfileWithActions;
+
+  // If there's a logo path, convert it to a signed URL (works for private buckets)
+  if (profile.logo) {
+    // Remove "logos/" prefix if it exists (for backward compatibility)
+    const logoFileName = profile.logo.startsWith('logos/') ? profile.logo.replace('logos/', '') : profile.logo;
+    
+    const { data: signedUrlData, error: urlError } = await supabase
+      .storage
+      .from('logos')
+      .createSignedUrl(logoFileName, 60 * 60 * 24); // Expires in 24 hours
+    
+    if (!urlError && signedUrlData?.signedUrl) {
+      profile.logo = signedUrlData.signedUrl;
+    } else {
+      console.error('Error creating signed URL for eco profile logo:', urlError);
+      profile.logo = undefined; // Set to undefined if we can't get the signed URL
+    }
+  }
+
+  return profile;
 }
 
 export async function upsertEcoProfile(
@@ -632,7 +652,7 @@ export async function upsertEcoProfile(
 
   const userId = userResponse.data.user.id;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { raison_sociale, logo_organisation, ...restOfProfile } = profile;
+  const { raison_sociale, logo, ...restOfProfile } = profile;
 
   // RLS on 'eco_profils' ensures users can only update their own profile
   const { error } = await supabase
@@ -1558,4 +1578,130 @@ export async function getReportData(
     reportType
   };
 
+}
+
+// New queries for company account information
+export interface CompanyAccountInfo {
+  user_id_moral: string;
+  raison_sociale: string | null;
+  tel: string | null;
+  labels: string[] | null;
+  logo: string | null;
+}
+
+export async function getCompanyAccountInfo(supabaseClient: SupabaseClient): Promise<CompanyAccountInfo | null> {
+  const supabase = supabaseClient;
+  
+  // Get current user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error('Error fetching auth user:', authError?.message);
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('utilisateurs_moraux')
+    .select('user_id_moral, raison_sociale, tel, labels, logo')
+    .eq('user_id_moral', user.id)
+    .single();
+
+  if (error) {
+    if (error.code !== 'PGRST116') {
+      console.error('Error fetching company account info:', error.message);
+    }
+    return null;
+  }
+
+  // If there's a logo path, get the signed URL (works for private buckets)
+  let logoUrl = null;
+  if (data.logo) {
+    // Remove "logos/" prefix if it exists (for backward compatibility)
+    const logoFileName = data.logo.startsWith('logos/') ? data.logo.replace('logos/', '') : data.logo;
+    
+    const { data: signedUrlData, error: urlError } = await supabase
+      .storage
+      .from('logos')
+      .createSignedUrl(logoFileName, 60 * 60 * 24); // Expires in 24 hours
+    
+    if (!urlError && signedUrlData?.signedUrl) {
+      logoUrl = signedUrlData.signedUrl;
+    } else {
+      console.error('Error creating signed URL:', urlError);
+    }
+  }
+
+  return {
+    ...data,
+    logo: logoUrl
+  };
+}
+
+export async function updateCompanyAccountInfo(
+  supabaseClient: SupabaseClient,
+  data: {
+    raison_sociale: string;
+    tel: string;
+    labels: string[];
+    logoPath?: string | null;
+  }
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  
+  // Get current user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error('Error fetching auth user:', authError?.message);
+    return { error: 'User not authenticated' };
+  }
+
+  const { error } = await supabase
+    .from('utilisateurs_moraux')
+    .upsert({
+      user_id_moral: user.id,
+      raison_sociale: data.raison_sociale,
+      tel: data.tel,
+      labels: data.labels,
+      ...(data.logoPath !== undefined && { logo: data.logoPath })
+    });
+
+  if (error) {
+    console.error('Error updating company account info:', error.message);
+    return { error: error.message };
+  }
+
+  return { success: 'Company information updated successfully' };
+}
+
+export async function uploadCompanyLogo(
+  supabaseClient: SupabaseClient,
+  file: File
+): Promise<{ success: boolean; filePath?: string; error?: string }> {
+  const supabase = supabaseClient;
+  
+  // Get current user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error('Error fetching auth user:', authError?.message);
+    return { success: false, error: 'User not authenticated' };
+  }
+
+  // Generate unique filename
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+
+  // Upload file to logos bucket
+  const { error: uploadError } = await supabase.storage
+    .from('logos')
+    .upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: true
+    });
+
+  if (uploadError) {
+    console.error('Error uploading logo:', uploadError.message);
+    return { success: false, error: uploadError.message };
+  }
+
+  // Return just the filename since we use from('logos') to specify the bucket
+  return { success: true, filePath: fileName };
 }

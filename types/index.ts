@@ -133,7 +133,6 @@ export interface PlanAction {
 
 // Types for Eco Profile System
 export interface EcoProfile {
-  user_id_moral: string;
   raison_etre?: string;
   valeurs?: string;
   missions?: string;
@@ -145,7 +144,7 @@ export interface EcoProfile {
   url_facebook?: string;
   url_unique?: boolean;
   raison_sociale?: string;
-  logo_organisation?: string;
+  logo?: string;
 }
 
 export interface EcoProfileWithActions extends EcoProfile {

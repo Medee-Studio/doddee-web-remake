@@ -30,7 +30,7 @@ export default function KpisCards({ kpis }: { kpis: Kpi[] }) {
                       <span>{kpi.kpi_unit}</span>
                     </p>
                     <p
-                      className="text-muted-foreground text-xs text-center line-clamp-2"
+                      className="text-muted-foreground text-xs text-center line-clamp-2 mx-2"
                 
                     >
                       {kpi.kpi_label}
