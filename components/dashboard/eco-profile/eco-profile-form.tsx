@@ -4,8 +4,9 @@ import { EcoProfile } from "@/types";
 import { deepEqual, getURL } from "@/lib/helpers";
 import { upsertEcoProfile } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/client";
-import { Eye, Facebook, Instagram, Linkedin, Loader2 } from "lucide-react";
+import { Download, Eye, Facebook, Instagram, Linkedin, Loader2, QrCode } from "lucide-react";
 import { useState } from "react";
+import QRCode from "qrcode";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -34,6 +42,8 @@ export default function EcoProfileForm({
 }: EcoProfileFormProps) {
   const [modifiedProfile, setModifiedProfile] = useState<EcoProfile>(profile);
   const [loading, setLoading] = useState<boolean>(false);
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [qrCodeDialogOpen, setQrCodeDialogOpen] = useState<boolean>(false);
 
   const changeKey = (
     key: keyof EcoProfile,
@@ -64,6 +74,34 @@ export default function EcoProfileForm({
     window.location.reload();
   };
 
+  const generateQrCode = async () => {
+    try {
+      const url = `${getURL()}/ecoprofile/${uuid}`;
+      const qrCodeData = await QRCode.toDataURL(url, {
+        errorCorrectionLevel: 'H',
+        margin: 1,
+        width: 256,
+      });
+      setQrCode(qrCodeData);
+      setQrCodeDialogOpen(true);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      toast.error("Erreur lors de la génération du QR code");
+    }
+  };
+
+  const downloadQrCode = () => {
+    if (!qrCode) return;
+    
+    const link = document.createElement('a');
+    link.download = 'eco-profil-qr-code.png';
+    link.href = qrCode;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("QR Code téléchargé avec succès !");
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-6 p-6">
       <Card>
@@ -92,17 +130,28 @@ export default function EcoProfileForm({
             />
           </div>
 
-          <div className="flex md:flex-row flex-col space-y-2 md:space-y-0 md:space-x-6">
+          <div className="flex md:flex-row flex-col space-y-2 md:space-y-0 md:space-x-6 w-full">
             {profile.url_unique && (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => window.open(`${getURL()}/ecoprofile/${uuid}`)}
-              >
-                <Eye className="mr-2 h-4 w-4" /> Voir mon site
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => window.open(`${getURL()}/ecoprofile/${uuid}`)}
+                >
+                  <Eye className="mr-2 h-4 w-4" /> Voir mon site
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={generateQrCode}
+                  disabled={loading}
+                >
+                  <QrCode className="mr-2 h-4 w-4" /> QR Code
+                </Button>
+              </>
             )}
 
+          </div>
             {!deepEqual(modifiedProfile, profile) && (
               <Button
                 onClick={async () => await upsertData()}
@@ -113,7 +162,6 @@ export default function EcoProfileForm({
                 Sauvegarder les modifications
               </Button>
             )}
-          </div>
         </CardContent>
       </Card>
 
@@ -275,6 +323,34 @@ export default function EcoProfileForm({
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={qrCodeDialogOpen} onOpenChange={setQrCodeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>QR Code de votre éco-profil</DialogTitle>
+            <DialogDescription>
+              Scannez ce QR code pour accéder directement à votre éco-profil public.
+            </DialogDescription>
+          </DialogHeader>
+          {qrCode && (
+            <>
+              <div className="flex items-center justify-center p-6">
+                <img src={qrCode} alt="QR Code de l'éco-profil" className="h-64 w-64" />
+              </div>
+              <div className="flex justify-center">
+                <Button
+                  onClick={downloadQrCode}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Télécharger le QR Code
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

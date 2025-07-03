@@ -53,16 +53,24 @@ export default function EnjeuModal({
     action: ActionFormDataType,
     date: Date | undefined,
   ) => {
-    await onSelect(action, date);
-    // Fermer explicitement les deux modals
-    setObjectifModalOpen(false);
-    onOpenChange(false);
+    try {
+      await onSelect(action, date);
+      
+      setTimeout(() => {
+        setObjectifModalOpen(false);
+      }, 150);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 300);
+    } catch (error) {
+      console.error("Erreur lors de la sélection de l'action:", error);
+    }
   };
 
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="md:w-4/5 lg:max-w-3xl w-full">
+        <DialogContent className="md:w-4/5 lg:max-w-3xl w-full max-h-[80vh] overflow-y-scroll">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
               {whichClasseEmoji(enjeu.classe.nom_classe_enjeu)}{" "}

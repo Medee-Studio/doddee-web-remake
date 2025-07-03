@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -12,16 +13,9 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+
 import { ActionFormDataType } from "@/types";
-import { cn } from "@/lib/utils";
+
 
 type ActionCardProps = {
   action: ActionFormDataType;
@@ -36,7 +30,6 @@ export default function ActionCard({
 }: ActionCardProps) {
   const [showDateDialog, setShowDateDialog] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleButtonClick = () => {
     if (buttonType === "select") {
@@ -46,11 +39,24 @@ export default function ActionCard({
     }
   };
 
-  const handleConfirmSelection = () => {
-    onSelect(action, selectedDate);
-    setShowDateDialog(false);
-    setSelectedDate(undefined);
+  const handleConfirmSelection = async () => {
+    try {
+      await onSelect(action, selectedDate);
+      setShowDateDialog(false);
+      setSelectedDate(undefined);
+    } catch (error) {
+      console.error("Erreur lors de la sélection:", error);
+    }
   };
+
+  // Handle calendar date selection
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
+
+
 
   const getDifficultyColor = (nombre_sablier: number) => {
     if (nombre_sablier <= 2) return "bg-green-100 text-green-800 border-green-300";
@@ -119,47 +125,28 @@ export default function ActionCard({
       </Card>
 
       <Dialog open={showDateDialog} onOpenChange={setShowDateDialog}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent 
+          className="sm:max-w-[425px] max-h-[80vh] overflow-y-scroll"
+        >
           <DialogHeader>
             <DialogTitle>Définir une échéance</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 flex-1 overflow-y-auto">
             <p className="text-sm text-muted-foreground">
               Sélectionnez une date d&apos;échéance pour l&apos;action &quot;{action.nom_action}&quot; (optionnel)
             </p>
             
-            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
-                  )}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {selectedDate ? (
-                    format(selectedDate, "PPP", { locale: fr })
-                  ) : (
-                    "Choisir une date"
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => {
-                    setSelectedDate(date);
-                    setIsCalendarOpen(false);
-                  }}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="flex justify-center">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                disabled={(date) => date < new Date()}
+                className="rounded-md border"
+              />
+            </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="mt-6">
             <Button variant="outline" onClick={() => setShowDateDialog(false)}>
               Annuler
             </Button>

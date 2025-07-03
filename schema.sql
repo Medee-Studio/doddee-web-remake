@@ -492,3 +492,4 @@ EXCEPTION
     RETURN json_build_object('error', 'Erreur lors de la mise à jour des informations de l&apos;équipe: ' || SQLERRM);
 END;
 $$;
+
