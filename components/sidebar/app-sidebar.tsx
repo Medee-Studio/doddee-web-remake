@@ -10,6 +10,7 @@ import {
   Megaphone,
   Plus,
   CreditCard,
+  Files,
 } from "lucide-react"
 
 import { NavMain, type NavItem } from "./nav-main"
@@ -55,6 +56,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/dashboard/eco-profile",
       icon: Megaphone,
       isActive: pathname === "/dashboard/eco-profile",
+    },
+    {
+      title: "Formulaires",
+      url: "/dashboard/forms",
+      icon: Files,
+      isActive: pathname.startsWith("/dashboard/forms"),
     },
     {
       title: "Mes KPIs",
