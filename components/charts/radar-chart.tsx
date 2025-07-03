@@ -102,7 +102,7 @@ export function DashboardRadarChart({ data }: { data: Action[] }) {
   }, [pathname, searchParams]);
 
   return (
-    <Card className="xl:w-1/2 py-4">
+    <Card className="xl:w-full xl:h-full py-4">
       <CardContent className="pt-4 pb-0 px-4 h-full">
         {data && data.length > 0 ? (
           <ChartContainer

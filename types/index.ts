@@ -177,4 +177,20 @@ export interface KpiPayload {
 export interface ToSendSupabase {
   supabaseTableName: string;
   payload: KpiPayload[];
+}
+
+// NPS (Net Promoter Score) related types
+export interface NPSData {
+  total_responses: number;
+  average_score: number | null;
+  promoters: number;
+  passives: number;
+  detractors: number;
+  nps_score: number | null;
+}
+
+export interface UserMoralData {
+  actions: Action[];
+  kpis: any[];
+  nps: NPSData;
 } 

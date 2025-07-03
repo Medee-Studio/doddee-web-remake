@@ -47,18 +47,6 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
     }
   };
 
-  const getScoreLabel = (score: number) => {
-    if (score <= 6) return "Détracteur";
-    if (score <= 8) return "Passif";
-    return "Promoteur";
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score <= 6) return "text-red-600";
-    if (score <= 8) return "text-yellow-600";
-    return "text-green-600";
-  };
-
   if (hasSubmitted) {
     return (
       <Card className="w-full bg-green-50 border-green-200">
@@ -107,10 +95,7 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
           </div>
 
           <div className="text-center">
-            <div className="text-2xl font-bold mb-2">{score[0]}</div>
-            <div className={`text-lg font-medium ${getScoreColor(score[0])}`}>
-              {getScoreLabel(score[0])}
-            </div>
+            <div className="text-2xl font-bold mb-2">{score[0]}</div>            
           </div>
         </div>
 
