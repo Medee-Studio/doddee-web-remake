@@ -9,6 +9,7 @@ import * as z from "zod"
 import { Loader2, Upload, X, Trash2, Mail } from "lucide-react"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
+import type { User } from "@supabase/supabase-js"
 import { getCompanyAccountInfo, updateCompanyAccountInfo, uploadCompanyLogo } from "@/lib/supabase/queries"
 import { labels } from "@/lib/form-data/complete-profile"
 import { Button } from "@/components/ui/button"
@@ -45,6 +46,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import Image from "next/image"
+
 
 const companyFormSchema = z.object({
   raisonSociale: z.string().min(2, { message: "La raison sociale doit contenir au moins 2 caractères" }),
@@ -54,14 +57,7 @@ const companyFormSchema = z.object({
 
 type CompanyFormValues = z.infer<typeof companyFormSchema>
 
-interface User {
-  id: string;
-  email?: string;
-  user_metadata: any;
-  app_metadata: { 
-    provider?: string; 
-  };
-}
+
 
 export function AccountForm({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState(false)
@@ -348,10 +344,12 @@ export function AccountForm({ user }: { user: User }) {
                 <div className="mt-2 space-y-2">
                   {logo && (
                     <div className="relative w-24 h-24">
-                      <img 
+                      <Image 
                         src={logo} 
                         alt="Logo" 
-                        className="w-full h-full object-cover rounded-md border"
+                        className="object-cover rounded-md border"
+                        width={96}
+                        height={96}
                       />
                       <button
                         type="button"

@@ -1,39 +1,39 @@
 import { PageHeader } from "@/components/common/page-header";
-import KpisForm from "./kpis-form";
-import { redirectToPath } from "@/lib/auth/server";
-import { getStatusRedirect } from "@/lib/helpers";
-import { getUser } from "@/lib/supabase/queries";
+import { getUser, getAllKpisForUser } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
-import { Kpi } from "@/types";
+import { KpiCard } from "@/components/dashboard/kpis/kpi-card";
 
 export default async function KpisContent() {
   const supabase = await createClient();
   const user = await getUser(supabase);
-  
-  let utilisateurs_moraux_kpis: Kpi[] | null = null;
-  
-  if (user) {
-    const { data, error } = await supabase
-      .from("utilisateurs_moraux_kpis")
-      .select("kpi_type,kpi_value,kpi_label")
-      .eq("user_id_moral", user.id);
-    
-    utilisateurs_moraux_kpis = data;
-    
-    if (error) {
-      const redirectPath = getStatusRedirect(
-        "/dashboard",
-        "Erreur",
-        "Vos KPIs précédemment remplis n'ont pas pu être récupérés.",
-      );
-      return redirectToPath(redirectPath);
-    }
+
+  if (!user) {
+    return (
+      <>
+        <PageHeader title="Indicateurs de performance (KPIs)" />
+        <div className="p-6">
+          <p className="text-muted-foreground">Vous devez être connecté pour voir vos KPIs.</p>
+        </div>
+      </>
+    );
   }
+
+  const kpis = await getAllKpisForUser(supabase);
 
   return (
     <>
       <PageHeader title="Indicateurs de performance (KPIs)" />
-      <KpisForm kpis={utilisateurs_moraux_kpis} />
+      <div className="p-6">
+        {!kpis || kpis.length === 0 ? (
+          <p className="text-muted-foreground">Aucun KPI disponible pour le moment.</p>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {kpis.map((kpi) => (
+              <KpiCard key={kpi.id_kpi} kpi={kpi} />
+            ))}
+          </div>
+        )}
+      </div>
     </>
   );
 }
