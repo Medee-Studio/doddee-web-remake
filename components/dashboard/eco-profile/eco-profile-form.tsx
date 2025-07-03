@@ -28,6 +28,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface EcoProfileFormProps {
   profile: EcoProfile;
@@ -335,7 +336,7 @@ export default function EcoProfileForm({
           {qrCode && (
             <>
               <div className="flex items-center justify-center p-6">
-                <img src={qrCode} alt="QR Code de l'éco-profil" className="h-64 w-64" />
+                <Image src={qrCode} alt="QR Code de l'éco-profil" className="h-64 w-64" width={256} height={256} />
               </div>
               <div className="flex justify-center">
                 <Button

@@ -74,30 +74,9 @@ export function NavUser() {
 
       if (user) {
         const email = user.email || ""
-        const firstName = user.user_metadata?.first_name as string | undefined
-        const lastName = user.user_metadata?.last_name as string | undefined
-
-        let displayName = ""
-        if (firstName && lastName) {
-          displayName = `${firstName} ${lastName}`
-        } else if (firstName) {
-          displayName = firstName
-        } else if (lastName) {
-          displayName = lastName
-        } else {
-          displayName = email || "User" // Fallback
-        }
-
-        let initials = "U"
-        if (firstName && lastName) {
-          initials = `${firstName[0]}${lastName[0]}`.toUpperCase()
-        } else if (firstName) {
-          initials = firstName[0].toUpperCase()
-        } else if (lastName) {
-          initials = lastName[0].toUpperCase()
-        } else if (email) {
-          initials = email[0].toUpperCase()
-        }
+        
+        const displayName = email || "User" // Use email as display name
+        const initials = email ? email[0].toUpperCase() : "U" // Use first letter of email
         
         setUserDetails({ displayName, email, initials })
       } else {
@@ -160,7 +139,6 @@ export function NavUser() {
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{userDetails.displayName}</span>
-                <span className="truncate text-xs text-muted-foreground">{userDetails.email}</span>
               </div>
               <EllipsisVertical className="ml-auto h-4 w-4" />
             </SidebarMenuButton>
@@ -178,9 +156,6 @@ export function NavUser() {
               </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{userDetails.displayName}</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {userDetails.email}
-                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -192,20 +167,6 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuGroup>
-              {theme === "light" ? (
-                <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
-                  <Moon className="mr-2 h-4 w-4" />
-                  <span>Passer au thème sombre</span>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
-                  <Sun className="mr-2 h-4 w-4" />
-                  <span>Passer au thème clair</span>
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuGroup> */}
-            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
               <LogOutIcon className="mr-2 h-4 w-4" />
               <span>Déconnexion</span>
