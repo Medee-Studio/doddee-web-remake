@@ -619,16 +619,15 @@ export async function upsertEcoProfile(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { raison_sociale, logo, ...restOfProfile } = profile;
 
-  // RLS on 'eco_profils' ensures users can only update their own profile
+  // RLS on 'eco_profiles' ensures users can only update their own profile
   const { error } = await supabase
-    .from("eco_profils")
+    .from("eco_profiles")
     .upsert(
       {
-        id: userId,
+        user_id_moral: userId,
         ...restOfProfile,
-        updated_at: new Date().toISOString(),
       },
-      { onConflict: "id" }
+      { onConflict: "user_id_moral" }
     )
     .select()
     .single();
