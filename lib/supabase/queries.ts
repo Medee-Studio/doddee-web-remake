@@ -1259,6 +1259,7 @@ export async function getUtilisateurMorauxSecteurAndCategory(supabaseClient: Sup
     sous_secteur_id: moralData?.sous_secteur_id || null,
     categories: categoriesData || null
   };
+}
 
 // MAP DATA FUNCTIONS
 export interface PublicUtilisateurMoral {
