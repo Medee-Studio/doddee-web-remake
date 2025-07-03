@@ -1,7 +1,7 @@
 import { Kpi } from "@/types";
 import { whichEmoji } from "@/lib/helpers";
-import { Activity, PlusCircle } from "lucide-react";
-import Link from "next/link";
+import { Activity } from "lucide-react";
+
 import { Card } from "@/components/ui/card";
 import {
   Carousel,
