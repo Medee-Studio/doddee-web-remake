@@ -52,9 +52,6 @@ export default function KpisCards({ kpis }: { kpis: Kpi[] }) {
         </div>
       ) : (
         <div className="w-full ">
-          <Carousel opts={{ align: "start" }}>
-            <CarouselContent>
-              <CarouselItem className="basis-full md:basis-1/3">
                 <Card className="w-full flex flex-col relative justify-between py-4 px-4">
                   <Activity className="mt-2 ml-2 h-4 w-4" strokeWidth={3} />
                   <div className="flex flex-col items-center justify-center h-[150px] p-3">
@@ -74,9 +71,6 @@ export default function KpisCards({ kpis }: { kpis: Kpi[] }) {
                     </p>
                   </div>
                 </Card>
-              </CarouselItem>
-            </CarouselContent>
-          </Carousel>
         </div>
       )}
     </>

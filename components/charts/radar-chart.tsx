@@ -72,7 +72,7 @@ export function DashboardRadarChart({ data }: { data: Action[] }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [key, setKey] = useState<number>(0);
-  
+
   const processedData = useMemo(() => {
     if (!data) return [];
     // Group actions by enjeu
@@ -103,8 +103,8 @@ export function DashboardRadarChart({ data }: { data: Action[] }) {
 
   return (
     <Card className="xl:w-1/2 py-4">
-      <CardContent className="pt-4 pb-0 px-4">
-        {data ? (
+      <CardContent className="pt-4 pb-0 px-4 h-full">
+        {data && data.length > 0 ? (
           <ChartContainer
             config={chartConfig}
             className="mx-auto w-full max-h-[250px]"
@@ -121,7 +121,9 @@ export function DashboardRadarChart({ data }: { data: Action[] }) {
             </RadarChart>
           </ChartContainer>
         ) : (
-          <p></p>
+          <div className="flex flex-col items-center justify-center py-8 text-center h-full">
+            <p className="text-sm text-muted-foreground">Aucune donnée disponible</p>
+          </div>
         )}
       </CardContent>
       <CardHeader className="items-center pb-4 px-4">
