@@ -17,6 +17,7 @@ import { QuestionTree, QuestionNode, FormAnswer, QuestionnaireState, KpiData, Qu
 import { createClient } from "@/lib/supabase/client";
 import { saveQuestionnaireData } from "@/lib/supabase/queries";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface QuestionnaireProps {
   questionTree: QuestionTree;
@@ -45,6 +46,7 @@ interface QuestionnaireProps {
  * - Step 1, Question 3: "1-3" → Answer stored as {questionKey: "1-3", answer: "Non"} (separate from "0-3")
  */
 export default function Questionnaire({ questionTree, questionnaireType }: QuestionnaireProps) {
+  const router = useRouter();
   const [state, setState] = useState<QuestionnaireState>({
     answers: [],
     valide_id_actions: [],
@@ -67,6 +69,7 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
       
       if ('success' in result) {
         toast.success(result.success);
+        router.push("/dashboard/actions");
       } else {
         toast.error(result.error);
       }
