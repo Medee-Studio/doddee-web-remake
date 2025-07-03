@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
-import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload } from '@/types';
+import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType, Action, PJ, UserMoralPJ } from '@/types';
 import { cache } from 'react';
 
 // Define types for RPC data structures
@@ -437,7 +437,7 @@ export const getUserMoralData = cache(async (supabase: SupabaseClient) => {
     if (rpcError) {
       throw new Error("Failed to get user moral data");
     }
-
+    console.log("userMoralData", userMoralData)
     return userMoralData;
   } else {
     throw new Error("No active session found");
@@ -473,6 +473,7 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
       .from("utilisateurs_moraux_actions")
       .select(
         `
+        id,
         id_action,
         action_status,
         deadline,
@@ -489,49 +490,12 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
 
     if (queryError) {
       console.warn("Database query failed, using mock data:", queryError.message);
-      
-      // Return mock data for demonstration purposes when tables don't exist
-      const mockActions: PlanAction[] = [
-        {
-          action_data: {
-            id: 1,
-            nom_action: "Mise en place d'un programme de recyclage",
-            action_type: 'environnement',
-          },
-          user_action_data: {
-            deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-            action_status: 'en_cours',
-          },
-        },
-        {
-          action_data: {
-            id: 2,
-            nom_action: "Formation du personnel sur la diversité",
-            action_type: 'social',
-          },
-          user_action_data: {
-            deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
-            action_status: 'en_cours_validation',
-          },
-        },
-        {
-          action_data: {
-            id: 3,
-            nom_action: "Audit de transparence financière",
-            action_type: 'gouvernance',
-          },
-          user_action_data: {
-            deadline: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(), // 21 days from now
-            action_status: 'valide',
-          },
-        },
-      ];
-      
-      return mockActions;
+      return [];
     }
 
     // Define the query result type
     interface QueryResult {
+      id?: number;
       id_action?: number;
       action_status?: string;
       deadline?: string;
@@ -577,12 +541,13 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
             action_type: validActionType,
           },
           user_action_data: {
+            id_utilisateur_moral_action: item.id || 0,
             deadline: item.deadline || '',
             action_status: validActionStatus,
           },
         };
       })
-      .filter((item) => item.action_data.id !== 0); // Filter out invalid items
+      .filter((item) => item.action_data.id !== 0 && item.user_action_data.id_utilisateur_moral_action !== 0); // Filter out invalid items
 
     return transformedActions;
   } catch (queryError) {
@@ -618,24 +583,62 @@ export async function getEcoProfileById(supabase: SupabaseClient, profileId: str
     return null;
   }
 
-  return data as EcoProfileWithActions;
+  const profile = data as EcoProfileWithActions;
+
+  // If there's a logo path, convert it to a signed URL (works for private buckets)
+  if (profile.logo) {
+    // Remove "logos/" prefix if it exists (for backward compatibility)
+    const logoFileName = profile.logo.startsWith('logos/') ? profile.logo.replace('logos/', '') : profile.logo;
+    
+    const { data: signedUrlData, error: urlError } = await supabase
+      .storage
+      .from('logos')
+      .createSignedUrl(logoFileName, 60 * 60 * 24); // Expires in 24 hours
+    
+    if (!urlError && signedUrlData?.signedUrl) {
+      profile.logo = signedUrlData.signedUrl;
+    } else {
+      console.error('Error creating signed URL for eco profile logo:', urlError);
+      profile.logo = undefined; // Set to undefined if we can't get the signed URL
+    }
+  }
+
+  return profile;
 }
 
 export async function upsertEcoProfile(
   supabase: SupabaseClient,
   profile: EcoProfile
 ): Promise<ActionResult> {
-  const { error } = await supabase
-    .from("eco_profiles")
-    .upsert(profile)
-    .eq("user_id_moral", profile.user_id_moral);
-
-  if (error) {
-    console.error('Error upserting eco profile:', error.message);
-    return { error: 'Impossible de sauvegarder votre profil écologique.' };
+  const userResponse = await supabase.auth.getUser();
+  if (userResponse.error) {
+    return { error: "Erreur d'authentification" };
   }
 
-  return { success: 'Votre profil écologique a été sauvegardé avec succès.' };
+  const userId = userResponse.data.user.id;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { raison_sociale, logo, ...restOfProfile } = profile;
+
+  // RLS on 'eco_profils' ensures users can only update their own profile
+  const { error } = await supabase
+    .from("eco_profils")
+    .upsert(
+      {
+        id: userId,
+        ...restOfProfile,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "id" }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error upserting eco profile:", error);
+    return { error: "Erreur lors de la mise à jour de l'éco-profil" };
+  }
+
+  return { success: "Éco-profil mis à jour avec succès" };
 }
 
 // KPI Queries - Debug function to check what exists in database
@@ -809,6 +812,66 @@ export async function upsertKpis(
   }
 }
 
+
+export interface CompleteProfileData {
+  raison_sociale: string;
+  tel: string;
+  siren: string;
+  adresse: string;
+  annee_de_creation: number;
+  labels: string[];
+  coordonnees: number[];
+  secteur: string;
+  sous_secteur: string;
+  fonction: string;
+  flotte_vehicule: boolean;
+  plus_de_un_salarie: boolean;
+  locaux: boolean;
+  parc_informatique: boolean;
+  site_web: boolean;
+  site_de_production: boolean;
+  approvisionnement: boolean;
+  distribution: boolean;
+  stock: boolean;
+}
+
+export async function submitCompleteProfile(
+  supabaseClient: SupabaseClient,
+  data: CompleteProfileData
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  
+  const { data: result, error } = await supabase.rpc('create_complete_profile', {
+    p_raison_sociale: data.raison_sociale,
+    p_tel: data.tel,
+    p_siren: data.siren,
+    p_adresse: data.adresse,
+    p_annee_de_creation: data.annee_de_creation,
+    p_labels: data.labels,
+    p_coordinates: data.coordonnees,
+    p_secteur_id: parseInt(data.secteur),
+    p_sous_secteur_id: parseInt(data.sous_secteur),
+    p_fonction: data.fonction,
+    p_flotte_vehicule: data.flotte_vehicule,
+    p_plus_de_un_salarie: data.plus_de_un_salarie,
+    p_locaux: data.locaux,
+    p_parc_informatique: data.parc_informatique,
+    p_site_web: data.site_web,
+    p_site_de_production: data.site_de_production,
+    p_approvisionnement: data.approvisionnement,
+    p_distribution: data.distribution,
+    p_stock: data.stock
+  });
+
+  console.log('🔍 [submitCompleteProfile] Result:', result);
+
+  if (error) {
+    console.error('Error creating complete profile:', error);
+    return { error: error.message };
+  }
+
+  return { success: 'Complete profile created successfully' };
+}
 // USER SUBSCRIPTION FUNCTIONS
 export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, userId?: string) {
   console.log('[QUERY] getUserSubscriptionStatus called with userId:', userId);
@@ -903,6 +966,13 @@ export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, 
 }
 
 export async function getUserByStripeCustomerId(supabaseClient: SupabaseClient, customerId: string) {
+  console.log('[WEBHOOK] getUserByStripeCustomerId called with:', { customerId });
+  
+  if (!customerId) {
+    console.error('[WEBHOOK] getUserByStripeCustomerId: customerId is required');
+    return null;
+  }
+
   const supabase = supabaseClient;
   const { data, error } = await supabase
     .from('users')
@@ -911,11 +981,25 @@ export async function getUserByStripeCustomerId(supabaseClient: SupabaseClient, 
     .single();
 
   if (error) {
-    if (error.code !== 'PGRST116') { 
-        console.error('Error fetching user by Stripe customer ID:', error.message);
+    if (error.code === 'PGRST116') {
+      console.log('[WEBHOOK] getUserByStripeCustomerId: No user found for Stripe customer:', customerId);
+    } else {
+      console.error('[WEBHOOK] getUserByStripeCustomerId: Database error:', {
+        code: error.code,
+        message: error.message,
+        customerId
+      });
     }
     return null;
   }
+  
+  console.log('[WEBHOOK] getUserByStripeCustomerId: User found:', {
+    userId: data.id,
+    email: data.email,
+    currentPlan: data.plan_name,
+    currentStatus: data.subscription_status
+  });
+  
   return data;
 }
 
@@ -929,6 +1013,16 @@ export async function updateUserSubscription(
     subscription_status: string;
   }
 ) {
+  console.log('[WEBHOOK] updateUserSubscription called with:', {
+    userId,
+    subscriptionData
+  });
+  
+  if (!userId) {
+    console.error('[WEBHOOK] updateUserSubscription: userId is required');
+    return null;
+  }
+
   const supabase = supabaseClient;
   const { data, error } = await supabase
     .from('users')
@@ -943,9 +1037,22 @@ export async function updateUserSubscription(
     .single();
 
   if (error) {
-    console.error('Error updating user subscription:', error.message);
+    console.error('[WEBHOOK] updateUserSubscription: Database error:', {
+      code: error.code,
+      message: error.message,
+      userId,
+      subscriptionData
+    });
     return null;
   }
+  
+  console.log('[WEBHOOK] updateUserSubscription: Successfully updated user:', {
+    userId,
+    newPlan: data.plan_name,
+    newStatus: data.subscription_status,
+    stripeSubscriptionId: data.stripe_subscription_id
+  });
+  
   return data;
 }
 
@@ -967,4 +1074,935 @@ export async function createUserStripeCustomer(
     return null;
   }
   return data;
+}
+
+interface QuestionnaireData {
+  answers: Array<{
+    questionKey: string;
+    questionText: string;
+    answer: string | number | string[];
+  }>;
+  valide_id_actions: number[];
+  disponible_id_actions: number[];
+  kpis: Array<{
+    questionId: string;
+    questionText: string;
+    kpiId: number;
+    answer: string | number | string[];
+  }>;
+}
+
+export async function saveQuestionnaireData(
+  supabaseClient: SupabaseClient,
+  questionnaireData: QuestionnaireData,
+  questionnaireType: QuestionnaireType
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  const user = await getUser(supabase);
+  
+  if (!user) {
+    return { error: 'Utilisateur non authentifié.' };
+  }
+
+  try {
+    // 1. Insert actions with status "valide"
+    if (questionnaireData.valide_id_actions.length > 0) {
+      const valideActions = questionnaireData.valide_id_actions.map(actionId => ({
+        user_id_moral: user.id,
+        id_action: actionId,
+        action_status: 'valide'
+      }));
+
+      const { error: valideActionsError } = await supabase
+        .from('utilisateurs_moraux_actions')
+        .insert(valideActions);
+
+      if (valideActionsError) {
+        console.error('Error inserting valide actions:', valideActionsError.message);
+        return { error: 'Erreur lors de l\'enregistrement des actions validées.' };
+      }
+    }
+
+    // 2. Insert actions with status "disponible"
+    if (questionnaireData.disponible_id_actions.length > 0) {
+      const disponibleActions = questionnaireData.disponible_id_actions.map(actionId => ({
+        user_id_moral: user.id,
+        id_action: actionId,
+        action_status: 'disponible'
+      }));
+
+      const { error: disponibleActionsError } = await supabase
+        .from('utilisateurs_moraux_actions')
+        .insert(disponibleActions);
+
+      if (disponibleActionsError) {
+        console.error('Error inserting disponible actions:', disponibleActionsError.message);
+        return { error: 'Erreur lors de l\'enregistrement des actions disponibles.' };
+      }
+    }
+
+    // 3. Insert KPIs
+    if (questionnaireData.kpis.length > 0) {
+      const kpiInserts = questionnaireData.kpis.map(kpi => ({
+        user_id_moral: user.id,
+        id_kpi: kpi.kpiId,
+        question: kpi.questionText,
+        answer: kpi.answer.toString() // Convert to string as per table schema
+      }));
+
+      const { error: kpisError } = await supabase
+        .from('utilisateurs_moraux_kpis')
+        .insert(kpiInserts);
+
+      if (kpisError) {
+        console.error('Error inserting KPIs:', kpisError.message);
+        return { error: 'Erreur lors de l\'enregistrement des KPIs.' };
+      }
+    }
+
+    // 4. Insert form answers - dynamically select table based on questionnaire type
+    if (questionnaireData.answers.length > 0) {
+      const answerInserts = questionnaireData.answers.map(answer => ({
+        user_id_moral: user.id,
+        question: answer.questionText,
+        answer: Array.isArray(answer.answer) 
+          ? answer.answer.join(', ') // Convert array to comma-separated string
+          : answer.answer.toString()
+      }));
+
+      // Determine target table based on questionnaire type
+      const getTableName = (type: QuestionnaireType): string => {
+        switch (type) {
+          case "environnement":
+            return "utilisateurs_moraux_environnement_response";
+          case "social":
+            return "utilisateurs_moraux_social_response";
+          case "gouvernance":
+            return "utilisateurs_moraux_gouvernance_response";
+          default:
+            return "utilisateurs_moraux_environnement_response"; // fallback
+        }
+      };
+
+      const tableName = getTableName(questionnaireType);
+      console.log(`Inserting answers into table: ${tableName}`);
+
+      const { error: answersError } = await supabase
+        .from(tableName)
+        .insert(answerInserts);
+
+      if (answersError) {
+        console.error(`Error inserting answers into ${tableName}:`, answersError.message);
+        return { error: 'Erreur lors de l\'enregistrement des réponses.' };
+      }
+    }
+
+    return { success: 'Questionnaire sauvegardé avec succès.' };
+  } catch (error) {
+    console.error('Unexpected error in saveQuestionnaireData:', error);
+    return { error: 'Une erreur inattendue s\'est produite lors de la sauvegarde.' };
+  }
+  }
+
+// Type for combined sector and category data
+export interface UtilisateurMorauxSecteurAndCategory {
+  sous_secteur_id: number | null;
+  categories: {
+    id: number;
+    user_id: string;
+    flotte_vehicule: boolean | null;
+    plus_de_un_salarie: boolean | null;
+    locaux: boolean | null;
+    parc_informatique: boolean | null;
+    site_web: boolean | null;
+    site_de_production: boolean | null;
+    approvisionnement: boolean | null;
+    distribution: boolean | null;
+    stock: boolean | null;
+  } | null;
+}
+
+export async function getUtilisateurMorauxSecteurAndCategory(supabaseClient: SupabaseClient): Promise<UtilisateurMorauxSecteurAndCategory | null> {
+  const supabase = supabaseClient;
+  
+  // Get the current user first
+  const authUser = await getUser(supabaseClient);
+  if (!authUser) {
+    console.error('No authenticated user found');
+    return null;
+  }
+
+  // Get sous_secteur_id from utilisateurs_moraux
+  const { data: moralData, error: moralError } = await supabase
+    .from('utilisateurs_moraux')
+    .select('sous_secteur_id')
+    .eq('user_id_moral', authUser.id)
+    .single();
+
+  if (moralError) {
+    if (moralError.code !== 'PGRST116') {
+      console.error('Error fetching user moral data:', moralError.message);
+    }
+    return null;
+  }
+
+  // Get all data from utilisateurs_moraux_categories
+  const { data: categoriesData, error: categoriesError } = await supabase
+    .from('utilisateurs_moraux_categories')
+    .select('*')
+    .eq('user_id', authUser.id)
+    .single();
+
+  if (categoriesError && categoriesError.code !== 'PGRST116') {
+    console.error('Error fetching user categories data:', categoriesError.message);
+  }
+
+  return {
+    sous_secteur_id: moralData?.sous_secteur_id || null,
+    categories: categoriesData || null
+  };
+}
+
+// MAP DATA FUNCTIONS
+export interface PublicUtilisateurMoral {
+  user_id_moral: string;
+  raison_sociale: string | null;
+  secteur_id: number | null;
+  sous_secteur_id: number | null;
+  coordinates: [number, number] | null; // [lng, lat] array format from database
+  labels: {
+    certifications?: string[];
+  } | null;
+}
+
+export async function getPublicUtilisateursMoraux(
+  supabaseClient: SupabaseClient,
+  searchTerm?: string,
+  sousSecteurId?: number
+): Promise<PublicUtilisateurMoral[]> {
+  const supabase = supabaseClient;
+  
+  try {
+    // Try to use RPC function first
+    const { data, error } = await supabase.rpc('get_public_utilisateurs_moraux', {
+      p_search_term: searchTerm || null,
+      p_sous_secteur_id: sousSecteurId || null,
+    });
+
+    if (error) {
+      if (error.code === 'PGRST202') {
+        console.log('RPC function not found, using direct table query');
+        // Fallback to direct table query
+        let query = supabase
+          .from('utilisateurs_moraux')
+          .select('user_id_moral, raison_sociale, secteur_id, sous_secteur_id, coordinates, labels')
+          .not('coordinates', 'is', null)
+          .not('raison_sociale', 'is', null);
+
+        if (searchTerm) {
+          query = query.ilike('raison_sociale', `%${searchTerm}%`);
+        }
+
+        if (sousSecteurId) {
+          query = query.eq('sous_secteur_id', sousSecteurId);
+        }
+
+        const { data: directData, error: directError } = await query.limit(100);
+
+        if (directError) {
+          console.warn('Direct table query failed, using mock data:', directError.message);
+          return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+        }
+
+        return directData || [];
+      } else {
+        console.error('RPC error:', error.message);
+        return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+      }
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching public utilisateurs moraux:', error);
+    return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+  }
+}
+
+function getMockUtilisateursMoraux(searchTerm?: string, sousSecteurId?: number): PublicUtilisateurMoral[] {
+  const mockData: PublicUtilisateurMoral[] = [
+    {
+      user_id_moral: '1',
+      raison_sociale: 'EcoAgri Solutions',
+      secteur_id: 1, // Alimentation, agriculture et élevage
+      sous_secteur_id: 1, // Agriculture & production agricole
+      coordinates: [2.3522, 48.8566], // Paris [lng, lat]
+      labels: { certifications: ['ISO 14001', 'Agriculture Biologique'] }
+    },
+    {
+      user_id_moral: '2',
+      raison_sociale: 'Studio Créatif Durable',
+      secteur_id: 2, // Arts, cinéma, culture
+      sous_secteur_id: 16, // Centres culturels
+      coordinates: [4.8357, 45.7640], // Lyon [lng, lat]
+      labels: { certifications: ['B Corp', 'Label Écologique'] }
+    },
+    {
+      user_id_moral: '3',
+      raison_sociale: 'GreenConseil Audit',
+      secteur_id: 4, // Audit, gestion, conseil, droit
+      sous_secteur_id: 21, // Cabinet de conseil
+      coordinates: [5.3698, 43.2965], // Marseille [lng, lat]
+      labels: { certifications: ['ISO 9001', 'Fair Trade'] }
+    },
+    {
+      user_id_moral: '4',
+      raison_sociale: 'EcoMobility France',
+      secteur_id: 5, // Automobiles, véhicules
+      sous_secteur_id: 27, // Location & vente de vélos et trottinettes
+      coordinates: [-1.5536, 47.2184], // Nantes [lng, lat]
+      labels: { certifications: ['LEED', 'ISO 14001'] }
+    },
+    {
+      user_id_moral: '5',
+      raison_sociale: 'Digital Green Solutions',
+      secteur_id: 11, // Digital, internet, logiciels
+      sous_secteur_id: 64, // Plateformes, logiciels et applications
+      coordinates: [1.4442, 43.6047], // Toulouse [lng, lat]
+      labels: { certifications: ['ISO 26000', 'GreenIT'] }
+    },
+    {
+      user_id_moral: '6',
+      raison_sociale: 'ÉcoBâtiment & Co',
+      secteur_id: 9, // Construction, travaux publics, immobilier, architecture
+      sous_secteur_id: 51, // Construction & Travaux publics
+      coordinates: [0.1079, 49.4944], // Le Havre [lng, lat]
+      labels: { certifications: ['HQE', 'BREEAM'] }
+    }
+  ];
+
+  let filteredData = mockData;
+
+  if (searchTerm) {
+    filteredData = filteredData.filter(item => 
+      item.raison_sociale?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  if (sousSecteurId) {
+    filteredData = filteredData.filter(item => item.sous_secteur_id === sousSecteurId);
+  }
+
+  return filteredData;
+
+
+}
+
+// PDF Report Data Types and Functions
+export interface QuestionnaireResponse {
+  id: number;
+  user_id_moral: string;
+  question: string;
+  answer: string;
+  created_at: string;
+}
+
+export interface ReportData {
+  userProfile: EnterpriseInfo | null;
+  responses: QuestionnaireResponse[];
+  actions: Action[];
+  reportType: 'environnement' | 'social' | 'gouvernance';
+}
+
+// Query functions for PDF report data
+export async function getEnvironnementResponses(supabaseClient: SupabaseClient): Promise<QuestionnaireResponse[]> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux_environnement_response')
+    .select('*')
+    .eq('user_id_moral', session.user.id)
+    .order('created_at', { ascending: true });
+
+  if (queryError) {
+    console.error('Error fetching environnement responses:', queryError);
+    throw new Error('Failed to fetch environnement responses');
+  }
+
+  return data || [];
+}
+
+export async function getSocialResponses(supabaseClient: SupabaseClient): Promise<QuestionnaireResponse[]> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux_social_response')
+    .select('*')
+    .eq('user_id_moral', session.user.id)
+    .order('created_at', { ascending: true });
+
+  if (queryError) {
+    console.error('Error fetching social responses:', queryError);
+    throw new Error('Failed to fetch social responses');
+  }
+
+  return data || [];
+}
+
+export async function getGouvernanceResponses(supabaseClient: SupabaseClient): Promise<QuestionnaireResponse[]> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux_gouvernance_response')
+    .select('*')
+    .eq('user_id_moral', session.user.id)
+    .order('created_at', { ascending: true });
+
+  if (queryError) {
+    console.error('Error fetching gouvernance responses:', queryError);
+    throw new Error('Failed to fetch gouvernance responses');
+  }
+
+  return data || [];
+}
+
+// Enterprise information interface
+export interface EnterpriseInfo {
+  raison_sociale: string | null;
+  tel: string | null;
+  siren: string | null;
+  adresse: string | null;
+  annee_de_creation: number | null;
+  labels: string[] | null;
+}
+
+export async function getEnterpriseInfo(supabaseClient: SupabaseClient): Promise<EnterpriseInfo | null> {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  if (error || !session) {
+    throw new Error("No active session found");
+  }
+
+  const { data, error: queryError } = await supabaseClient
+    .from('utilisateurs_moraux')
+    .select('raison_sociale, tel, siren, adresse, annee_de_creation, labels')
+    .eq('user_id_moral', session.user.id)
+    .single();
+
+  if (queryError) {
+    console.error('Error fetching enterprise info:', queryError);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getReportData(
+  supabaseClient: SupabaseClient, 
+  reportType: 'environnement' | 'social' | 'gouvernance'
+): Promise<ReportData> {
+  // Get enterprise information from utilisateurs_moraux table
+  const enterpriseInfo = await getEnterpriseInfo(supabaseClient);
+  
+  // Get user moral data for actions
+  const userMoralData = await getUserMoralData(supabaseClient);
+  
+  // Get questionnaire responses based on type
+  let responses: QuestionnaireResponse[] = [];
+  switch (reportType) {
+    case 'environnement':
+      responses = await getEnvironnementResponses(supabaseClient);
+      break;
+    case 'social':
+      responses = await getSocialResponses(supabaseClient);
+      break;
+    case 'gouvernance':
+      responses = await getGouvernanceResponses(supabaseClient);
+      break;
+  }
+
+  // Get actions filtered by type
+  const allActions = userMoralData?.actions || [];
+  const filteredActions = allActions.filter((action: Action) => action.action_type === reportType);
+
+  return {
+    userProfile: enterpriseInfo,
+    responses,
+    actions: filteredActions,
+    reportType
+  };
+
+}
+
+// New queries for company account information
+export interface CompanyAccountInfo {
+  user_id_moral: string;
+  raison_sociale: string | null;
+  tel: string | null;
+  labels: string[] | null;
+  logo: string | null;
+}
+
+export async function getCompanyAccountInfo(supabaseClient: SupabaseClient): Promise<CompanyAccountInfo | null> {
+  const supabase = supabaseClient;
+  
+  // Get current user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error('Error fetching auth user:', authError?.message);
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('utilisateurs_moraux')
+    .select('user_id_moral, raison_sociale, tel, labels, logo')
+    .eq('user_id_moral', user.id)
+    .single();
+
+  if (error) {
+    if (error.code !== 'PGRST116') {
+      console.error('Error fetching company account info:', error.message);
+    }
+    return null;
+  }
+
+  // If there's a logo path, get the signed URL (works for private buckets)
+  let logoUrl = null;
+  if (data.logo) {
+    // Remove "logos/" prefix if it exists (for backward compatibility)
+    const logoFileName = data.logo.startsWith('logos/') ? data.logo.replace('logos/', '') : data.logo;
+    
+    const { data: signedUrlData, error: urlError } = await supabase
+      .storage
+      .from('logos')
+      .createSignedUrl(logoFileName, 60 * 60 * 24); // Expires in 24 hours
+    
+    if (!urlError && signedUrlData?.signedUrl) {
+      logoUrl = signedUrlData.signedUrl;
+    } else {
+      console.error('Error creating signed URL:', urlError);
+    }
+  }
+
+  return {
+    ...data,
+    logo: logoUrl
+  };
+}
+
+export async function updateCompanyAccountInfo(
+  supabaseClient: SupabaseClient,
+  data: {
+    raison_sociale: string;
+    tel: string;
+    labels: string[];
+    logoPath?: string | null;
+  }
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  
+  // Get current user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error('Error fetching auth user:', authError?.message);
+    return { error: 'User not authenticated' };
+  }
+
+  const { error } = await supabase
+    .from('utilisateurs_moraux')
+    .upsert({
+      user_id_moral: user.id,
+      raison_sociale: data.raison_sociale,
+      tel: data.tel,
+      labels: data.labels,
+      ...(data.logoPath !== undefined && { logo: data.logoPath })
+    });
+
+  if (error) {
+    console.error('Error updating company account info:', error.message);
+    return { error: error.message };
+  }
+
+  return { success: 'Company information updated successfully' };
+}
+
+export async function uploadCompanyLogo(
+  supabaseClient: SupabaseClient,
+  file: File
+): Promise<{ success: boolean; filePath?: string; error?: string }> {
+  const supabase = supabaseClient;
+  
+  // Get current user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error('Error fetching auth user:', authError?.message);
+    return { success: false, error: 'User not authenticated' };
+  }
+
+  // Generate unique filename
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+
+  // Upload file to logos bucket
+  const { error: uploadError } = await supabase.storage
+    .from('logos')
+    .upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: true
+    });
+
+  if (uploadError) {
+    console.error('Error uploading logo:', uploadError.message);
+    return { success: false, error: uploadError.message };
+  }
+
+  // Return just the filename since we use from('logos') to specify the bucket
+  return { success: true, filePath: fileName };
+}
+
+// PJs (Pièces Justificatives) related functions
+// Interface for the actions_pjs query result
+interface ActionPJQueryResult {
+  id_pj: number;
+  pjs: PJ[];
+}
+
+export async function getActionPJs(
+  supabaseClient: SupabaseClient,
+  actionId: number
+): Promise<PJ[]> {
+  const { data, error } = await supabaseClient
+    .from('actions_pjs')
+    .select(`
+      id_pj,
+      pjs (
+        id_pj,
+        titre,
+        description
+      )
+    `)
+    .eq('id_action', actionId);
+
+  if (error) {
+    console.error('Error fetching action PJs:', error.message);
+    return [];
+  }
+
+  return data?.flatMap((item: ActionPJQueryResult) => item.pjs).filter(Boolean) || [];
+}
+
+// Interface for the utilisateurs_moraux_pjs query result
+interface UserMoralPJQueryResult {
+  id: number;
+  id_utilisateur_moral_action: number;
+  id_pj: number | null;
+  path_to_pj: string | null;
+  status: string | null;
+  pjs: PJ[] | null;
+}
+
+export async function getUserMoralPJs(
+  supabaseClient: SupabaseClient,
+  idUtilisateurMoralAction: number
+): Promise<UserMoralPJ[]> {
+  const { data, error } = await supabaseClient
+    .from('utilisateurs_moraux_pjs')
+    .select(`
+      id,
+      id_utilisateur_moral_action,
+      id_pj,
+      path_to_pj,
+      status,
+      pjs (
+        id_pj,
+        titre,
+        description
+      )
+    `)
+    .eq('id_utilisateur_moral_action', idUtilisateurMoralAction);
+
+    
+  if (error) {
+    console.error('Error fetching user moral PJs:', error.message);
+    return [];
+  }
+
+  return data?.map((item: UserMoralPJQueryResult) => ({
+    id: item.id,
+    id_utilisateur_moral_action: item.id_utilisateur_moral_action,
+    id_pj: item.id_pj,
+    path_to_pj: item.path_to_pj,
+    status: item.status,
+    pj: item.pjs && item.pjs.length > 0 ? item.pjs[0] : null
+  })) || [];
+}
+
+export async function uploadPJFile(
+  supabaseClient: SupabaseClient,
+  file: File,
+  idUtilisateurMoralAction: number,
+  idPJ: number
+): Promise<{ success: boolean; filePath?: string; error?: string }> {
+  try {
+    const fileExtension = file.name.split('.').pop();
+    const fileName = `${idUtilisateurMoralAction}_${idPJ}_${Date.now()}.${fileExtension}`;
+
+    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+      .from('pjs')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('Error uploading PJ file:', uploadError);
+      return { success: false, error: uploadError.message };
+    }
+
+    // Update the utilisateurs_moraux_pjs table with the file path
+    const { error: updateError } = await supabaseClient
+      .from('utilisateurs_moraux_pjs')
+      .update({
+        path_to_pj: uploadData.path,
+      })
+      .eq('id_utilisateur_moral_action', idUtilisateurMoralAction)
+      .eq('id_pj', idPJ);
+
+      
+
+    if (updateError) {
+      console.error('Error updating PJ record:', updateError);
+      return { success: false, error: updateError.message };
+    }
+
+    return { success: true, filePath: uploadData.path };
+  } catch (error) {
+    console.error('Error in uploadPJFile:', error);
+    return { success: false, error: 'Unexpected error occurred' };
+  }
+}
+
+export async function getPJFileUrl(
+  supabaseClient: SupabaseClient,
+  filePath: string
+): Promise<string | null> {
+  const { data, error } = await supabaseClient.storage
+    .from('pjs')
+    .createSignedUrl(filePath, 3600); // 1 hour expiry
+
+  if (error) {
+    console.error('Error creating signed URL for PJ:', error);
+    return null;
+  }
+
+  return data.signedUrl;
+}
+
+// New KPI Queries for the user's specific table structure
+export interface UserKpiWithDetails {
+  id: number;
+  id_kpi: number;
+  user_id_moral: string;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+  next_ask: string | null;
+  kpi_details: {
+    id_kpi: number;
+    nom: string;
+    recurrence: string | null;
+    type: string;
+    kpi_type: string;
+    unit: string | null;
+  };
+  all_responses?: Array<{
+    id: number;
+    answer: string;
+    created_at: string;
+    updated_at: string;
+  }>;
+}
+
+export async function getUserKpisWithDetails(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .select(`
+      *,
+      kpi_details:kpis!inner(
+        id_kpi,
+        nom,
+        recurrence,
+        type,
+        kpi_type,
+        unit
+      )
+    `)
+    .eq('user_id_moral', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user KPIs with details:', error);
+    return null;
+  }
+
+  return data as UserKpiWithDetails[];
+}
+
+export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return null;
+  }
+
+  // Get only the user's KPI responses with their KPI details
+  const { data, error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .select(`
+      id,
+      id_kpi,
+      user_id_moral,
+      question,
+      answer,
+      created_at,
+      updated_at,
+      next_ask,
+      kpi_details:kpis!inner(
+        id_kpi,
+        nom,
+        recurrence,
+        type,
+        kpi_type,
+        unit
+      )
+    `)
+    .eq('user_id_moral', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user KPIs:', error);
+    return null;
+  }
+
+  if (!data) {
+    return [];
+  }
+
+  // Group by KPI ID to get all responses for each KPI
+  const kpiMap = new Map<number, UserKpiWithDetails>();
+  
+  data.forEach((response: any) => {
+    const kpiId = response.id_kpi;
+    if (!kpiMap.has(kpiId)) {
+      // Create new entry with latest response as main data
+      kpiMap.set(kpiId, {
+        id: response.id,
+        id_kpi: response.id_kpi,
+        user_id_moral: response.user_id_moral,
+        question: response.question,
+        answer: response.answer,
+        created_at: response.created_at,
+        updated_at: response.updated_at,
+        next_ask: response.next_ask,
+        kpi_details: response.kpi_details,
+        all_responses: []
+      } as UserKpiWithDetails);
+    }
+    
+    // Add this response to the all_responses array
+    const kpiEntry = kpiMap.get(kpiId)!;
+    kpiEntry.all_responses!.push({
+      id: response.id,
+      answer: response.answer,
+      created_at: response.created_at,
+      updated_at: response.updated_at,
+    });
+  });
+
+  return Array.from(kpiMap.values());
+}
+
+export async function addKpiResponse(
+  supabase: SupabaseClient,
+  kpiId: number,
+  question: string,
+  answer: string
+): Promise<ActionResult> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return { error: 'Utilisateur non authentifié.' };
+  }
+
+  const { error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .insert({
+      id_kpi: kpiId,
+      user_id_moral: user.id,
+      question: question,
+      answer: answer,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error('Error adding KPI response:', error);
+    return { error: 'Erreur lors de l\'ajout de la réponse.' };
+  }
+
+  return { success: 'Réponse ajoutée avec succès.' };
+}
+
+export function canAddNewKpiResponse(kpi: UserKpiWithDetails): boolean {
+  const { kpi_details, created_at } = kpi;
+  
+  // If type is "ponctuel" OR recurrence is "ponctuel", always allow new responses
+  if (kpi_details.type === 'ponctuel' || kpi_details.recurrence === 'ponctuel') {
+    return true;
+  }
+  
+  // If type is "numeric", check recurrence
+  if (kpi_details.type === 'numeric') {
+    // If recurrence is null, cannot ask again
+    if (!kpi_details.recurrence) {
+      return false;
+    }
+    
+    const lastResponseDate = new Date(created_at);
+    const now = new Date();
+    
+    switch (kpi_details.recurrence) {
+      case 'mensuel':
+        // Check if it's been at least a month since last response
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        return lastResponseDate <= oneMonthAgo;
+        
+      case 'annuel':
+        // Check if it's been at least a year since last response
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        return lastResponseDate <= oneYearAgo;
+        
+      default:
+        return false;
+    }
+  }
+  
+  return false;
 }

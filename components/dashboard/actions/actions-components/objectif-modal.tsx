@@ -43,10 +43,11 @@ export default function ObjectifModal({
     date: Date | undefined,
   ) => {
     try {
-      // Appel de la fonction onSelect
+      
       await onSelect(action, date);
-      // Fermer explicitement le modal
-      onOpenChange(false);
+      setTimeout(() => {
+        onOpenChange(false);
+      }, 100);
     } catch (error) {
       console.error("Erreur lors de la sélection de l'action:", error);
     }
@@ -54,7 +55,6 @@ export default function ObjectifModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="md:w-4/5 lg:max-w-3xl">
         <DialogHeader className="h-fit sticky top-0 z-10">
           <DialogTitle className="text-xl font-bold">
             {objectif.nom_objectif}
@@ -63,6 +63,7 @@ export default function ObjectifModal({
             </span>
           </DialogTitle>
         </DialogHeader>
+      <DialogContent className="md:w-4/5 lg:max-w-3xl max-h-[80vh] overflow-y-scroll ">
         <div className="flex-col flex-grow overflow-y-auto">          
           <div className="grid overflow-y-auto h-full grid-cols-1 md:grid-cols-2 gap-3 py-2">
             {availableActions.length > 0 ? (
@@ -71,7 +72,7 @@ export default function ObjectifModal({
                   key={index}
                   action={action}
                   buttonType="select"
-                  onSelect={handleSelectAction} // Utiliser notre wrapper function
+                  onSelect={handleSelectAction} 
                 />
               ))
             ) : (

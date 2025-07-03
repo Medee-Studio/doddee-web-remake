@@ -9,6 +9,8 @@ export default async function CoursesContent() {
   const supabase = await createClient();
   const ressources = await getUserRessources(supabase);
 
+  console.log("ressources", ressources);
+
   if (!ressources.ressources_externes && !ressources.ressources_internes) {
     const redirectPath = getStatusRedirect(
       "/dashboard",

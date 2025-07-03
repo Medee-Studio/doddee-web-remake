@@ -179,11 +179,11 @@ export default function RessourceInterneCard({
             </CardContent>
           </Card>
 
-          <div className="flex-1 flex flex-col pt-20 pb-20">
+          <div className="flex-1 flex flex-col pt-24 pb-24">
             <AnimatePresence mode="wait">
               {currentCoursElement.type === "html_content" ? (
-                <Card className="flex-1 mx-4 md:mx-8">
-                  <CardContent className="h-full">
+                <Card className="flex-1 mx-4 md:mx-2 border-0 shadow-none">
+                  <CardContent className="h-full flex items-center justify-center p-6 md:p-8">
                     <motion.div
                       key={currentIndex}
                       ref={contentRef}
@@ -191,7 +191,7 @@ export default function RessourceInterneCard({
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: direction > 0 ? -40 : 40, opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="prose prose-slate max-w-none h-full overflow-y-auto scrollbar-hidden text-sm md:text-base leading-relaxed"
+                      className="prose prose-slate max-w-[1000px] md:max-w-[1400px] mx-auto h-full overflow-y-auto scrollbar-hidden text-sm md:text-base leading-relaxed flex flex-col justify-center w-full text-center break-words overflow-wrap-anywhere [&_ul]:list-disc [&_ul]:list-inside [&_ul]:text-center [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:text-center [&_ol]:space-y-2 [&_li]:text-center [&_li]:leading-relaxed [&_img]:max-w-full [&_img]:max-h-[30vh] [&_img]:h-auto [&_img]:mx-auto [&_img]:rounded-lg [&_img]:shadow-sm [&_img]:object-contain [&_a]:break-all [&_p]:break-words"
                       dangerouslySetInnerHTML={{
                         __html: sanitize(currentCoursElement.content, {
                           allowedTags: [
@@ -223,7 +223,7 @@ export default function RessourceInterneCard({
                 </Card>
 
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center px-8">
+                <div className="flex-1 flex flex-col items-center justify-center px-8 py-8">
                   <motion.div
                     key={currentIndex}
                     ref={titleRef}
@@ -327,7 +327,7 @@ export default function RessourceInterneCard({
             </motion.div>
             
             <Button size="lg" className="w-full max-w-xs" asChild>
-              <a href="/dashboard/plan">
+              <a href="/dashboard/action-plan">
                 Voir mes actions
                 <ArrowRight className="ml-2 h-4 w-4" />
               </a>

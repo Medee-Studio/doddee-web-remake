@@ -74,6 +74,7 @@ export const npsResponses = pgTable('nps_responses', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
+
 export const forms = pgTable('forms', {
   id: uuid('id').primaryKey().defaultRandom(),
   createdBy: uuid('created_by')
@@ -99,6 +100,7 @@ export const formResponses = pgTable('form_responses', {
   responseData: jsonb('response_data').notNull(),
   submittedAt: timestamp('submitted_at').notNull().defaultNow(),
 });
+
 
 // RELATIONS
 
@@ -167,10 +169,12 @@ export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
 export type NpsResponse = typeof npsResponses.$inferSelect;
 export type NewNpsResponse = typeof npsResponses.$inferInsert;
+
 export type Form = typeof forms.$inferSelect;
 export type NewForm = typeof forms.$inferInsert;
 export type FormResponse = typeof formResponses.$inferSelect;
 export type NewFormResponse = typeof formResponses.$inferInsert;
+
 
 
 

@@ -4,19 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ActionsList({ actions }: { actions: UserAction[] }) {
   return (
-    <Card className="xl:w-1/2">
+    <Card className="w-full max-h-[400px] overflow-y-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
           Actions en cours
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-full">
         {actions && actions.length > 0 ? (
           <div className="space-y-4">
-            {actions.slice(0, 5).map((action) => (
+            {actions.slice(0, 5).map((action, index) => (
               <div
-                key={action.id}
+                key={`${action.id}-${action.action_status}-${index}`}
                 className="flex items-start gap-3 p-3 rounded-lg border bg-card"
               >
                 <div className="flex-1 space-y-1">
@@ -30,6 +30,9 @@ export default function ActionsList({ actions }: { actions: UserAction[] }) {
                       {action.action_type}
                     </span>
                   </div>
+                  <p className="text-sm font-medium line-clamp-2">
+                    {action.nom_action}
+                  </p>
                   {action.enjeu && (
                     <p className="text-sm text-muted-foreground">
                       {action.enjeu.nom_enjeu}
@@ -65,7 +68,7 @@ export default function ActionsList({ actions }: { actions: UserAction[] }) {
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
+          <div className="flex flex-col items-center justify-center py-8 text-center h-full">
             <Clock className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-sm text-muted-foreground">
               Aucune action en cours pour le moment.

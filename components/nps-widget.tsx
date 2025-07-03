@@ -47,17 +47,6 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
     }
   };
 
-  const getScoreLabel = (score: number) => {
-    if (score <= 6) return "Détracteur";
-    if (score <= 8) return "Passif";
-    return "Promoteur";
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score <= 6) return "text-red-600";
-    if (score <= 8) return "text-yellow-600";
-    return "text-green-600";
-  };
 
   if (hasSubmitted) {
     return (
@@ -107,10 +96,10 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
           </div>
 
           <div className="text-center">
-            <div className="text-2xl font-bold mb-2">{score[0]}</div>
-            <div className={`text-sm font-medium ${getScoreColor(score[0])}`}>
-              {getScoreLabel(score[0])}
-            </div>
+
+
+            <div className="text-2xl font-bold mb-2">{score[0]}</div>            
+
           </div>
         </div>
 
@@ -131,13 +120,6 @@ export default function NPSWidget({ ecoProfileId }: NPSWidgetProps) {
           </Button>
         </div>
 
-        <div className="text-xs text-center text-muted-foreground">
-          <p>
-            <strong>Comment calculer le NPS ?</strong><br />
-            Le NPS est calculé en soustrayant le pourcentage de détracteurs (0-6) 
-            du pourcentage de promoteurs (9-10).
-          </p>
-        </div>
       </CardContent>
     </Card>
   );

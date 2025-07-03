@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/carousel";
 import KpisCards from "@/components/dashboard/kpis-cards";
 import { Label } from "@/components/ui/label";
-import { DashboardPieChart } from "@/components/charts/pie-chart";
 import { Action } from "@/types";
 import { redirectToPath } from "@/lib/auth/server";
 import {
@@ -29,7 +28,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const { id } = await params;
   const supabase = await createClient();
   const data = await getEcoProfileById(supabase, id);
-
+  
   if (!data || !data.url_unique) {
     notFound();
   }
@@ -44,13 +43,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return redirectToPath(redirectPath);
   }
 
-  const environnement = actions.filter(
-    (el: Action) => el.action_type === "environnement",
-  );
-  const social = actions.filter((el: Action) => el.action_type === "social");
-  const gouvEtEthique = actions.filter(
-    (el: Action) => el.action_type === "gouvernance",
-  );
 
   const rawCards = [
     { title: "🌱 Sa raison d'être", content: data.raison_etre },
@@ -65,10 +57,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     <div className="p-4 max-w-7xl flex flex-col items-center mx-auto space-y-12 py-[15dvh]">
       <div>
         <div className="flex flex-row items-center space-x-2 justify-center">
-          {data.logo_organisation && (
+          {data.logo && (
             <Image
               alt="logo"
-              src={data.logo_organisation}
+              src={data.logo}
               width={80}
               height={80}
               className="w-20 h-auto"
@@ -137,34 +129,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           <KpisCards kpis={data.kpis} />
         </div>
       )}
-
-      <div className="w-full">
-        <p className="text-2xl font-bold tracking-tight mb-2">
-          Son scoring ESG
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-          {environnement.length > 0 && (
-            <DashboardPieChart
-              title={"♻️ Environnement"}
-              data={environnement}
-            />
-          )}
-          {social.length > 0 && (
-            <DashboardPieChart title={"🤝🏼 Social"} data={social} />
-          )}
-          {gouvEtEthique.length > 0 && (
-            <DashboardPieChart title={"⏱️ Gouvernance"} data={gouvEtEthique} />
-          )}
-          {actions.length > 0 && (
-            <DashboardPieChart
-              className="2xl:block xl:hidden"
-              title={"Global"}
-              data={actions}
-            />
-          )}
-        </div>
-      </div>
 
       {cards.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
