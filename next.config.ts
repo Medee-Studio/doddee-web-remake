@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'pgebsnfiekytqpbggwvd.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/sign/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'www.google.com',
         port: '',
         pathname: '/s2/favicons**',

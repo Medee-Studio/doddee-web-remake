@@ -2,9 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { ReportData } from '@/lib/supabase/queries';
-
-// Dynamically imported PDF components
-let Document: any, Page: any, Text: any, View: any, StyleSheet: any, PDFDownloadLink: any;
+// Dynamically imported PDF components with minimal typing to avoid complex type issues
+let Document: React.ComponentType<{ children?: React.ReactNode }>;
+let Page: React.ComponentType<Record<string, unknown>>;
+let Text: React.ComponentType<Record<string, unknown>>;
+let View: React.ComponentType<Record<string, unknown>>;
+let StyleSheet: { create: (styles: Record<string, unknown>) => Record<string, unknown> };
+let PDFDownloadLink: React.ComponentType<Record<string, unknown>>;
 
 interface PDFReportProps {
   reportData: ReportData;
@@ -16,7 +20,7 @@ interface PDFDownloadButtonProps {
 }
 
 // Define styles with primary color theme
-const createStyles = (StyleSheet: any) => StyleSheet.create({
+const createStyles = (StyleSheetInstance: typeof StyleSheet) => StyleSheetInstance.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
@@ -154,7 +158,7 @@ const getActionStatusText = (status: string) => {
   }
 };
 
-const getActionStatusStyle = (status: string, styles: any) => {
+const getActionStatusStyle = (status: string, styles: ReturnType<typeof createStyles>) => {
   switch (status) {
     case 'valide':
       return styles.validAction;
@@ -231,9 +235,9 @@ const PDFReportDocument: React.FC<PDFReportProps> = ({ reportData }) => {
         userProfile.annee_de_creation && React.createElement(Text, { style: styles.text }, 
           `Année de création: ${userProfile.annee_de_creation}`
         ),
-        userProfile.labels?.certifications && Array.isArray(userProfile.labels.certifications) && userProfile.labels.certifications.length > 0 && 
+        userProfile.labels && Array.isArray(userProfile.labels) && userProfile.labels.length > 0 && 
         React.createElement(Text, { style: styles.text }, 
-          `Certifications: ${userProfile.labels.certifications.join(', ')}`
+          `Certifications: ${userProfile.labels.join(', ')}`
         )
       ),
 
@@ -279,12 +283,12 @@ export const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({
   useEffect(() => {
     // Dynamically import PDF components only on client side
     import('@react-pdf/renderer').then((module) => {
-      Document = module.Document;
-      Page = module.Page;
-      Text = module.Text;
-      View = module.View;
-      StyleSheet = module.StyleSheet;
-      PDFDownloadLink = module.PDFDownloadLink;
+      Document = module.Document as React.ComponentType<{ children?: React.ReactNode }>;
+      Page = module.Page as React.ComponentType<Record<string, unknown>>;
+      Text = module.Text as React.ComponentType<Record<string, unknown>>;
+      View = module.View as React.ComponentType<Record<string, unknown>>;
+      StyleSheet = module.StyleSheet as { create: (styles: Record<string, unknown>) => Record<string, unknown> };
+      PDFDownloadLink = module.PDFDownloadLink as unknown as React.ComponentType<Record<string, unknown>>;
       setIsReady(true);
     }).catch((error) => {
       console.error('Failed to load @react-pdf/renderer:', error);
@@ -303,13 +307,16 @@ export const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({
 
   const fileName = `rapport-${reportData.reportType}-${new Date().toISOString().split('T')[0]}.pdf`;
 
-  return React.createElement(PDFDownloadLink, {
-    document: React.createElement(PDFReportDocument, { reportData }),
-    fileName,
-    className,
-    children: ({ loading }: { loading: boolean }) => 
-      loading ? 'Génération en cours...' : 'Télécharger le rapport'
-  });
+  return React.createElement(
+    PDFDownloadLink, 
+    {
+      document: React.createElement(PDFReportDocument, { reportData }),
+      fileName,
+      className,
+    },
+    (({ loading }: { loading: boolean }) => 
+      loading ? 'Génération en cours...' : 'Télécharger le rapport') as unknown as React.ReactNode
+  );
 };
 
 export default PDFReportDocument; 

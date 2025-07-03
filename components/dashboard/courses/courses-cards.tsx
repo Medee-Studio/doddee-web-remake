@@ -73,7 +73,7 @@ export default function CoursesCards({ ressources }: { ressources: RessourcesDat
                 </CardContent>
               </Card>
             </DialogTrigger>
-            <DialogContent className="max-w-[95vw] w-full h-[95vh] max-h-[95vh] border-[20px] border-[#e9faff] p-0">
+            <DialogContent className="max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] w-full h-[95vh] max-h-[95vh] border-[20px] border-[#e9faff] p-0">
               <DialogHeader className="sr-only">
                 <DialogTitle>{ressourceInterne.nom_ressource}</DialogTitle>
               </DialogHeader>

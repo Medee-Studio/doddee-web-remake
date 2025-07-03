@@ -20,6 +20,7 @@ export interface Kpi {
   kpi_type: 'environnement' | 'social' | 'gouvernance';
   kpi_value: number | string;
   kpi_label: string;
+  kpi_unit: string;
 }
 
 // Types for Actions System
@@ -121,6 +122,7 @@ export interface PlanActionData {
 }
 
 export interface UserActionData {
+  id_utilisateur_moral_action: number;
   deadline: string;
   action_status: 'disponible' | 'en_cours_validation' | 'en_cours' | 'valide';
 }
@@ -132,7 +134,6 @@ export interface PlanAction {
 
 // Types for Eco Profile System
 export interface EcoProfile {
-  user_id_moral: string;
   raison_etre?: string;
   valeurs?: string;
   missions?: string;
@@ -144,7 +145,7 @@ export interface EcoProfile {
   url_facebook?: string;
   url_unique?: boolean;
   raison_sociale?: string;
-  logo_organisation?: string;
+  logo?: string;
 }
 
 export interface EcoProfileWithActions extends EcoProfile {
@@ -290,3 +291,19 @@ export interface RadioOption {
 export * from './esg-form';
 
 export type QuestionnaireType = "environnement" | "social" | "gouvernance"; 
+
+// Types for PJs (Pièces Justificatives) System
+export interface PJ {
+  id_pj: number;
+  titre: string;
+  description: string;
+}
+
+export interface UserMoralPJ {
+  id: number;
+  id_utilisateur_moral_action: number;
+  id_pj: number;
+  path_to_pj: string | null;
+  status: string | null;
+  pj: PJ;
+} 
