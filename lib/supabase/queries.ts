@@ -1499,7 +1499,7 @@ export interface EnterpriseInfo {
   siren: string | null;
   adresse: string | null;
   annee_de_creation: number | null;
-  labels: any | null;
+  labels: string[] | null;
 }
 
 export async function getEnterpriseInfo(supabaseClient: SupabaseClient): Promise<EnterpriseInfo | null> {
