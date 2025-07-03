@@ -3,6 +3,8 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { UrlStatusHandler } from "@/components/common/url-status-handler";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +34,10 @@ export default function RootLayout({
             // enableSystem
             disableTransitionOnChange
           >
+            {/* Listen for ?title=&description=&type= to trigger toasts */}
+            <Suspense fallback={null}>
+              <UrlStatusHandler />
+            </Suspense>
             {children}
           </ThemeProvider>
         </main>

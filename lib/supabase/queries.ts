@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
-import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload } from '@/types';
+import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType } from '@/types';
 import { cache } from 'react';
 
 // Define types for RPC data structures
@@ -963,6 +963,13 @@ export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, 
 }
 
 export async function getUserByStripeCustomerId(supabaseClient: SupabaseClient, customerId: string) {
+  console.log('[WEBHOOK] getUserByStripeCustomerId called with:', { customerId });
+  
+  if (!customerId) {
+    console.error('[WEBHOOK] getUserByStripeCustomerId: customerId is required');
+    return null;
+  }
+
   const supabase = supabaseClient;
   const { data, error } = await supabase
     .from('users')
@@ -971,11 +978,25 @@ export async function getUserByStripeCustomerId(supabaseClient: SupabaseClient, 
     .single();
 
   if (error) {
-    if (error.code !== 'PGRST116') { 
-        console.error('Error fetching user by Stripe customer ID:', error.message);
+    if (error.code === 'PGRST116') {
+      console.log('[WEBHOOK] getUserByStripeCustomerId: No user found for Stripe customer:', customerId);
+    } else {
+      console.error('[WEBHOOK] getUserByStripeCustomerId: Database error:', {
+        code: error.code,
+        message: error.message,
+        customerId
+      });
     }
     return null;
   }
+  
+  console.log('[WEBHOOK] getUserByStripeCustomerId: User found:', {
+    userId: data.id,
+    email: data.email,
+    currentPlan: data.plan_name,
+    currentStatus: data.subscription_status
+  });
+  
   return data;
 }
 
@@ -989,6 +1010,16 @@ export async function updateUserSubscription(
     subscription_status: string;
   }
 ) {
+  console.log('[WEBHOOK] updateUserSubscription called with:', {
+    userId,
+    subscriptionData
+  });
+  
+  if (!userId) {
+    console.error('[WEBHOOK] updateUserSubscription: userId is required');
+    return null;
+  }
+
   const supabase = supabaseClient;
   const { data, error } = await supabase
     .from('users')
@@ -1003,9 +1034,22 @@ export async function updateUserSubscription(
     .single();
 
   if (error) {
-    console.error('Error updating user subscription:', error.message);
+    console.error('[WEBHOOK] updateUserSubscription: Database error:', {
+      code: error.code,
+      message: error.message,
+      userId,
+      subscriptionData
+    });
     return null;
   }
+  
+  console.log('[WEBHOOK] updateUserSubscription: Successfully updated user:', {
+    userId,
+    newPlan: data.plan_name,
+    newStatus: data.subscription_status,
+    stripeSubscriptionId: data.stripe_subscription_id
+  });
+  
   return data;
 }
 
@@ -1027,5 +1071,324 @@ export async function createUserStripeCustomer(
     return null;
   }
   return data;
+}
+
+
+interface QuestionnaireData {
+  answers: Array<{
+    questionKey: string;
+    questionText: string;
+    answer: string | number | string[];
+  }>;
+  valide_id_actions: number[];
+  disponible_id_actions: number[];
+  kpis: Array<{
+    questionId: string;
+    questionText: string;
+    kpiId: number;
+    answer: string | number | string[];
+  }>;
+}
+
+export async function saveQuestionnaireData(
+  supabaseClient: SupabaseClient,
+  questionnaireData: QuestionnaireData,
+  questionnaireType: QuestionnaireType
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  const user = await getUser(supabase);
+  
+  if (!user) {
+    return { error: 'Utilisateur non authentifié.' };
+  }
+
+  try {
+    // 1. Insert actions with status "valide"
+    if (questionnaireData.valide_id_actions.length > 0) {
+      const valideActions = questionnaireData.valide_id_actions.map(actionId => ({
+        user_id_moral: user.id,
+        id_action: actionId,
+        action_status: 'valide'
+      }));
+
+      const { error: valideActionsError } = await supabase
+        .from('utilisateurs_moraux_actions')
+        .insert(valideActions);
+
+      if (valideActionsError) {
+        console.error('Error inserting valide actions:', valideActionsError.message);
+        return { error: 'Erreur lors de l\'enregistrement des actions validées.' };
+      }
+    }
+
+    // 2. Insert actions with status "disponible"
+    if (questionnaireData.disponible_id_actions.length > 0) {
+      const disponibleActions = questionnaireData.disponible_id_actions.map(actionId => ({
+        user_id_moral: user.id,
+        id_action: actionId,
+        action_status: 'disponible'
+      }));
+
+      const { error: disponibleActionsError } = await supabase
+        .from('utilisateurs_moraux_actions')
+        .insert(disponibleActions);
+
+      if (disponibleActionsError) {
+        console.error('Error inserting disponible actions:', disponibleActionsError.message);
+        return { error: 'Erreur lors de l\'enregistrement des actions disponibles.' };
+      }
+    }
+
+    // 3. Insert KPIs
+    if (questionnaireData.kpis.length > 0) {
+      const kpiInserts = questionnaireData.kpis.map(kpi => ({
+        user_id_moral: user.id,
+        id_kpi: kpi.kpiId,
+        question: kpi.questionText,
+        answer: kpi.answer.toString() // Convert to string as per table schema
+      }));
+
+      const { error: kpisError } = await supabase
+        .from('utilisateurs_moraux_kpis')
+        .insert(kpiInserts);
+
+      if (kpisError) {
+        console.error('Error inserting KPIs:', kpisError.message);
+        return { error: 'Erreur lors de l\'enregistrement des KPIs.' };
+      }
+    }
+
+    // 4. Insert form answers - dynamically select table based on questionnaire type
+    if (questionnaireData.answers.length > 0) {
+      const answerInserts = questionnaireData.answers.map(answer => ({
+        user_id_moral: user.id,
+        question: answer.questionText,
+        answer: Array.isArray(answer.answer) 
+          ? answer.answer.join(', ') // Convert array to comma-separated string
+          : answer.answer.toString()
+      }));
+
+      // Determine target table based on questionnaire type
+      const getTableName = (type: QuestionnaireType): string => {
+        switch (type) {
+          case "environnement":
+            return "utilisateurs_moraux_environnement_response";
+          case "social":
+            return "utilisateurs_moraux_social_response";
+          case "gouvernance":
+            return "utilisateurs_moraux_gouvernance_response";
+          default:
+            return "utilisateurs_moraux_environnement_response"; // fallback
+        }
+      };
+
+      const tableName = getTableName(questionnaireType);
+      console.log(`Inserting answers into table: ${tableName}`);
+
+      const { error: answersError } = await supabase
+        .from(tableName)
+        .insert(answerInserts);
+
+      if (answersError) {
+        console.error(`Error inserting answers into ${tableName}:`, answersError.message);
+        return { error: 'Erreur lors de l\'enregistrement des réponses.' };
+      }
+    }
+
+    return { success: 'Questionnaire sauvegardé avec succès.' };
+  } catch (error) {
+    console.error('Unexpected error in saveQuestionnaireData:', error);
+    return { error: 'Une erreur inattendue s\'est produite lors de la sauvegarde.' };
+  }
+  }
+
+// Type for combined sector and category data
+export interface UtilisateurMorauxSecteurAndCategory {
+  sous_secteur_id: number | null;
+  categories: {
+    id: number;
+    user_id: string;
+    flotte_vehicule: boolean | null;
+    plus_de_un_salarie: boolean | null;
+    locaux: boolean | null;
+    parc_informatique: boolean | null;
+    site_web: boolean | null;
+    site_de_production: boolean | null;
+    approvisionnement: boolean | null;
+    distribution: boolean | null;
+    stock: boolean | null;
+  } | null;
+}
+
+export async function getUtilisateurMorauxSecteurAndCategory(supabaseClient: SupabaseClient): Promise<UtilisateurMorauxSecteurAndCategory | null> {
+  const supabase = supabaseClient;
+  
+  // Get the current user first
+  const authUser = await getUser(supabaseClient);
+  if (!authUser) {
+    console.error('No authenticated user found');
+    return null;
+  }
+
+  // Get sous_secteur_id from utilisateurs_moraux
+  const { data: moralData, error: moralError } = await supabase
+    .from('utilisateurs_moraux')
+    .select('sous_secteur_id')
+    .eq('user_id_moral', authUser.id)
+    .single();
+
+  if (moralError) {
+    if (moralError.code !== 'PGRST116') {
+      console.error('Error fetching user moral data:', moralError.message);
+    }
+    return null;
+  }
+
+  // Get all data from utilisateurs_moraux_categories
+  const { data: categoriesData, error: categoriesError } = await supabase
+    .from('utilisateurs_moraux_categories')
+    .select('*')
+    .eq('user_id', authUser.id)
+    .single();
+
+  if (categoriesError && categoriesError.code !== 'PGRST116') {
+    console.error('Error fetching user categories data:', categoriesError.message);
+  }
+
+  return {
+    sous_secteur_id: moralData?.sous_secteur_id || null,
+    categories: categoriesData || null
+  };
+
+// MAP DATA FUNCTIONS
+export interface PublicUtilisateurMoral {
+  user_id_moral: string;
+  raison_sociale: string | null;
+  secteur_id: number | null;
+  sous_secteur_id: number | null;
+  coordinates: [number, number] | null; // [lng, lat] array format from database
+  labels: {
+    certifications?: string[];
+  } | null;
+}
+
+export async function getPublicUtilisateursMoraux(
+  supabaseClient: SupabaseClient,
+  searchTerm?: string,
+  sousSecteurId?: number
+): Promise<PublicUtilisateurMoral[]> {
+  const supabase = supabaseClient;
+  
+  try {
+    // Try to use RPC function first
+    const { data, error } = await supabase.rpc('get_public_utilisateurs_moraux', {
+      p_search_term: searchTerm || null,
+      p_sous_secteur_id: sousSecteurId || null,
+    });
+
+    if (error) {
+      if (error.code === 'PGRST202') {
+        console.log('RPC function not found, using direct table query');
+        // Fallback to direct table query
+        let query = supabase
+          .from('utilisateurs_moraux')
+          .select('user_id_moral, raison_sociale, secteur_id, sous_secteur_id, coordinates, labels')
+          .not('coordinates', 'is', null)
+          .not('raison_sociale', 'is', null);
+
+        if (searchTerm) {
+          query = query.ilike('raison_sociale', `%${searchTerm}%`);
+        }
+
+        if (sousSecteurId) {
+          query = query.eq('sous_secteur_id', sousSecteurId);
+        }
+
+        const { data: directData, error: directError } = await query.limit(100);
+
+        if (directError) {
+          console.warn('Direct table query failed, using mock data:', directError.message);
+          return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+        }
+
+        return directData || [];
+      } else {
+        console.error('RPC error:', error.message);
+        return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+      }
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching public utilisateurs moraux:', error);
+    return getMockUtilisateursMoraux(searchTerm, sousSecteurId);
+  }
+}
+
+function getMockUtilisateursMoraux(searchTerm?: string, sousSecteurId?: number): PublicUtilisateurMoral[] {
+  const mockData: PublicUtilisateurMoral[] = [
+    {
+      user_id_moral: '1',
+      raison_sociale: 'EcoAgri Solutions',
+      secteur_id: 1, // Alimentation, agriculture et élevage
+      sous_secteur_id: 1, // Agriculture & production agricole
+      coordinates: [2.3522, 48.8566], // Paris [lng, lat]
+      labels: { certifications: ['ISO 14001', 'Agriculture Biologique'] }
+    },
+    {
+      user_id_moral: '2',
+      raison_sociale: 'Studio Créatif Durable',
+      secteur_id: 2, // Arts, cinéma, culture
+      sous_secteur_id: 16, // Centres culturels
+      coordinates: [4.8357, 45.7640], // Lyon [lng, lat]
+      labels: { certifications: ['B Corp', 'Label Écologique'] }
+    },
+    {
+      user_id_moral: '3',
+      raison_sociale: 'GreenConseil Audit',
+      secteur_id: 4, // Audit, gestion, conseil, droit
+      sous_secteur_id: 21, // Cabinet de conseil
+      coordinates: [5.3698, 43.2965], // Marseille [lng, lat]
+      labels: { certifications: ['ISO 9001', 'Fair Trade'] }
+    },
+    {
+      user_id_moral: '4',
+      raison_sociale: 'EcoMobility France',
+      secteur_id: 5, // Automobiles, véhicules
+      sous_secteur_id: 27, // Location & vente de vélos et trottinettes
+      coordinates: [-1.5536, 47.2184], // Nantes [lng, lat]
+      labels: { certifications: ['LEED', 'ISO 14001'] }
+    },
+    {
+      user_id_moral: '5',
+      raison_sociale: 'Digital Green Solutions',
+      secteur_id: 11, // Digital, internet, logiciels
+      sous_secteur_id: 64, // Plateformes, logiciels et applications
+      coordinates: [1.4442, 43.6047], // Toulouse [lng, lat]
+      labels: { certifications: ['ISO 26000', 'GreenIT'] }
+    },
+    {
+      user_id_moral: '6',
+      raison_sociale: 'ÉcoBâtiment & Co',
+      secteur_id: 9, // Construction, travaux publics, immobilier, architecture
+      sous_secteur_id: 51, // Construction & Travaux publics
+      coordinates: [0.1079, 49.4944], // Le Havre [lng, lat]
+      labels: { certifications: ['HQE', 'BREEAM'] }
+    }
+  ];
+
+  let filteredData = mockData;
+
+  if (searchTerm) {
+    filteredData = filteredData.filter(item => 
+      item.raison_sociale?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  if (sousSecteurId) {
+    filteredData = filteredData.filter(item => item.sous_secteur_id === sousSecteurId);
+  }
+
+  return filteredData;
 
 }

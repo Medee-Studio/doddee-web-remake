@@ -1,4 +1,5 @@
 import { Kpi } from "@/types";
+import { toast } from "sonner";
 
 export function getKpiValueByLabel(kpis: Kpi[] | null, label: string): number | string | null {
   const kpi = kpis?.find((k) => k.kpi_label === label);
@@ -41,12 +42,50 @@ export function getStatusRedirect(
   path: string,
   title: string,
   description: string,
+  type: 'success' | 'error' | 'info' | 'warning' = 'info',
 ): string {
   const params = new URLSearchParams({
     title,
     description,
+    type,
   });
   return `${path}?${params.toString()}`;
+}
+
+/**
+ * Reads URL search parameters and displays a sonner toast if status parameters are present
+ * Should be called from client components after navigation
+ */
+export function handleUrlStatusToast(searchParams: URLSearchParams): void {
+  const title = searchParams.get('title');
+  const description = searchParams.get('description');
+  const type = searchParams.get('type') as 'success' | 'error' | 'info' | 'warning' | null;
+
+  if (title && description) {
+    switch (type) {
+      case 'success':
+        toast.success(title, { description });
+        break;
+      case 'error':
+        toast.error(title, { description });
+        break;
+      case 'warning':
+        toast.warning(title, { description });
+        break;
+      case 'info':
+      default:
+        toast.info(title, { description });
+        break;
+    }
+  }
+}
+
+/**
+ * Hook version for Next.js useSearchParams
+ */
+export function useUrlStatusToast(searchParams: string): void {
+  const urlParams = new URLSearchParams(searchParams);
+  handleUrlStatusToast(urlParams);
 }
 
 // Date utility functions for Plan d'Action

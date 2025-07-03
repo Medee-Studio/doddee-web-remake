@@ -269,4 +269,8 @@ export interface RadioQuestion {
 export interface RadioOption {
   label: string;
   value: string;
-} 
+}
+
+export * from './esg-form';
+
+export type QuestionnaireType = "environnement" | "social" | "gouvernance"; 
