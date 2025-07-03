@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/common/page-header";
-import { getUser, getAllKpisForUser } from "@/lib/supabase/queries";
+import {  getAllKpisForUser } from "@/lib/supabase/queries";
 import { createClient } from "@/lib/supabase/server";
 import { KpiCard } from "@/components/dashboard/kpis/kpi-card";
 
@@ -7,7 +7,7 @@ export default async function KpisContent() {
   const supabase = await createClient();
 
   const kpis = await getAllKpisForUser(supabase);
-  console.log("kpis", kpis);
+
 
   return (
     <>

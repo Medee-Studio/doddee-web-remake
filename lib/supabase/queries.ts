@@ -1865,6 +1865,26 @@ export async function getUserKpisWithDetails(supabase: SupabaseClient): Promise<
   return data as UserKpiWithDetails[];
 }
 
+// Interface for the KPI response data structure
+interface KpiResponseData {
+  id: number;
+  id_kpi: number;
+  user_id_moral: string;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+  next_ask: string | null;
+  kpi_details: {
+    id_kpi: number;
+    nom: string;
+    recurrence: string | null;
+    type: string;
+    kpi_type: string;
+    unit: string | null;
+  }[];
+}
+
 export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
   const user = await getUser(supabase);
   if (!user) {
@@ -1907,7 +1927,7 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
   // Group by KPI ID to get all responses for each KPI
   const kpiMap = new Map<number, UserKpiWithDetails>();
   
-  data.forEach((response: any) => {
+  data.forEach((response: KpiResponseData) => {
     const kpiId = response.id_kpi;
     if (!kpiMap.has(kpiId)) {
       // Create new entry with latest response as main data
@@ -1920,7 +1940,7 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
         created_at: response.created_at,
         updated_at: response.updated_at,
         next_ask: response.next_ask,
-        kpi_details: response.kpi_details,
+        kpi_details: response.kpi_details[0], // Take the first element since it's an array
         all_responses: []
       } as UserKpiWithDetails);
     }
@@ -1984,7 +2004,6 @@ export function canAddNewKpiResponse(kpi: UserKpiWithDetails): boolean {
     }
     
     const lastResponseDate = new Date(created_at);
-    const now = new Date();
     
     switch (kpi_details.recurrence) {
       case 'mensuel':

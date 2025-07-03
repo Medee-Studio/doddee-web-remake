@@ -109,3 +109,15 @@ export interface FormListItem {
   updatedAt: Date;
   responsesCount: number;
 }
+
+// Database row structure (snake_case) from RPC functions
+export interface FormListItemRow {
+  id: string;
+  name: string;
+  description?: string;
+  is_public: boolean;
+  public_id: string;
+  created_at: string;
+  updated_at: string;
+  responses_count?: number;
+}

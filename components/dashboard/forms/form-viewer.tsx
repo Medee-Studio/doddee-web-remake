@@ -236,7 +236,7 @@ export function FormViewer({ form }: FormViewerProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action est irréversible. Le formulaire "{form.name}" et toutes ses réponses seront
+              Cette action est irréversible. Le formulaire {form.name} et toutes ses réponses seront
               définitivement supprimés.
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { cache } from 'react';
-import { FormData, FormListItem, FormResponseData, FormWithStats, FormResponse } from './types';
+import { FormData, FormListItem, FormListItemRow, FormResponseData, FormWithStats, FormResponse } from './types';
 import { ActionResult } from '@/lib/supabase/schema';
 
 // Get user's forms with response counts
@@ -11,7 +11,7 @@ export const getUserForms = cache(async (supabase: SupabaseClient): Promise<Form
 
     if (!rpcError && rpcData) {
       // Map database fields (snake_case) to interface fields (camelCase)
-      return rpcData.map((form: any) => ({
+      return rpcData.map((form: FormListItemRow) => ({
         id: form.id,
         name: form.name,
         description: form.description,
