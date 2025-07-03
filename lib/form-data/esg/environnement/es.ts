@@ -4,14 +4,43 @@ export const es: QuestionTree = [
     {
       "id": "1",
       "value": "Votre entreprise optimise-t-elle sa gestion des stocks pour améliorer sa logistique de transport et réduire son empreinte carbone ?",
-      "ids_secteurs": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29],
+      "ids_secteurs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
       "id_action": null,
       "information": "L'optimisation de la gestion des stocks peut inclure des initiatives telles que la réduction des stocks excédentaires pour diminuer les trajets inutiles, l'amélioration de la prévision des besoins pour éviter les déplacements fréquents, l'adoption de méthodes de stockage adaptées pour minimiser les transports, ou l'utilisation de technologies pour mieux gérer les flux de marchandises. Votre réponse doit décrire les pratiques et stratégies que votre entreprise a mises en place pour allier une gestion efficace des stocks et une réduction des impacts environnementaux.",
       "children": [
         {
           "id": "2",
           "value": "Oui",
-          "id_action": 295,
+          "id_action": 246,
           "done": true,
           "information": null,
           "children": [
@@ -24,7 +53,7 @@ export const es: QuestionTree = [
                 {
                   "id": "4",
                   "value": "Oui",
-                  "id_action": 298,
+                  "id_action": 249,
                   "done": true,
                   "information": null,
                   "children": [
@@ -54,7 +83,7 @@ export const es: QuestionTree = [
                 {
                   "id": "8",
                   "value": "Non",
-                  "id_action": 298,
+                  "id_action": 249,
                   "done": false,
                   "information": null,
                   "children": [],
@@ -73,7 +102,7 @@ export const es: QuestionTree = [
                 {
                   "id": "10",
                   "value": "Oui",
-                  "id_action": 299,
+                  "id_action": 250,
                   "done": true,
                   "information": null,
                   "children": [
@@ -93,7 +122,7 @@ export const es: QuestionTree = [
                 {
                   "id": "13",
                   "value": "Non",
-                  "id_action": 299,
+                  "id_action": 250,
                   "done": false,
                   "information": null,
                   "children": [],
@@ -112,7 +141,7 @@ export const es: QuestionTree = [
                 {
                   "id": "15",
                   "value": "Oui",
-                  "id_action": 300,
+                  "id_action": 251,
                   "done": true,
                   "information": null,
                   "children": [
@@ -132,7 +161,7 @@ export const es: QuestionTree = [
                 {
                   "id": "18",
                   "value": "Non",
-                  "id_action": 300,
+                  "id_action": 251,
                   "done": false,
                   "information": null,
                   "children": [],
@@ -151,7 +180,7 @@ export const es: QuestionTree = [
                 {
                   "id": "20",
                   "value": "Oui",
-                  "id_action": 301,
+                  "id_action": 252,
                   "done": true,
                   "information": null,
                   "children": [
@@ -171,7 +200,7 @@ export const es: QuestionTree = [
                 {
                   "id": "23",
                   "value": "Non",
-                  "id_action": 301,
+                  "id_action": 252,
                   "done": false,
                   "information": null,
                   "children": [],
@@ -190,7 +219,7 @@ export const es: QuestionTree = [
                 {
                   "id": "25",
                   "value": "Oui",
-                  "id_action": 302,
+                  "id_action": 253,
                   "done": true,
                   "information": null,
                   "children": [
@@ -210,7 +239,7 @@ export const es: QuestionTree = [
                 {
                   "id": "28",
                   "value": "Non",
-                  "id_action": 302,
+                  "id_action": 253,
                   "done": false,
                   "information": null,
                   "children": [],
@@ -229,7 +258,7 @@ export const es: QuestionTree = [
                 {
                   "id": "30",
                   "value": "Oui",
-                  "id_action": 303,
+                  "id_action": 254,
                   "done": true,
                   "information": null,
                   "children": [
@@ -249,7 +278,7 @@ export const es: QuestionTree = [
                 {
                   "id": "33",
                   "value": "Non",
-                  "id_action": 303,
+                  "id_action": 254,
                   "done": false,
                   "information": null,
                   "children": [],
@@ -285,7 +314,7 @@ export const es: QuestionTree = [
         {
           "id": "37",
           "value": "Non",
-          "id_action": 295,
+          "id_action": 246,
           "done": false,
           "information": null,
           "children": [],
