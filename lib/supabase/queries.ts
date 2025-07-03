@@ -1890,32 +1890,11 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
     return null;
   }
 
-  // Get only the user's KPI responses with their KPI details
-  const { data, error } = await supabase
-    .from('utilisateurs_moraux_kpis')
-    .select(`
-      id,
-      id_kpi,
-      user_id_moral,
-      question,
-      answer,
-      created_at,
-      updated_at,
-      next_ask,
-      kpi_details:kpis!inner(
-        id_kpi,
-        nom,
-        recurrence,
-        type,
-        kpi_type,
-        unit
-      )
-    `)
-    .eq('user_id_moral', user.id)
-    .order('created_at', { ascending: false });
+  // Use the RPC function with user ID parameter
+  const { data, error } = await supabase.rpc('get_all_kpis_for_user', { user_id: user.id });
 
   if (error) {
-    console.error('Error fetching user KPIs:', error);
+    console.error('Error fetching user KPIs via RPC:', error);
     return null;
   }
 
@@ -1926,7 +1905,7 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
   // Group by KPI ID to get all responses for each KPI
   const kpiMap = new Map<number, UserKpiWithDetails>();
   
-  data.forEach((response: KpiResponseData) => {
+  data.forEach((response: any) => {
     const kpiId = response.id_kpi;
     if (!kpiMap.has(kpiId)) {
       // Create new entry with latest response as main data
@@ -1939,7 +1918,7 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
         created_at: response.created_at,
         updated_at: response.updated_at,
         next_ask: response.next_ask,
-        kpi_details: response.kpi_details[0], // Take the first element since it's an array
+        kpi_details: response.kpi_details, // Now it's already a proper object from JSONB
         all_responses: []
       } as UserKpiWithDetails);
     }
@@ -1991,7 +1970,7 @@ export function canAddNewKpiResponse(kpi: UserKpiWithDetails): boolean {
   const { kpi_details, created_at } = kpi;
   
   // If type is "ponctuel" OR recurrence is "ponctuel", always allow new responses
-  if (kpi_details.type === 'ponctuel' || kpi_details.recurrence === 'ponctuel') {
+  if (kpi_details.recurrence === 'ponctuel') {
     return true;
   }
   
