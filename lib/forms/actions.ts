@@ -102,3 +102,43 @@ export async function submitFormResponseAction(formData: FormData) {
     return { error: 'Erreur lors de la soumission du formulaire' };
   }
 }
+
+export async function toggleFormPublishAction(formId: string) {
+  const supabase = await createClient();
+  
+  try {
+    // First, get the current form to check its current publish status
+    const { data: currentForm, error: fetchError } = await supabase
+      .from('forms')
+      .select('is_public')
+      .eq('id', formId)
+      .single();
+
+    if (fetchError) {
+      console.error('Error fetching form:', fetchError);
+      return { error: 'Erreur lors de la récupération du formulaire' };
+    }
+
+    // Toggle the is_public status
+    const newPublishStatus = !currentForm.is_public;
+    
+    const result = await updateForm(supabase, formId, { 
+      isPublic: newPublishStatus 
+    });
+
+    if ('error' in result) {
+      return { error: result.error };
+    }
+
+    revalidatePath('/dashboard/forms');
+    revalidatePath(`/dashboard/forms/${formId}`);
+    
+    return { 
+      success: newPublishStatus ? 'Formulaire publié avec succès' : 'Formulaire dépublié avec succès',
+      isPublic: newPublishStatus
+    };
+  } catch (error) {
+    console.error('Error toggling form publish status:', error);
+    return { error: 'Erreur lors de la publication du formulaire' };
+  }
+}

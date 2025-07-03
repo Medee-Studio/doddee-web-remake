@@ -12,19 +12,26 @@ interface FormDetailsPageProps {
 
 export default async function FormDetailsPage({ params }: FormDetailsPageProps) {
   const { id } = await params;
-  const supabase = await createClient();
-  const form = await getFormWithStats(supabase, id);
+  
+  try {
+    const supabase = await createClient();
 
-  if (!form) {
+    const form = await getFormWithStats(supabase, id);
+    if (!form) {
+      console.error('Form not found or user not authorized:', id);
+      notFound();
+    }
+
+    return (
+      <>
+        <PageHeader title={form.name} /> 
+        <div className="p-6 space-y-6 max-w-6xl mx-auto">
+          <FormViewer form={form} />
+        </div>
+      </>
+    );
+  } catch (error) {
+    console.error('Error in FormDetailsPage:', error);
     notFound();
   }
-
-  return (
-    <>
-      <PageHeader title={form.name} /> 
-      <div className="p-6 space-y-6 max-w-6xl mx-auto">
-        <FormViewer form={form} />
-      </div>
-    </>
-  );
 }

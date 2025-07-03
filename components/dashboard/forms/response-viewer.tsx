@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FormData } from '@/lib/forms/types';
 import { deleteFormResponse, exportFormResponses } from '@/lib/forms/queries';
 import { createClient } from '@/lib/supabase/client';
@@ -43,6 +44,7 @@ interface ResponseViewerProps {
 }
 
 export function ResponseViewer({ form, responses: initialResponses }: ResponseViewerProps) {
+  const router = useRouter();
   const [responses, setResponses] = useState(initialResponses);
   const [deletingResponseId, setDeletingResponseId] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -84,30 +86,7 @@ export function ResponseViewer({ form, responses: initialResponses }: ResponseVi
     setIsExporting(false);
   };
 
-  // Extract all unique field keys from responses
-  const allFieldKeys = new Set<string>();
-  responses.forEach(response => {
-    Object.keys(response.response_data).forEach(key => allFieldKeys.add(key));
-  });
 
-  // Get field labels from form schema
-  const getFieldLabel = (fieldId: string) => {
-    for (const section of form.schema.sections) {
-      const field = section.fields.find(f => f.id === fieldId);
-      if (field) return field.label || fieldId;
-    }
-    return fieldId;
-  };
-
-  const renderFieldValue = (value: unknown) => {
-    if (Array.isArray(value)) {
-      return value.join(', ');
-    }
-    if (typeof value === 'boolean') {
-      return value ? 'Oui' : 'Non';
-    }
-    return value?.toString() || '';
-  };
 
   return (
     <div className="space-y-6">
@@ -153,17 +132,17 @@ export function ResponseViewer({ form, responses: initialResponses }: ResponseVi
                     <TableHead>Date</TableHead>
                     {form.settings.requireName && <TableHead>Nom</TableHead>}
                     {form.settings.requireEmail && <TableHead>Email</TableHead>}
-                    {Array.from(allFieldKeys).map(fieldKey => (
-                      <TableHead key={fieldKey}>
-                        {getFieldLabel(fieldKey)}
-                      </TableHead>
-                    ))}
+                    <TableHead>Nombre de réponses</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {responses.map((response) => (
-                    <TableRow key={response.id}>
+                    <TableRow 
+                      key={response.id}
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => router.push(`/dashboard/forms/${form.id}/responses/${response.id}`)}
+                    >
                       <TableCell>
                         <div className="text-sm">
                           {(() => {
@@ -201,17 +180,20 @@ export function ResponseViewer({ form, responses: initialResponses }: ResponseVi
                       {form.settings.requireEmail && (
                         <TableCell>{response.respondent_email || '-'}</TableCell>
                       )}
-                      {Array.from(allFieldKeys).map(fieldKey => (
-                        <TableCell key={fieldKey}>
-                          <div className="max-w-xs truncate" title={renderFieldValue(response.response_data[fieldKey])}>
-                            {renderFieldValue(response.response_data[fieldKey])}
-                          </div>
-                        </TableCell>
-                      ))}
+                      <TableCell>
+                        <div className="text-sm">
+                          {Object.keys(response.response_data).length} champ{Object.keys(response.response_data).length !== 1 ? 's' : ''} rempli{Object.keys(response.response_data).length !== 1 ? 's' : ''}
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>

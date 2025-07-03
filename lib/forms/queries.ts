@@ -10,7 +10,17 @@ export const getUserForms = cache(async (supabase: SupabaseClient): Promise<Form
     const { data: rpcData, error: rpcError } = await supabase.rpc('get_user_forms_with_stats');
 
     if (!rpcError && rpcData) {
-      return rpcData as FormListItem[];
+      // Map database fields (snake_case) to interface fields (camelCase)
+      return rpcData.map((form: any) => ({
+        id: form.id,
+        name: form.name,
+        description: form.description,
+        isPublic: form.is_public,
+        publicId: form.public_id,
+        createdAt: form.created_at,
+        updatedAt: form.updated_at,
+        responsesCount: form.responses_count || 0,
+      })) as FormListItem[];
     }
 
     console.log('RPC failed, using direct query:', rpcError);
@@ -38,6 +48,7 @@ export const getUserForms = cache(async (supabase: SupabaseClient): Promise<Form
           .select('*', { count: 'exact', head: true })
           .eq('form_id', form.id);
 
+        // Map database fields (snake_case) to interface fields (camelCase)
         return {
           id: form.id,
           name: form.name,
@@ -74,7 +85,19 @@ export async function getFormById(
     return null;
   }
 
-  return data as FormData;
+  // Map database fields (snake_case) to interface fields (camelCase)
+  return {
+    id: data.id,
+    createdBy: data.created_by,
+    name: data.name,
+    description: data.description,
+    schema: data.schema,
+    settings: data.settings,
+    isPublic: data.is_public,
+    publicId: data.public_id,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  } as FormData;
 }
 
 // Get form by public ID (for public submission)
@@ -94,7 +117,19 @@ export async function getFormByPublicId(
     return null;
   }
 
-  return data as FormData;
+  // Map database fields (snake_case) to interface fields (camelCase)
+  return {
+    id: data.id,
+    createdBy: data.created_by,
+    name: data.name,
+    description: data.description,
+    schema: data.schema,
+    settings: data.settings,
+    isPublic: data.is_public,
+    publicId: data.public_id,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  } as FormData;
 }
 
 // Get form with response count
@@ -103,22 +138,45 @@ export async function getFormWithStats(
   formId: string
 ): Promise<FormWithStats | null> {
   try {
+    // Check if user is authenticated
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('User authentication failed in getFormWithStats:', userError);
+      return null;
+    }
+
     // First try RPC function
     const { data: rpcData, error: rpcError } = await supabase.rpc('get_form_with_stats', {
       p_form_id: formId,
     });
 
     if (!rpcError && rpcData?.[0]) {
-      return rpcData[0] as FormWithStats;
+      const data = rpcData[0];
+      // Map database fields (snake_case) to interface fields (camelCase)
+      return {
+        id: data.id,
+        createdBy: data.created_by,
+        name: data.name,
+        description: data.description,
+        schema: data.schema,
+        settings: data.settings,
+        isPublic: data.is_public,
+        publicId: data.public_id,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+        responsesCount: data.responses_count || 0,
+      } as FormWithStats;
     }
 
     console.log('RPC failed, using direct query:', rpcError);
 
-    // Fallback to direct query
+    // Fallback to direct query with authorization check
     const { data: formData, error: formError } = await supabase
       .from('forms')
       .select('*')
       .eq('id', formId)
+      .eq('created_by', user.id) // Ensure user can only access their own forms
       .single();
 
     if (formError) {
@@ -132,8 +190,18 @@ export async function getFormWithStats(
       .select('*', { count: 'exact', head: true })
       .eq('form_id', formId);
 
+    // Map database fields (snake_case) to interface fields (camelCase)
     return {
-      ...formData,
+      id: formData.id,
+      createdBy: formData.created_by,
+      name: formData.name,
+      description: formData.description,
+      schema: formData.schema,
+      settings: formData.settings,
+      isPublic: formData.is_public,
+      publicId: formData.public_id,
+      createdAt: formData.created_at,
+      updatedAt: formData.updated_at,
       responsesCount: responsesCount || 0,
     } as FormWithStats;
   } catch (error) {
@@ -202,12 +270,20 @@ export async function updateForm(
     isPublic?: boolean;
   }
 ): Promise<ActionResult> {
+  // Map camelCase to snake_case for database columns
+  const dbUpdates: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  };
+
+  if (updates.name !== undefined) dbUpdates.name = updates.name;
+  if (updates.description !== undefined) dbUpdates.description = updates.description;
+  if (updates.schema !== undefined) dbUpdates.schema = updates.schema;
+  if (updates.settings !== undefined) dbUpdates.settings = updates.settings;
+  if (updates.isPublic !== undefined) dbUpdates.is_public = updates.isPublic;
+
   const { error } = await supabase
     .from('forms')
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
+    .update(dbUpdates)
     .eq('id', formId);
 
   if (error) {
@@ -276,6 +352,25 @@ export async function getFormResponses(
 
   if (error) {
     console.error('Error fetching form responses:', error);
+    return null;
+  }
+
+  return data;
+}
+
+// Get a single form response by ID
+export async function getFormResponseById(
+  supabase: SupabaseClient,
+  responseId: string
+): Promise<FormResponse | null> {
+  const { data, error } = await supabase
+    .from('form_responses')
+    .select('*')
+    .eq('id', responseId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching form response:', error);
     return null;
   }
 
