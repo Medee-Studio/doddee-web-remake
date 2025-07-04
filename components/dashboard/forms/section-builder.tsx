@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { FormSection, FormField } from '@/lib/forms/types';
+import { FormSection, FormField } from '@/lib/supabase/queries';
 import { ChevronUp, ChevronDown, Trash2, Plus } from 'lucide-react';
 import { FieldBuilder } from './field-builder';
 import { nanoid } from 'nanoid';

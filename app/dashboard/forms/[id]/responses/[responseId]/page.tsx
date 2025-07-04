@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { getFormById, getFormResponseById } from '@/lib/forms/queries';
+import { getFormById, getFormResponseById } from '@/lib/supabase/queries';
 import { PageHeader } from '@/components/common/page-header';
 import { ResponseDetailViewer } from '@/components/dashboard/forms/response-detail-viewer';
 

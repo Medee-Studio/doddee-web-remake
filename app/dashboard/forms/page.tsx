@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
-import { getUserForms } from '@/lib/forms/queries';
+import { getUserForms } from '@/lib/supabase/queries';
 import { FormsListClient } from '@/components/dashboard/forms/forms-list-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

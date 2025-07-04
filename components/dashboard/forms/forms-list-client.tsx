@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FormListItem } from '@/lib/forms/types';
-import { deleteForm } from '@/lib/forms/queries';
+import { FormListItem, deleteForm } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

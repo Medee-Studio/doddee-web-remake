@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { getFormByPublicId } from '@/lib/forms/queries';
+import { getFormByPublicId } from '@/lib/supabase/queries';
 import { PublicFormSubmission } from '@/components/forms/public-form-submission';
 
 interface PublicFormPageProps {

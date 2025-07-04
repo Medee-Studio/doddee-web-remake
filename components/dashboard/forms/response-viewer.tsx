@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FormData } from '@/lib/forms/types';
-import { deleteFormResponse, exportFormResponses } from '@/lib/forms/queries';
+import { FormDataType, deleteFormResponse, exportFormResponses } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,10 +35,10 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
-import { FormResponse } from '@/lib/forms/types';
+import { FormResponse } from '@/lib/supabase/queries';
 
 interface ResponseViewerProps {
-  form: FormData;
+  form: FormDataType;
   responses: FormResponse[];
 }
 

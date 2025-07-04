@@ -2,9 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { FormWithStats } from '@/lib/forms/types';
-import { toggleFormPublishAction } from '@/lib/forms/actions';
-import { deleteForm } from '@/lib/forms/queries';
+import { FormWithStats, toggleFormPublishAction, deleteForm } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,7 +45,8 @@ export function FormViewer({ form }: FormViewerProps) {
   const handleTogglePublish = async () => {
     setIsToggling(true);
     try {
-      const result = await toggleFormPublishAction(form.id);
+      const supabase = createClient();
+      const result = await toggleFormPublishAction(supabase, form.id);
       
       if (result.error) {
         toast.error(result.error);

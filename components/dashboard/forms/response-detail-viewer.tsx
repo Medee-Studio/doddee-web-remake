@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { FormData, FormResponse } from '@/lib/forms/types';
+import { FormDataType, FormResponse } from '@/lib/supabase/queries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 interface ResponseDetailViewerProps {
-  form: FormData;
+  form: FormDataType;
   response: FormResponse;
 }
 

@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormData, FormField } from '@/lib/forms/types';
-import { submitFormResponse } from '@/lib/forms/queries';
+import { FormDataType, FormField, submitFormResponse } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 interface PublicFormSubmissionProps {
-  form: FormData;
+  form: FormDataType;
 }
 
 export function PublicFormSubmission({ form }: PublicFormSubmissionProps) {
