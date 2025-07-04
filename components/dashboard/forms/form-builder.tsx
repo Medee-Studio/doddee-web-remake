@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createFormSchema, createForm } from '@/lib/supabase/queries';
+import { createFormSchema, createForm } from '@/lib/supabase/actions';  
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ButtonLoading } from '@/components/ui/button-loading';

@@ -3,10 +3,32 @@ import { Badge } from "@/components/ui/badge";
 import { NPSData } from "@/types";
 
 interface NPSCardProps {
-  npsData: NPSData;
+  npsData: NPSData | null;
 }
 
 export default function NPSCard({ npsData }: NPSCardProps) {
+  // Check if there's actual data available
+  if (!npsData || (npsData.total_responses === 0 && npsData.nps_score === null)) {
+    return (
+      <Card className="w-full xl:h-full">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            Net Promoter Score (NPS)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="text-center py-8 text-gray-500">
+            <p className="text-2xl mb-2">📊</p>
+            <p className="text-sm">Pas encore de score disponible</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Partagez votre éco-profil pour recevoir des évaluations
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const { total_responses, nps_score, promoters, passives, detractors, average_score } = npsData;
 
   // Determine NPS score color and label

@@ -33,7 +33,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CheckIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { submitCompleteProfile } from "@/lib/supabase/queries";
+import { submitCompleteProfile } from "@/lib/supabase/actions";
 import { toast } from "sonner";
 import Image from "next/image";
 import mascotte from "@/public/mascotte.png";

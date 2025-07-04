@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { ReportData } from '@/types';
+import { ReportData, Action, ActionStatus } from '@/types';
 // Dynamically imported PDF components with minimal typing to avoid complex type issues
 let Document: React.ComponentType<{ children?: React.ReactNode }>;
 let Page: React.ComponentType<Record<string, unknown>>;
@@ -129,6 +129,72 @@ const createStyles = (StyleSheetInstance: typeof StyleSheet) => StyleSheetInstan
     borderTopColor: '#e5e7eb',
     paddingTop: 10,
   },
+  chartSection: {
+    marginVertical: 20,
+    backgroundColor: '#f9fafb',
+    padding: 15,
+    borderRadius: 8,
+  },
+  chartTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  chartContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  chartStats: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 15,
+  },
+  chartCenterText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#10b45a',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  chartSubText: {
+    fontSize: 10,
+    color: '#6b7280',
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  chartLegend: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginTop: 10,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    marginRight: 8,
+    borderRadius: 2,
+  },
+  legendText: {
+    fontSize: 11,
+    color: '#374151',
+  },
+  chartBars: {
+    flexDirection: 'row',
+    height: 20,
+    width: '100%',
+    marginBottom: 15,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  chartBar: {
+    height: '100%',
+  },
 });
 
 const getReportTitle = (reportType: string) => {
@@ -171,6 +237,51 @@ const getActionStatusStyle = (status: string, styles: ReturnType<typeof createSt
   }
 };
 
+// Add chart-related functions and styles
+const createChartData = (actions: Action[]) => {
+  const statusCounts = actions.reduce((acc, action) => {
+    acc[action.action_status] = (acc[action.action_status] || 0) + 1;
+    return acc;
+  }, {} as Record<ActionStatus, number>);
+
+  const total = actions.length;
+  const chartData = Object.entries(statusCounts).map(([status, count]) => ({
+    status: status as ActionStatus,
+    count: count as number,
+    percentage: Math.round((count as number / total) * 100)
+  }));
+
+  return chartData;
+};
+
+const getStatusLabel = (status: ActionStatus) => {
+  switch (status) {
+    case 'valide':
+      return 'Validées';
+    case 'en_cours':
+      return 'En cours';
+    case 'en_cours_validation':
+      return 'En cours de validation';
+    case 'disponible':
+    default:
+      return 'Disponibles';
+  }
+};
+
+const getStatusColor = (status: ActionStatus) => {
+  switch (status) {
+    case 'valide':
+      return '#059669'; // Green
+    case 'en_cours':
+      return '#d97706'; // Orange
+    case 'en_cours_validation':
+      return '#dc2626'; // Red
+    case 'disponible':
+    default:
+      return '#6b7280'; // Gray
+  }
+};
+
 const PDFReportDocument: React.FC<PDFReportProps> = ({ reportData }) => {
   const { userProfile, responses, actions, reportType } = reportData;
   
@@ -179,6 +290,9 @@ const PDFReportDocument: React.FC<PDFReportProps> = ({ reportData }) => {
   const validatedActions = actions.filter(action => action.action_status === 'valide').length;
   const inProgressActions = actions.filter(action => action.action_status === 'en_cours').length;
   const completionRate = totalActions > 0 ? Math.round((validatedActions / totalActions) * 100) : 0;
+
+  // Create chart data
+  const chartData = totalActions > 0 ? createChartData(actions) : [];
 
   const styles = createStyles(StyleSheet);
 
@@ -214,6 +328,52 @@ const PDFReportDocument: React.FC<PDFReportProps> = ({ reportData }) => {
         React.createElement(View, { style: styles.statItem },
           React.createElement(Text, { style: styles.statNumber }, `${completionRate}%`),
           React.createElement(Text, { style: styles.statLabel }, 'Taux de completion')
+        )
+      ),
+
+      // Chart Section
+      totalActions > 0 && React.createElement(View, { style: styles.chartSection },
+        React.createElement(Text, { style: styles.chartTitle }, 
+          `Répartition des actions ${reportType === 'environnement' ? 'environnementales' : 
+            reportType === 'social' ? 'sociales' : 'de gouvernance'}`
+        ),
+        React.createElement(View, { style: styles.chartContainer },
+          // Center completion percentage
+          React.createElement(Text, { style: styles.chartCenterText }, `${completionRate}%`),
+          React.createElement(Text, { style: styles.chartSubText }, 'd\'actions validées'),
+          
+          // Chart bars representation
+          React.createElement(View, { style: styles.chartBars },
+            ...chartData.map((data, index) => 
+              React.createElement(View, { 
+                key: index, 
+                style: [
+                  styles.chartBar, 
+                  { 
+                    backgroundColor: getStatusColor(data.status), 
+                    width: `${data.percentage}%` 
+                  }
+                ] 
+              })
+            )
+          ),
+          
+          // Legend
+          React.createElement(View, { style: styles.chartLegend },
+            ...chartData.map((data, index) =>
+              React.createElement(View, { key: index, style: styles.legendItem },
+                React.createElement(View, { 
+                  style: [
+                    styles.legendColor, 
+                    { backgroundColor: getStatusColor(data.status) }
+                  ] 
+                }),
+                React.createElement(Text, { style: styles.legendText }, 
+                  `${getStatusLabel(data.status)}: ${data.count} (${data.percentage}%)`
+                )
+              )
+            )
+          )
         )
       ),
 

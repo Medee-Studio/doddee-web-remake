@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { QuestionTree, QuestionNode, FormAnswer, QuestionnaireState, KpiData, QuestionnaireType } from "@/types";
 import { createClient } from "@/lib/supabase/client";
-import { saveQuestionnaireData } from "@/lib/supabase/queries";
+import { saveQuestionnaireData } from "@/lib/supabase/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 

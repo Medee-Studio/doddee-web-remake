@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/payments/stripe';
 import Stripe from 'stripe';
 import { createClient } from '@/lib/supabase/server';
-import { updateUserSubscription, createUserStripeCustomer } from '@/lib/supabase/queries';
+import { updateUserSubscription, createUserStripeCustomer } from '@/lib/supabase/actions';
 
 interface UpdateTeamSubscriptionDetailsResponse {
   success?: string;

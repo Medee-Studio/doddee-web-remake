@@ -11,8 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Calendar, Clock, History, TrendingUp } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { UserKpiWithDetails } from "@/types";
-import { canAddNewKpiResponse } from "@/lib/supabase/queries";
-import { addKpiResponse } from "@/lib/supabase/queries";
+import { canAddNewKpiResponse, addKpiResponse } from "@/lib/supabase/actions";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { whichEmoji } from "@/lib/helpers";

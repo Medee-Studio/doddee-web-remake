@@ -2,7 +2,7 @@
 
 import { EcoProfile } from "@/types";
 import { deepEqual, getURL } from "@/lib/helpers";
-import { upsertEcoProfile } from "@/lib/supabase/queries";
+import { upsertEcoProfile } from "@/lib/supabase/actions";
 import { createClient } from "@/lib/supabase/client";
 import { Download, Eye, Facebook, Instagram, Linkedin, Loader2, QrCode } from "lucide-react";
 import { useState } from "react";

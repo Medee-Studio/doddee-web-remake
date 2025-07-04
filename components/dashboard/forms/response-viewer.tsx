@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { deleteFormResponse, exportFormResponses } from '@/lib/supabase/queries';
+import { deleteFormResponse, exportFormResponses } from '@/lib/supabase/actions';
 import { FormDataType } from '@/types';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

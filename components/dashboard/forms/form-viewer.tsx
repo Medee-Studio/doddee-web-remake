@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FormWithStats } from '@/types';
-import { deleteForm } from '@/lib/supabase/queries';
-import { toggleFormPublishAction } from '@/lib/supabase/actions';
+import { deleteForm, toggleFormPublishAction } from '@/lib/supabase/actions';
+
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,14 +50,16 @@ export function FormViewer({ form }: FormViewerProps) {
       const supabase = createClient();
       const result = await toggleFormPublishAction(supabase, form.id);
       
-      if (result.error) {
+      if ('error' in result) {
         toast.error(result.error);
         return;
       }
       
-      if (result.success) {
+      if ('success' in result) {
         toast.success(result.success);
-        setIsPublic(result.isPublic);
+        if ('isPublic' in result) {
+          setIsPublic(result.isPublic);
+        }
       }
     } catch (error) {
       console.error('Error toggling publish status:', error);

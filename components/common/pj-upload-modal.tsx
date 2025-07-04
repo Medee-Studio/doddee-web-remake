@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { PJ, UserMoralPJ } from "@/types";
-import { uploadPJFile, getPJFileUrl } from "@/lib/supabase/queries";
+import { uploadPJFile, getPJFileUrl } from "@/lib/supabase/actions";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 

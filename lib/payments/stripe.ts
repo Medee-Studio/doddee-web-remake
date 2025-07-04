@@ -5,12 +5,14 @@ import { User } from '@supabase/supabase-js';
 import {
   getTeamByStripeCustomerId,
   getUser,
-  updateTeamSubscription,
   getUserByStripeCustomerId,
-  updateUserSubscription,
-  createUserStripeCustomer,
   getUserSubscriptionStatus
 } from '@/lib/supabase/queries';
+import {
+  updateTeamSubscription,
+  updateUserSubscription,
+  createUserStripeCustomer
+} from '@/lib/supabase/actions';
 import { createClient, createServiceRoleClient } from '../supabase/server';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
