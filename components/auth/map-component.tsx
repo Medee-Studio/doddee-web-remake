@@ -2,95 +2,18 @@
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import { Icon, LatLngBounds } from "leaflet"
-import { PublicUtilisateurMoral } from "@/lib/supabase/queries"
+import { PublicUtilisateurMoral } from "@/types"
+import { sous_secteurs } from "@/lib/form-data/complete-profile"
 
 // Import Leaflet CSS
 import "leaflet/dist/leaflet.css"
 
-// Sous-secteur mapping (same as in companies-map.tsx)
-const SOUS_SECTEURS: { [key: string]: { value: string; label: string }[] } = {
-  "1": [
-    { value: "1", label: "Agriculture & production agricole" },
-    { value: "2", label: "Agriculture urbaine" },
-    { value: "3", label: "Alimentation pour animaux" },
-    { value: "4", label: "Bières & brasseries" },
-    { value: "5", label: "Boissons, sodas, jus & fontaines" },
-    { value: "6", label: "Cafés, infusions & herboristerie" },
-    { value: "7", label: "Céréales & produits céréaliers" },
-    { value: "8", label: "Commerce alimentaire" },
-    { value: "9", label: "Fruits, légumes & fruits secs" },
-    { value: "10", label: "Grossiste alimentaire" },
-  ],
-  "2": [
-    { value: "16", label: "Centres culturels" },
-    { value: "17", label: "Librairies & librairies en ligne" },
-    { value: "18", label: "Salles de spectacle & théâtres" },
-  ],
-  "4": [
-    { value: "20", label: "Cabinet comptable et d'audit" },
-    { value: "21", label: "Cabinet de conseil" },
-    { value: "22", label: "Cabinet juridique" },
-  ],
-  "5": [
-    { value: "23", label: "Concession automobile, réparation véhicule et pneumatiques" },
-    { value: "24", label: "Deux-roues & véhicules légers" },
-    { value: "25", label: "Location & vente de bateaux" },
-    { value: "26", label: "Location & vente de scooters et motos" },
-    { value: "27", label: "Location & vente de vélos et trottinettes" },
-  ],
-  "6": [
-    { value: "32", label: "Agent général d'assurance" },
-    { value: "33", label: "Assurance & Mutuelle" },
-    { value: "34", label: "Courtage bancaire et d'assurance" },
-    { value: "35", label: "Plateforme de financement" },
-  ],
-  "7": [
-    { value: "36", label: "Centrale d'achat et de référencement" },
-    { value: "37", label: "Commerce divers" },
-    { value: "38", label: "Gestion de distributeurs automatiques" },
-    { value: "39", label: "Import-export & négoce" },
-    { value: "40", label: "Marketplace & plateforme de e-commerce" },
-  ],
-  "8": [
-    { value: "42", label: "Agence de communication & marketing" },
-    { value: "43", label: "Agence de relation publique et de lobbying" },
-    { value: "44", label: "Agence de relations presse & régies publicitaires" },
-    { value: "45", label: "Objets promotionnels & cadeaux d'entreprise" },
-    { value: "46", label: "Production audiovisuelle & graphisme" },
-  ],
-  "9": [
-    { value: "47", label: "Agent immobilier" },
-    { value: "48", label: "Aménagement & entretien d'extérieur" },
-    { value: "49", label: "Aménagement & entretien d'intérieur" },
-    { value: "50", label: "Bureau d'étude immobilier" },
-    { value: "51", label: "Construction & Travaux publics" },
-  ],
-  "10": [
-    { value: "58", label: "Coiffeurs & Barbiers" },
-    { value: "59", label: "Cosmétiques, soins & parfums" },
-    { value: "60", label: "Instituts de beauté & de bien-être" },
-    { value: "61", label: "Produits d'hygiène" },
-  ],
-  "11": [
-    { value: "62", label: "Agence de création digitale & SSII" },
-    { value: "63", label: "Blogs & sites internet" },
-    { value: "64", label: "Plateformes, logiciels et applications" },
-    { value: "65", label: "Service IT & E-commerce numérique" },
-  ],
-  "12": [
-    { value: "66", label: "Édition" },
-    { value: "67", label: "Médias numériques & papiers" },
-  ],
-  "13": [
-    { value: "68", label: "Organismes de formation" },
-    { value: "69", label: "Universités & grandes écoles" },
-  ],
-}
+
 
 // Get all sous-secteurs as flat array
 const getAllSousSecteurs = () => {
   const allSousSecteurs: { value: string; label: string }[] = []
-  Object.values(SOUS_SECTEURS).forEach(secteurGroup => {
+  Object.values(sous_secteurs).forEach(secteurGroup => {
     allSousSecteurs.push(...secteurGroup)
   })
   return allSousSecteurs

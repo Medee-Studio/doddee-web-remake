@@ -50,10 +50,10 @@ const createStyles = (StyleSheetInstance: typeof StyleSheet) => StyleSheetInstan
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#10b45a', // Primary color equivalent: hsl(154 100% 59.4%)
+    color: '#10b981', // Primary green color
     marginBottom: 10,
     borderBottom: 1,
-    borderBottomColor: '#dcfce7',
+    borderBottomColor: '#ebfaff',
     paddingBottom: 5,
   },
   text: {
@@ -88,18 +88,21 @@ const createStyles = (StyleSheetInstance: typeof StyleSheet) => StyleSheetInstan
     paddingLeft: 10,
   },
   validAction: {
-    color: '#059669',
+    color: '#10b981', // Primary green color
+  },
+  inProgressAction: {
+    color: '#6b7280', // Darker gray
   },
   pendingAction: {
-    color: '#d97706',
+    color: '#9ca3af', // Medium gray
   },
   availableAction: {
-    color: '#6b7280',
+    color: '#d1d5db', // Light gray
   },
   stats: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#f0fdf4',
+    backgroundColor: '#ebfaff',
     padding: 15,
     borderRadius: 8,
     marginVertical: 15,
@@ -110,7 +113,7 @@ const createStyles = (StyleSheetInstance: typeof StyleSheet) => StyleSheetInstan
   statNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#10b45a', // Primary color
+    color: '#10b981', // Primary green color
   },
   statLabel: {
     fontSize: 10,
@@ -131,7 +134,7 @@ const createStyles = (StyleSheetInstance: typeof StyleSheet) => StyleSheetInstan
   },
   chartSection: {
     marginVertical: 20,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#ebfaff',
     padding: 15,
     borderRadius: 8,
   },
@@ -154,7 +157,7 @@ const createStyles = (StyleSheetInstance: typeof StyleSheet) => StyleSheetInstan
   chartCenterText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#10b45a',
+    color: '#10b981',
     textAlign: 'center',
     marginBottom: 5,
   },
@@ -229,6 +232,7 @@ const getActionStatusStyle = (status: string, styles: ReturnType<typeof createSt
     case 'valide':
       return styles.validAction;
     case 'en_cours':
+      return styles.inProgressAction;
     case 'en_cours_validation':
       return styles.pendingAction;
     case 'disponible':
@@ -270,15 +274,16 @@ const getStatusLabel = (status: ActionStatus) => {
 
 const getStatusColor = (status: ActionStatus) => {
   switch (status) {
-    case 'valide':
-      return '#059669'; // Green
-    case 'en_cours':
-      return '#d97706'; // Orange
-    case 'en_cours_validation':
-      return '#dc2626'; // Red
     case 'disponible':
+      return '#d1d5db'; // Light gray
+    case 'en_cours_validation':
+      return '#9ca3af'; // Medium gray
+    case 'en_cours':
+      return '#6b7280'; // Darker gray
+    case 'valide':
+      return '#10b981'; // Primary green color
     default:
-      return '#6b7280'; // Gray
+      return '#e5e7eb'; // Very light gray fallback
   }
 };
 

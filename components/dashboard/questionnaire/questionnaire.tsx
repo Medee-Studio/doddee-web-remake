@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import {  ChevronRight, ChevronLeft, Info, CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -216,22 +215,9 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
   };
 
   const handleNext = async () => {
-    // Log current state with answer keys for debugging
-    console.log("Current State:", {
-      answers: state.answers,
-      valide_id_actions: state.valide_id_actions,
-      disponible_id_actions: state.disponible_id_actions,
-      kpis: state.kpis,
-      currentQuestionIndex: state.currentQuestionIndex,
-    });
-
-    // Log answer keys for current step
-    const currentStepAnswers = state.answers.filter(a => a.questionKey.startsWith(`${state.currentQuestionIndex}-`));
-    console.log(`Step ${state.currentQuestionIndex} answers:`, currentStepAnswers.map(a => ({ key: a.questionKey, answer: a.answer })));
-
-    // Log step transition for debugging key uniqueness
-    console.log(`Transition: Step ${state.currentQuestionIndex} → Step ${state.currentQuestionIndex + 1}`);
-    console.log(`Next step keys will use format: ${state.currentQuestionIndex + 1}-[question_id]`);
+    // Auto-scroll to top when "Suivant" is clicked
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
 
     if (state.currentQuestionIndex < questionTree.length - 1) {
       setState(prev => ({
@@ -280,16 +266,6 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
                 <Label htmlFor={`${questionKey}-${child.id}`} className="cursor-pointer flex-1">
                   {child.value}
                 </Label>
-                {child.id_action && (
-                  <Badge variant="outline" className="text-xs">
-                    Action
-                  </Badge>
-                )}
-                {child.id_kpis && child.id_kpis.length > 0 && (
-                  <Badge variant="outline" className="text-xs">
-                    KPI
-                  </Badge>
-                )}
               </div>
             ))}
           </RadioGroup>
@@ -314,16 +290,6 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
                 <Label htmlFor={`${questionKey}-${child.id}`} className="cursor-pointer flex-1">
                   {child.value}
                 </Label>
-                {child.id_action && (
-                  <Badge variant="outline" className="text-xs">
-                    Action
-                  </Badge>
-                )}
-                {child.id_kpis && child.id_kpis.length > 0 && (
-                  <Badge variant="outline" className="text-xs">
-                    KPI
-                  </Badge>
-                )}
               </div>
             ))}
           </div>
@@ -411,143 +377,102 @@ export default function Questionnaire({ questionTree, questionnaireType }: Quest
   return (
     <div className="space-y-6">
       {/* Progress indicator */}
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>Étape {state.currentQuestionIndex + 1} sur {questionTree.length}</span>
-        <div className="flex space-x-1">
-          {Array.from({ length: questionTree.length }).map((_, index) => (
-            <div
-              key={index}
-              className={`h-2 w-8 rounded ${
-                index <= state.currentQuestionIndex ? "bg-primary" : "bg-muted"
-              }`}
-            />
-          ))}
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-sm text-muted-foreground">
+          <span className="text-center sm:text-left">Étape {state.currentQuestionIndex + 1} sur {questionTree.length}</span>
+          <div className="flex space-x-2 justify-center sm:justify-end flex-wrap gap-1">
+            {Array.from({ length: questionTree.length }).map((_, index) => (
+              <div
+                key={index}
+                className={`h-2 w-6 sm:w-8 rounded ${
+                  index <= state.currentQuestionIndex ? "bg-primary" : "bg-muted"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Questions */}
-      <div className="space-y-6">
-        {currentQuestions.map((question, index) => {
-          // Create question key using format "{step}-{id}" where step is the parent question index
-          const questionKey = `${state.currentQuestionIndex}-${question.id}`;
-          return (
-          <Card key={questionKey} className={index === 0 ? "border-primary" : ""}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-lg font-medium leading-6">
-                    {question.value}
-                  </CardTitle>
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="space-y-6">
+          {currentQuestions.map((question, index) => {
+            // Create question key using format "{step}-{id}" where step is the parent question index
+            const questionKey = `${state.currentQuestionIndex}-${question.id}`;
+            return (
+            <Card key={questionKey} className={index === 0 ? "border-primary" : ""}>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg font-medium leading-6">
+                      {question.value}
+                    </CardTitle>
+                  </div>
+                  {question.information && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 flex-shrink-0"
+                        >
+                          <Info className="h-4 w-4" />
+                          <span className="sr-only">Voir les informations</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>Informations complémentaires</DialogTitle>
+                          <DialogDescription className="text-left">
+                            Détails concernant cette question
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="mt-4">
+                          <p className="text-sm whitespace-pre-line leading-relaxed">
+                            {question.information}
+                          </p>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </div>
-                {question.information && (
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 flex-shrink-0"
-                      >
-                        <Info className="h-4 w-4" />
-                        <span className="sr-only">Voir les informations</span>
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Informations complémentaires</DialogTitle>
-                        <DialogDescription className="text-left">
-                          Détails concernant cette question
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="mt-4">
-                        <p className="text-sm whitespace-pre-line leading-relaxed">
-                          {question.information}
-                        </p>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              {renderInput(question)}
-            </CardContent>
-          </Card>
-          );
-        })}
+              </CardHeader>
+              <CardContent>
+                {renderInput(question)}
+              </CardContent>
+            </Card>
+            );
+          })}
+        </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={handlePrevious}
-          disabled={state.currentQuestionIndex === 0}
-          className="flex items-center space-x-2"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span>Précédent</span>
-        </Button>
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="flex justify-between">
+          <Button
+            variant="outline"
+            onClick={handlePrevious}
+            disabled={state.currentQuestionIndex === 0}
+            className="flex items-center space-x-2"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span>Précédent</span>
+          </Button>
 
-        <Button
-          onClick={handleNext}
-          disabled={!canProceed}
-          className="flex items-center space-x-2"
-        >
-          <span>
-            {state.currentQuestionIndex === questionTree.length - 1 ? "Terminer" : "Suivant"}
-          </span>
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+          <Button
+            onClick={handleNext}
+            disabled={!canProceed}
+            className="flex items-center space-x-2"
+          >
+            <span>
+              {state.currentQuestionIndex === questionTree.length - 1 ? "Terminer" : "Suivant"}
+            </span>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Debug info (remove in production) */}
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle className="text-sm">État actuel (Debug)</CardTitle>
-        </CardHeader>
-        <CardContent className="text-xs">
-          <div className="space-y-2">
-            <div>Réponses: {state.answers.length}</div>
-            {state.answers.length > 0 && (
-              <div className="mt-2 space-y-1">
-                <div><strong>Réponses stockées:</strong></div>
-                {state.answers.map((answer, index) => (
-                  <div key={index} className="text-xs bg-muted/50 p-2 rounded">
-                    <div><strong>{answer.questionKey}:</strong> {answer.answer}</div>
-                    <div className="text-muted-foreground">{answer.questionText.substring(0, 60)}...</div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div>Actions validées: [{state.valide_id_actions.join(", ")}]</div>
-            <div>Actions disponibles: [{state.disponible_id_actions.join(", ")}]</div>
-            <div>KPIs: {state.kpis.length}</div>
-            {state.kpis.length > 0 && (
-              <div className="mt-2 space-y-1">
-                {state.kpis.map((kpi, index) => (
-                  <div key={index} className="text-xs bg-muted/50 p-2 rounded">
-                    <div><strong>KPI {kpi.kpiId}:</strong> {kpi.answer}</div>
-                    <div className="text-muted-foreground">{kpi.questionText}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div>Questions actives: {currentQuestions.length}</div>
-            <div>Étape actuelle (index parent): {state.currentQuestionIndex}</div>
-            <div className="text-xs text-muted-foreground">
-              Format des clés: {state.currentQuestionIndex}-[question_id]
-            </div>
-            <div className="mt-2 text-xs">
-              <div><strong>Questions actives avec leurs clés:</strong></div>
-              {currentQuestions.map((q, i) => (
-                <div key={i} className="text-muted-foreground">
-                  • {state.currentQuestionIndex}-{q.id}: {q.value.substring(0, 50)}...
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
     </div>
   );
 } 

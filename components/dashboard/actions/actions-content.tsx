@@ -14,6 +14,7 @@ export default async function ActionsContent() {
   const supabase = await createClient();
 
   const result = await fetchActionsWithObjectifsAndEnjeux(supabase);
+  
   if (result && result.data.length == 1 && result.data[0].actions.length == 0) {
     const redirectPath = getStatusRedirect(
       "/dashboard",

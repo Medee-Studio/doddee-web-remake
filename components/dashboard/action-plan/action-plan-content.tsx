@@ -13,6 +13,7 @@ export default async function ActionPlanContent() {
   let actions;
   try {
     actions = await getUserActionsData(supabase);
+    console.log("actions", actions);
   } catch (error) {
     console.error('Error loading actions:', error);
     const redirectPath = getStatusRedirect(
@@ -24,10 +25,11 @@ export default async function ActionPlanContent() {
   }
 
   if (!actions || actions.length === 0) {
+ 
     const redirectPath = getStatusRedirect(
       "/dashboard",
       "Pas d'actions disponibles ...",
-      "Vous devez terminer votre inscription pour accéder à cette page",
+      "Vous devez terminer votre inscription, ou bien séléctionner des actions disponibles pour accéder à cette page",
     );
     return redirectToPath(redirectPath);
   }

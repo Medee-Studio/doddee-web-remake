@@ -87,32 +87,3 @@ export function buildSocialQuestionnaire(userData: UtilisateurMorauxSecteurAndCa
   return combinedQuestions;
 }
 
-/**
- * Get questionnaire section names for debugging
- */
-export function getSocialQuestionnaireInfo(userData: UtilisateurMorauxSecteurAndCategory | null): {
-  sections: string[];
-  totalQuestions: number;
-  categoryStatus: Record<string, boolean | null>;
-} {
-  const sections: string[] = ["st (always included)"];
-  const categoryStatus: Record<string, boolean | null> = {};
-  
-  if (userData?.categories) {
-    const categories = userData.categories;
-    
-    categoryStatus.plus_de_un_salarie = categories.plus_de_un_salarie;
-    categoryStatus.site_web = categories.site_web;
-
-    if (categories.plus_de_un_salarie === false) sections.push("stpe (plus_de_un_salarie = false)");
-    if (categories.site_web === true) sections.push("sw (site_web)");
-  }
-
-  const dynamicQuestionnaire = buildSocialQuestionnaire(userData);
-  
-  return {
-    sections,
-    totalQuestions: dynamicQuestionnaire.length,
-    categoryStatus
-  };
-} 

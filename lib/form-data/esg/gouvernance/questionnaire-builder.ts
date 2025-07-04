@@ -104,34 +104,3 @@ export function buildGouvernanceQuestionnaire(userData: UtilisateurMorauxSecteur
   return combinedQuestionnaire;
 }
 
-/**
- * Get gouvernance questionnaire section names for debugging
- */
-export function getGouvernanceQuestionnaireInfo(userData: UtilisateurMorauxSecteurAndCategory | null): {
-  sections: string[];
-  totalQuestions: number;
-  categoryStatus: Record<string, boolean | null>;
-} {
-  const sections: string[] = ["gt (always included)"];
-  const categoryStatus: Record<string, boolean | null> = {};
-  
-  if (userData?.categories) {
-    const categories = userData.categories;
-    
-    categoryStatus.parc_informatique = categories.parc_informatique;
-    categoryStatus.plus_de_un_salarie = categories.plus_de_un_salarie;
-    categoryStatus.site_web = categories.site_web;
-
-    if (categories.parc_informatique === true) sections.push("gi (parc_informatique)");
-    if (categories.plus_de_un_salarie === false) sections.push("gtpe (plus_de_un_salarie = false)");
-    if (categories.site_web === true) sections.push("gw (site_web)");
-  }
-
-  const questionnaire = buildGouvernanceQuestionnaire(userData);
-  
-  return {
-    sections,
-    totalQuestions: questionnaire.length,
-    categoryStatus
-  };
-} 

@@ -544,8 +544,9 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
       `
       )
       .eq("user_id_moral", uuid)
-      .in("action_status", ["en_cours", "valide", "en_cours_validation"])
+      .in("action_status", ["en_cours", "valide"])
       .not("deadline", "is", null);
+      console.log("userActionsData", userActionsData);
 
     if (queryError) {
       console.warn("Database query failed, using mock data:", queryError.message);

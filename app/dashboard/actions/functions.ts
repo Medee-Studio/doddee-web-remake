@@ -24,7 +24,7 @@ export async function fetchActionsWithObjectifsAndEnjeux(
   const { data, error } = await supabase.rpc(
     "fetch_actions_disponible_with_objectifs_and_enjeux",
   );
-  console.log("data", data);
+  
   if (error) {
     console.error("Error fetching actions:", error);
     return null;

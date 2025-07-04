@@ -2,9 +2,9 @@
 
 import Questionnaire from "@/components/dashboard/questionnaire/questionnaire";
 import { UtilisateurMorauxSecteurAndCategory } from "@/types";
-import { buildEnvironmentQuestionnaire, getQuestionnaireInfo } from "@/lib/form-data/esg/environnement/questionnaire-builder";
-import { buildGouvernanceQuestionnaire, getGouvernanceQuestionnaireInfo } from "@/lib/form-data/esg/gouvernance/questionnaire-builder";
-import { buildSocialQuestionnaire, getSocialQuestionnaireInfo } from "@/lib/form-data/esg/social/questionnaire-builder";
+import { buildEnvironmentQuestionnaire } from "@/lib/form-data/esg/environnement/questionnaire-builder";
+import { buildGouvernanceQuestionnaire } from "@/lib/form-data/esg/gouvernance/questionnaire-builder";
+import { buildSocialQuestionnaire} from "@/lib/form-data/esg/social/questionnaire-builder";
 import { QuestionnaireType } from "@/types";
 import { QuestionTree } from "@/types/esg-form";
 
@@ -29,26 +29,9 @@ export default function QuestionnaireContent({ userData, questionnaireType }: Qu
     }
   };
 
-  // Get questionnaire info based on type
-  const getQuestionnaireInfoByType = (type: QuestionnaireType, userData: UtilisateurMorauxSecteurAndCategory | null) => {
-    switch (type) {
-      case "environnement":
-        return getQuestionnaireInfo(userData);
-      case "gouvernance":
-        return getGouvernanceQuestionnaireInfo(userData);
-      case "social":
-        return getSocialQuestionnaireInfo(userData);
-      default:
-        return {
-          sections: [`Unknown questionnaire type: ${type}`],
-          totalQuestions: 0,
-          categoryStatus: {}
-        };
-    }
-  };
 
   const dynamicQuestionnaire = buildQuestionnaireByType(questionnaireType, userData);
-  const questionnaireInfo = getQuestionnaireInfoByType(questionnaireType, userData);
+
 
   // Get questionnaire title based on type
   const getQuestionnaireTitle = (type: QuestionnaireType): string => {
@@ -84,35 +67,6 @@ export default function QuestionnaireContent({ userData, questionnaireType }: Qu
         <p className="text-muted-foreground mt-2">
           {getQuestionnaireDescription(questionnaireType)}
         </p>
-        {userData && (
-          <div className="mt-4 p-4 bg-muted/50 rounded-md">
-            <h2 className="text-sm font-medium mb-2">Informations utilisateur (Debug):</h2>
-            <p className="text-xs">Sous-secteur ID: {userData.sous_secteur_id || "Non défini"}</p>
-            
-            <div className="mt-3">
-              <h3 className="text-xs font-medium mb-1">Questionnaires inclus:</h3>
-              <div className="space-y-1">
-                {questionnaireInfo.sections.map((section, index) => (
-                  <p key={index} className="text-xs text-muted-foreground">• {section}</p>
-                ))}
-              </div>
-              <p className="text-xs mt-2 font-medium">Total: {questionnaireInfo.totalQuestions} questions</p>
-            </div>
-
-            <div className="mt-3">
-              <h3 className="text-xs font-medium mb-1">Statut des catégories:</h3>
-              <div className="grid grid-cols-2 gap-1 text-xs">
-                {Object.entries(questionnaireInfo.categoryStatus).map(([key, value]) => (
-                  <p key={key} className="text-muted-foreground">
-                    {key}: <span className={value === true ? "text-green-600" : value === false ? "text-red-600" : "text-gray-500"}>
-                      {value === null ? "null" : value.toString()}
-                    </span>
-                  </p>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       <Questionnaire 
