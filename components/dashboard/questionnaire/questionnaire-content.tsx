@@ -1,7 +1,7 @@
 "use client";
 
 import Questionnaire from "@/components/dashboard/questionnaire/questionnaire";
-import { UtilisateurMorauxSecteurAndCategory } from "@/lib/supabase/queries";
+import { UtilisateurMorauxSecteurAndCategory } from "@/types";
 import { buildEnvironmentQuestionnaire, getQuestionnaireInfo } from "@/lib/form-data/esg/environnement/questionnaire-builder";
 import { buildGouvernanceQuestionnaire, getGouvernanceQuestionnaireInfo } from "@/lib/form-data/esg/gouvernance/questionnaire-builder";
 import { buildSocialQuestionnaire, getSocialQuestionnaireInfo } from "@/lib/form-data/esg/social/questionnaire-builder";

@@ -1,5 +1,5 @@
 import { QuestionTree } from "@/types/esg-form";
-import { UtilisateurMorauxSecteurAndCategory } from "@/lib/supabase/queries";
+import { UtilisateurMorauxSecteurAndCategory } from "@/types";
 import { st } from "./st";
 import { stpe } from "./stpe";
 import { sw } from "./sw";

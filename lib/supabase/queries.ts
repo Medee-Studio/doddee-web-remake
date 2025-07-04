@@ -1,138 +1,21 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ActionResult, TeamDataWithMembers, TeamMemberRole, User } from './schema';
-import { RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, QuestionnaireType, Action, PJ, UserMoralPJ } from '@/types';
+import { 
+  RessourcesDataType, PlanAction, EcoProfile, EcoProfileWithActions, Kpi, KpiPayload, 
+  QuestionnaireType, Action, PJ, UserMoralPJ,  FormField,  
+   FormSchema, FormDataType, FormResponseData, FormResponse, 
+  FormWithStats, FormListItem, FormListItemRow, RpcTeamMember, 
+  RpcTeamData, ActionQueryResult, UserKpiWithDetails, KpiRpcResponse, CompleteProfileData, 
+  QuestionnaireData, UtilisateurMorauxSecteurAndCategory, PublicUtilisateurMoral, 
+  QuestionnaireResponse, ReportData, EnterpriseInfo, CompanyAccountInfo, ActionPJQueryResult, 
+  UserMoralPJQueryResult
+} from '@/types';
 import { cache } from 'react';
 import { z } from 'zod';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 // ======================
-// FORM TYPES & SCHEMAS
+// FORM VALIDATION SCHEMAS
 // ======================
-
-// Form field types
-export type FieldType = 
-  | 'text'
-  | 'number'
-  | 'slider'
-  | 'radio'
-  | 'checkbox'
-  | 'section';
-
-// Form field definition
-export interface FormField {
-  id: string;
-  type: FieldType;
-  label?: string;
-  description?: string;
-  required?: boolean;
-  placeholder?: string;
-  validation?: FieldValidation;
-  // Type-specific properties
-  options?: Option[]; // For radio and checkbox
-  min?: number; // For number and slider
-  max?: number; // For number and slider
-  step?: number; // For slider
-  defaultValue?: unknown;
-}
-
-// Form section definition
-export interface FormSection {
-  id: string;
-  type: 'section';
-  title: string;
-  subtitle?: string;
-  fields: FormField[];
-}
-
-// Option for radio and checkbox fields
-export interface Option {
-  value: string;
-  label: string;
-}
-
-// Field validation rules
-export interface FieldValidation {
-  minLength?: number;
-  maxLength?: number;
-  pattern?: string;
-  message?: string;
-}
-
-// Complete form schema
-export interface FormSchema {
-  sections: FormSection[];
-}
-
-// Form settings
-export interface FormSettings extends Record<string, unknown> {
-  submitButtonText?: string;
-  successMessage?: string;
-  redirectUrl?: string;
-  allowMultipleSubmissions?: boolean;
-  requireEmail?: boolean;
-  requireName?: boolean;
-  sendEmailNotification?: boolean;
-  notificationEmail?: string;
-}
-
-// Form with all data
-export interface FormDataType {
-  id: string;
-  createdBy: string;
-  name: string;
-  description?: string;
-  schema: FormSchema;
-  settings: FormSettings;
-  isPublic: boolean;
-  publicId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Form response data
-export interface FormResponseData {
-  [fieldId: string]: unknown;
-}
-
-// Form response from database
-export interface FormResponse {
-  id: string;
-  form_id: string;
-  respondent_email: string | null;
-  respondent_name: string | null;
-  response_data: Record<string, unknown>;
-  submitted_at: string;
-}
-
-// Form with response count
-export interface FormWithStats extends FormDataType {
-  responsesCount: number;
-}
-
-// Form list item
-export interface FormListItem {
-  id: string;
-  name: string;
-  description?: string;
-  isPublic: boolean;
-  publicId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  responsesCount: number;
-}
-
-// Database row structure (snake_case) from RPC functions
-export interface FormListItemRow {
-  id: string;
-  name: string;
-  description?: string;
-  is_public: boolean;
-  public_id: string;
-  created_at: string;
-  updated_at: string;
-  responses_count?: number;
-}
 
 // Form validation schemas
 export const fieldTypeSchema = z.enum([
@@ -276,7 +159,118 @@ export function createResponseValidator(formSchemaInput: FormSchema) {
 }
 
 // ======================
-// FORM QUERIES
+// USER & AUTHENTICATION FUNCTIONS
+// ======================
+
+export async function getUser(supabaseClient: SupabaseClient) {
+  const supabase = supabaseClient;
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    // console.error('Error fetching Supabase user:', error?.message);
+    return null;
+  }
+  return user; 
+}
+
+export async function getUserProfile(supabaseClient: SupabaseClient, userId?: string) {
+  const supabase = supabaseClient;
+  let idToFetch = userId;
+
+  if (!idToFetch) {
+    const authUser = await getUser(supabaseClient);
+    if (!authUser) return null;
+    idToFetch = authUser.id;
+  }
+
+  const { data: userProfile, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', idToFetch)
+    .single();
+
+  if (error) {
+    if (error.code !== 'PGRST116') { 
+      console.error('Error fetching user profile:', error.message);
+    }
+    return null;
+  }
+  return userProfile;
+}
+
+export async function getUserWithTeam(supabaseClient: SupabaseClient, userId?: string) {
+  // If a specific userId is provided and it's different from the current auth user,
+  // the RPC `get_current_user_profile_and_team_id` cannot be used directly due to RLS on users table.
+  // For simplicity, this function will now primarily serve to get the *current* user's profile and teamId via RPC.
+  // If fetching for other users is a strict requirement, a different approach or RLS modification is needed.
+  if (userId) {
+      const currentUser = await getUser(supabaseClient);
+      if (!currentUser || currentUser.id !== userId) {
+          // Fallback to old method if specific, non-current user ID is passed.
+          // This part might be restricted by RLS on 'users' table if not careful.
+          console.warn("getUserWithTeam called with a specific userId; falling back to non-RPC method which might be RLS restricted for other users' profiles.");
+          const userProfile = await getUserProfile(supabaseClient, userId);
+          if (!userProfile) return null;
+
+          const { data: teamMember, error: teamMemberError } = await supabaseClient
+            .from('team_members')
+            .select('team_id')
+            .eq('user_id', userId)
+            .single();
+          
+          if (teamMemberError && teamMemberError.code !== 'PGRST116') { 
+            console.error('Error fetching user team membership (fallback):', teamMemberError.message);
+            return { user: userProfile, teamId: null }; 
+          }
+          return {
+            user: userProfile, 
+            teamId: teamMember?.team_id || null,
+          };
+      }
+  }
+  
+  // For the current user, use the RPC
+  const { data, error } = await supabaseClient.rpc('get_current_user_profile_and_team_id');
+
+  if (error) {
+    console.error('Error calling get_current_user_profile_and_team_id RPC:', error.message);
+    return null;
+  }
+  // The RPC returns data in the shape { user: UserProfile | null, teamId: number | null }
+  return data as { user: User | null; teamId: number | null } | null;
+}
+
+export const getUserMoralData = cache(async (supabase: SupabaseClient) => {
+  // Get the current session
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
+
+  if (error) {
+    throw new Error("Failed to get session");
+  }
+
+  if (session) {
+    const uuid = session.user.id;
+
+    // Call the stored procedure with the uuid
+    const { data: userMoralData, error: rpcError } = await supabase.rpc(
+      "get_user_moral_data",
+      { uuid },
+    );
+
+    if (rpcError) {
+      throw new Error("Failed to get user moral data");
+    }
+    console.log("userMoralData", userMoralData)
+    return userMoralData;
+  } else {
+    throw new Error("No active session found");
+  }
+});
+
+// ======================
+// FORM MANAGEMENT FUNCTIONS
 // ======================
 
 // Get user's forms with response counts
@@ -717,203 +711,11 @@ export async function exportFormResponses(
   return csv.join('\n');
 }
 
-// ======================
-// FORM ACTIONS
-// ======================
-
-export async function createFormAction(supabase: SupabaseClient, formData: globalThis.FormData) {
-  try {
-    const data = {
-      name: formData.get('name') as string,
-      description: formData.get('description') as string,
-      schema: JSON.parse(formData.get('schema') as string),
-      settings: JSON.parse(formData.get('settings') as string),
-      isPublic: formData.get('isPublic') === 'true',
-    };
-
-    const validatedData = createFormSchema.parse(data);
-    const result = await createForm(supabase, validatedData);
-
-    if ('error' in result) {
-      return { error: result.error };
-    }
-
-    revalidatePath('/dashboard/forms');
-    redirect(`/dashboard/forms/${result.success}`);
-  } catch (error) {
-    console.error('Error creating form:', error);
-    return { error: 'Erreur lors de la création du formulaire' };
-  }
-}
-
-export async function updateFormAction(supabase: SupabaseClient, formId: string, formData: globalThis.FormData) {
-  try {
-    const updates = {
-      name: formData.get('name') as string,
-      description: formData.get('description') as string,
-      schema: JSON.parse(formData.get('schema') as string),
-      settings: JSON.parse(formData.get('settings') as string),
-      isPublic: formData.get('isPublic') === 'true',
-    };
-
-    const result = await updateForm(supabase, formId, updates);
-
-    if ('error' in result) {
-      return { error: result.error };
-    }
-
-    revalidatePath('/dashboard/forms');
-    revalidatePath(`/dashboard/forms/${formId}`);
-    return { success: result.success };
-  } catch (error) {
-    console.error('Error updating form:', error);
-    return { error: 'Erreur lors de la mise à jour du formulaire' };
-  }
-}
-
-export async function deleteFormAction(supabase: SupabaseClient, formId: string) {
-  try {
-    const result = await deleteForm(supabase, formId);
-
-    if ('error' in result) {
-      return { error: result.error };
-    }
-
-    revalidatePath('/dashboard/forms');
-    return { success: result.success };
-  } catch (error) {
-    console.error('Error deleting form:', error);
-    return { error: 'Erreur lors de la suppression du formulaire' };
-  }
-}
-
-export async function submitFormResponseAction(supabase: SupabaseClient, formData: globalThis.FormData) {
-  try {
-    const data = {
-      formId: formData.get('formId') as string,
-      respondentEmail: formData.get('respondentEmail') as string || undefined,
-      respondentName: formData.get('respondentName') as string || undefined,
-      responseData: JSON.parse(formData.get('responseData') as string),
-    };
-
-    const validatedData = formResponseSchema.parse(data);
-    const result = await submitFormResponse(supabase, validatedData);
-
-    if ('error' in result) {
-      return { error: result.error };
-    }
-
-    return { success: result.success };
-  } catch (error) {
-    console.error('Error submitting form response:', error);
-    return { error: 'Erreur lors de la soumission du formulaire' };
-  }
-}
-
-export async function toggleFormPublishAction(supabase: SupabaseClient, formId: string) {
-  try {
-    // First, get the current form to check its current publish status
-    const { data: currentForm, error: fetchError } = await supabase
-      .from('forms')
-      .select('is_public')
-      .eq('id', formId)
-      .single();
-
-    if (fetchError) {
-      console.error('Error fetching form:', fetchError);
-      return { error: 'Erreur lors de la récupération du formulaire' };
-    }
-
-    // Toggle the is_public status
-    const newPublishStatus = !currentForm.is_public;
-    
-    const result = await updateForm(supabase, formId, { 
-      isPublic: newPublishStatus 
-    });
-
-    if ('error' in result) {
-      return { error: result.error };
-    }
-
-    revalidatePath('/dashboard/forms');
-    revalidatePath(`/dashboard/forms/${formId}`);
-    
-    return { 
-      success: newPublishStatus ? 'Formulaire publié avec succès' : 'Formulaire dépublié avec succès',
-      isPublic: newPublishStatus
-    };
-  } catch (error) {
-    console.error('Error toggling form publish status:', error);
-    return { error: 'Erreur lors de la publication du formulaire' };
-  }
-}
+// Form actions have been moved to lib/supabase/actions.ts to handle revalidatePath properly
 
 // ======================
-// EXISTING QUERIES (rest of the file remains the same)
+// TEAM MANAGEMENT FUNCTIONS
 // ======================
-
-// Define types for RPC data structures
-interface RpcTeamMemberUser {
-  id: string;
-  email: string;
-}
-
-interface RpcTeamMember {
-  id: number;
-  user_id: string;
-  team_id: number;
-  role: string;
-  joined_at: string; // Comes as string from RPC, will be converted to Date
-  user: RpcTeamMemberUser;
-}
-
-interface RpcTeamData {
-  id: number;
-  name: string;
-  created_at: string; // Comes as string
-  updated_at: string; // Comes as string
-  stripe_customer_id: string | null;
-  stripe_subscription_id: string | null;
-  stripe_product_id: string | null;
-  plan_name: string | null;
-  subscription_status: string | null;
-  team_members: RpcTeamMember[] | null;
-}
-
-export async function getUser(supabaseClient: SupabaseClient) {
-  const supabase = supabaseClient;
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) {
-    // console.error('Error fetching Supabase user:', error?.message);
-    return null;
-  }
-  return user; 
-}
-
-export async function getUserProfile(supabaseClient: SupabaseClient, userId?: string) {
-  const supabase = supabaseClient;
-  let idToFetch = userId;
-
-  if (!idToFetch) {
-    const authUser = await getUser(supabaseClient);
-    if (!authUser) return null;
-    idToFetch = authUser.id;
-  }
-
-  const { data: userProfile, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', idToFetch)
-    .single();
-
-  if (error) {
-    if (error.code !== 'PGRST116') { 
-      console.error('Error fetching user profile:', error.message);
-    }
-    return null;
-  }
-  return userProfile;
-}
 
 export async function getTeamByStripeCustomerId(supabaseClient: SupabaseClient, customerId: string) {
   const supabase = supabaseClient;
@@ -957,48 +759,6 @@ export async function updateTeamSubscription(
     throw error; 
   }
   return data;
-}
-
-export async function getUserWithTeam(supabaseClient: SupabaseClient, userId?: string) {
-  // If a specific userId is provided and it's different from the current auth user,
-  // the RPC `get_current_user_profile_and_team_id` cannot be used directly due to RLS on users table.
-  // For simplicity, this function will now primarily serve to get the *current* user's profile and teamId via RPC.
-  // If fetching for other users is a strict requirement, a different approach or RLS modification is needed.
-  if (userId) {
-      const currentUser = await getUser(supabaseClient);
-      if (!currentUser || currentUser.id !== userId) {
-          // Fallback to old method if specific, non-current user ID is passed.
-          // This part might be restricted by RLS on 'users' table if not careful.
-          console.warn("getUserWithTeam called with a specific userId; falling back to non-RPC method which might be RLS restricted for other users' profiles.");
-          const userProfile = await getUserProfile(supabaseClient, userId);
-          if (!userProfile) return null;
-
-          const { data: teamMember, error: teamMemberError } = await supabaseClient
-            .from('team_members')
-            .select('team_id')
-            .eq('user_id', userId)
-            .single();
-          
-          if (teamMemberError && teamMemberError.code !== 'PGRST116') { 
-            console.error('Error fetching user team membership (fallback):', teamMemberError.message);
-            return { user: userProfile, teamId: null }; 
-          }
-          return {
-            user: userProfile, 
-            teamId: teamMember?.team_id || null,
-          };
-      }
-  }
-  
-  // For the current user, use the RPC
-  const { data, error } = await supabaseClient.rpc('get_current_user_profile_and_team_id');
-
-  if (error) {
-    console.error('Error calling get_current_user_profile_and_team_id RPC:', error.message);
-    return null;
-  }
-  // The RPC returns data in the shape { user: UserProfile | null, teamId: number | null }
-  return data as { user: User | null; teamId: number | null } | null;
 }
 
 export async function getTeamForUser(supabaseClient: SupabaseClient): Promise<TeamDataWithMembers | null> {
@@ -1072,7 +832,6 @@ export async function inviteTeamMember(
   supabaseClient: SupabaseClient,
   email: string,
   role: TeamMemberRole
-  // currentUserId: string // Removed as RPC uses auth.uid()
 ): Promise<ActionResult> {
   const { data, error } = await supabaseClient.rpc('invite_member_to_current_user_team', {
     p_invitee_email: email,
@@ -1081,14 +840,12 @@ export async function inviteTeamMember(
 
   if (error) {
     console.error('Erreur lors de l\'appel de la fonction RPC invite_member_to_current_user_team:', error.message);
-    // Check if data from RPC itself contains an error message
     if (data && 'error' in (data as ActionResult)) {
       return { error: (data as { error: string }).error };
     }
     return { error: 'Erreur lors de l\'envoi de l\'invitation via RPC: ' + error.message };
   }
 
-  // RPC returns { success: string } or { error: string }
   const result = data as ActionResult;
   if ('error' in result) {
     return { error: result.error };
@@ -1099,7 +856,6 @@ export async function inviteTeamMember(
 export async function createTeam(
   supabaseClient: SupabaseClient,
   teamName: string
-  // currentUserId: string // Removed as RPC uses auth.uid()
 ): Promise<ActionResult> {
   const { data, error } = await supabaseClient.rpc('create_team_for_current_user', {
     p_team_name: teamName,
@@ -1125,7 +881,6 @@ export async function createTeam(
 export async function acceptTeamInvite(
   supabaseClient: SupabaseClient,
   invitationId: number
-  // currentUserId: string // Removed as RPC uses auth.uid()
 ): Promise<ActionResult> {
   const { data, error } = await supabaseClient.rpc('accept_team_invite_for_current_user', {
     p_invitation_id: invitationId,
@@ -1223,9 +978,6 @@ export async function cancelTeamInvitation(
   supabaseClient: SupabaseClient,
   invitationId: number,
 ): Promise<ActionResult> {
-  // RLS policy "Team admins/owners can delete pending invitations for their team"
-  // should ensure only authorized users can delete.
-  // We also explicitly check for status 'pending' here as an additional safeguard.
   const { error } = await supabaseClient
     .from('invitations')
     .delete()
@@ -1263,35 +1015,9 @@ export async function handleCancelTeamInvitationForm(
   return cancelTeamInvitation(supabaseClient, invitationId);
 }
 
-export const getUserMoralData = cache(async (supabase: SupabaseClient) => {
-  // Get the current session
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
-
-  if (error) {
-    throw new Error("Failed to get session");
-  }
-
-  if (session) {
-    const uuid = session.user.id;
-
-    // Call the stored procedure with the uuid
-    const { data: userMoralData, error: rpcError } = await supabase.rpc(
-      "get_user_moral_data",
-      { uuid },
-    );
-
-    if (rpcError) {
-      throw new Error("Failed to get user moral data");
-    }
-    console.log("userMoralData", userMoralData)
-    return userMoralData;
-  } else {
-    throw new Error("No active session found");
-  }
-});
+// ======================
+// ACTION & RESOURCE FUNCTIONS
+// ======================
 
 export const getUserRessources = cache(async (supabase: SupabaseClient) => {
   const user = await getUser(supabase);
@@ -1342,28 +1068,9 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
       return [];
     }
 
-    // Define the query result type
-    interface QueryResult {
-      id?: number;
-      id_action?: number;
-      action_status?: string;
-      deadline?: string;
-      actions?: Array<{
-        id_action: number;
-        nom_action: string;
-        action_type: string;
-      }> | {
-        id_action: number;
-        nom_action: string;
-        action_type: string;
-      };
-      nom_action?: string;
-      action_type?: string;
-    }
-
     // Transform the data to match our PlanAction interface
-    const transformedActions: PlanAction[] = (userActionsData || [] as QueryResult[])
-      .map((item: QueryResult) => {
+    const transformedActions: PlanAction[] = (userActionsData || [] as ActionQueryResult[])
+      .map((item: ActionQueryResult) => {
         // Handle actions as array (first element) or direct properties
         let actionData;
         if (Array.isArray(item.actions) && item.actions.length > 0) {
@@ -1405,7 +1112,10 @@ export const getUserActionsData = cache(async (supabase: SupabaseClient) => {
   }
 });
 
-// Eco Profile Queries
+// ======================
+// ECO PROFILE FUNCTIONS
+// ======================
+
 export const getUserLabelsAndEcoProfile = cache(
   async (supabase: SupabaseClient, userId: string) => {
     const { data: userLabelsAndEcoProfile } = await supabase.rpc(
@@ -1489,7 +1199,11 @@ export async function upsertEcoProfile(
   return { success: "Éco-profil mis à jour avec succès" };
 }
 
-// KPI Queries - Debug function to check what exists in database
+// ======================
+// KPI FUNCTIONS
+// ======================
+
+// Debug function to check what exists in database
 export async function debugDatabaseKpiStructure(supabase: SupabaseClient) {
   console.log('🔍 [debugDatabaseKpiStructure] Investigating database structure...');
   
@@ -1539,13 +1253,6 @@ export async function debugDatabaseKpiStructure(supabase: SupabaseClient) {
 
 export async function getKpiDefinitions(supabase: SupabaseClient) {
   console.log('🔍 [getKpiDefinitions] Starting to fetch KPI definitions from database...');
-  
-  // NOTE: The get_kpi_definitions RPC function doesn't exist in the database yet.
-  // This is expected behavior - the system will fall back to hardcoded definitions.
-  // To implement dynamic KPI definitions from database:
-  // 1. Create a kpi_definitions table in Supabase
-  // 2. Create the get_kpi_definitions RPC function
-  // 3. Populate with KPI definition data
   
   try {
     console.log('🔍 [getKpiDefinitions] Calling supabase.rpc("get_kpi_definitions")...');
@@ -1660,67 +1367,160 @@ export async function upsertKpis(
   }
 }
 
-
-export interface CompleteProfileData {
-  raison_sociale: string;
-  tel: string;
-  siren: string;
-  adresse: string;
-  annee_de_creation: number;
-  labels: string[];
-  coordonnees: number[];
-  secteur: string;
-  sous_secteur: string;
-  fonction: string;
-  flotte_vehicule: boolean;
-  plus_de_un_salarie: boolean;
-  locaux: boolean;
-  parc_informatique: boolean;
-  site_web: boolean;
-  site_de_production: boolean;
-  approvisionnement: boolean;
-  distribution: boolean;
-  stock: boolean;
-}
-
-export async function submitCompleteProfile(
-  supabaseClient: SupabaseClient,
-  data: CompleteProfileData
-): Promise<ActionResult> {
-  const supabase = supabaseClient;
-  
-  const { data: result, error } = await supabase.rpc('create_complete_profile', {
-    p_raison_sociale: data.raison_sociale,
-    p_tel: data.tel,
-    p_siren: data.siren,
-    p_adresse: data.adresse,
-    p_annee_de_creation: data.annee_de_creation,
-    p_labels: data.labels,
-    p_coordinates: data.coordonnees,
-    p_secteur_id: parseInt(data.secteur),
-    p_sous_secteur_id: parseInt(data.sous_secteur),
-    p_fonction: data.fonction,
-    p_flotte_vehicule: data.flotte_vehicule,
-    p_plus_de_un_salarie: data.plus_de_un_salarie,
-    p_locaux: data.locaux,
-    p_parc_informatique: data.parc_informatique,
-    p_site_web: data.site_web,
-    p_site_de_production: data.site_de_production,
-    p_approvisionnement: data.approvisionnement,
-    p_distribution: data.distribution,
-    p_stock: data.stock
-  });
-
-  console.log('🔍 [submitCompleteProfile] Result:', result);
-
-  if (error) {
-    console.error('Error creating complete profile:', error);
-    return { error: error.message };
+export async function getUserKpisWithDetails(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return null;
   }
 
-  return { success: 'Complete profile created successfully' };
+  const { data, error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .select(`
+      *,
+      kpi_details:kpis!inner(
+        id_kpi,
+        nom,
+        recurrence,
+        type,
+        kpi_type,
+        unit
+      )
+    `)
+    .eq('user_id_moral', user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user KPIs with details:', error);
+    return null;
+  }
+
+  return data as UserKpiWithDetails[];
 }
-// USER SUBSCRIPTION FUNCTIONS
+
+export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return null;
+  }
+
+  // Use the RPC function with user ID parameter
+  const { data, error } = await supabase.rpc('get_all_kpis_for_user', { user_id: user.id });
+
+  if (error) {
+    console.error('Error fetching user KPIs via RPC:', error);
+    return null;
+  }
+
+  if (!data) {
+    return [];
+  }
+
+  // Group by KPI ID to get all responses for each KPI
+  const kpiMap = new Map<number, UserKpiWithDetails>();
+  
+  data.forEach((response: KpiRpcResponse) => {
+    const kpiId = response.id_kpi;
+    if (!kpiMap.has(kpiId)) {
+      // Create new entry with latest response as main data
+      kpiMap.set(kpiId, {
+        id: response.id,
+        id_kpi: response.id_kpi,
+        user_id_moral: response.user_id_moral,
+        question: response.question,
+        answer: response.answer,
+        created_at: response.created_at,
+        updated_at: response.updated_at,
+        next_ask: response.next_ask,
+        kpi_details: response.kpi_details, // Now it's already a proper object from JSONB
+        all_responses: []
+      } as UserKpiWithDetails);
+    }
+    
+    // Add this response to the all_responses array
+    const kpiEntry = kpiMap.get(kpiId)!;
+    kpiEntry.all_responses!.push({
+      id: response.id,
+      answer: response.answer,
+      created_at: response.created_at,
+      updated_at: response.updated_at,
+    });
+  });
+
+  return Array.from(kpiMap.values());
+}
+
+export async function addKpiResponse(
+  supabase: SupabaseClient,
+  kpiId: number,
+  question: string,
+  answer: string
+): Promise<ActionResult> {
+  const user = await getUser(supabase);
+  if (!user) {
+    return { error: 'Utilisateur non authentifié.' };
+  }
+
+  const { error } = await supabase
+    .from('utilisateurs_moraux_kpis')
+    .insert({
+      id_kpi: kpiId,
+      user_id_moral: user.id,
+      question: question,
+      answer: answer,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error('Error adding KPI response:', error);
+    return { error: 'Erreur lors de l\'ajout de la réponse.' };
+  }
+
+  return { success: 'Réponse ajoutée avec succès.' };
+}
+
+export function canAddNewKpiResponse(kpi: UserKpiWithDetails): boolean {
+  const { kpi_details, created_at } = kpi;
+  
+  // If type is "ponctuel" OR recurrence is "ponctuel", always allow new responses
+  if (kpi_details.recurrence === 'ponctuel') {
+    return true;
+  }
+  
+  // If type is "numeric", check recurrence
+  if (kpi_details.type === 'numeric') {
+    // If recurrence is null, cannot ask again
+    if (!kpi_details.recurrence) {
+      return false;
+    }
+    
+    const lastResponseDate = new Date(created_at);
+    
+    switch (kpi_details.recurrence) {
+      case 'mensuel':
+        // Check if it's been at least a month since last response
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        return lastResponseDate <= oneMonthAgo;
+        
+      case 'annuel':
+        // Check if it's been at least a year since last response
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        return lastResponseDate <= oneYearAgo;
+        
+      default:
+        return false;
+    }
+  }
+  
+  return false;
+}
+
+// ======================
+// SUBSCRIPTION FUNCTIONS
+// ======================
+
 export async function getUserSubscriptionStatus(supabaseClient: SupabaseClient, userId?: string) {
   console.log('[QUERY] getUserSubscriptionStatus called with userId:', userId);
   
@@ -1924,21 +1724,92 @@ export async function createUserStripeCustomer(
   return data;
 }
 
-interface QuestionnaireData {
-  answers: Array<{
-    questionKey: string;
-    questionText: string;
-    answer: string | number | string[];
-  }>;
-  valide_id_actions: number[];
-  disponible_id_actions: number[];
-  kpis: Array<{
-    questionId: string;
-    questionText: string;
-    kpiId: number;
-    answer: string | number | string[];
-  }>;
+// ======================
+// PROFILE COMPLETION FUNCTIONS
+// ======================
+
+export async function submitCompleteProfile(
+  supabaseClient: SupabaseClient,
+  data: CompleteProfileData
+): Promise<ActionResult> {
+  const supabase = supabaseClient;
+  
+  const { data: result, error } = await supabase.rpc('create_complete_profile', {
+    p_raison_sociale: data.raison_sociale,
+    p_tel: data.tel,
+    p_siren: data.siren,
+    p_adresse: data.adresse,
+    p_annee_de_creation: data.annee_de_creation,
+    p_labels: data.labels,
+    p_coordinates: data.coordonnees,
+    p_secteur_id: parseInt(data.secteur),
+    p_sous_secteur_id: parseInt(data.sous_secteur),
+    p_fonction: data.fonction,
+    p_flotte_vehicule: data.flotte_vehicule,
+    p_plus_de_un_salarie: data.plus_de_un_salarie,
+    p_locaux: data.locaux,
+    p_parc_informatique: data.parc_informatique,
+    p_site_web: data.site_web,
+    p_site_de_production: data.site_de_production,
+    p_approvisionnement: data.approvisionnement,
+    p_distribution: data.distribution,
+    p_stock: data.stock
+  });
+
+  console.log('🔍 [submitCompleteProfile] Result:', result);
+
+  if (error) {
+    console.error('Error creating complete profile:', error);
+    return { error: error.message };
+  }
+
+  return { success: 'Complete profile created successfully' };
 }
+
+export async function getUtilisateurMorauxSecteurAndCategory(supabaseClient: SupabaseClient): Promise<UtilisateurMorauxSecteurAndCategory | null> {
+  const supabase = supabaseClient;
+  
+  // Get the current user first
+  const authUser = await getUser(supabaseClient);
+  if (!authUser) {
+    console.error('No authenticated user found');
+    return null;
+  }
+
+  // Get sous_secteur_id from utilisateurs_moraux
+  const { data: moralData, error: moralError } = await supabase
+    .from('utilisateurs_moraux')
+    .select('sous_secteur_id')
+    .eq('user_id_moral', authUser.id)
+    .single();
+
+  if (moralError) {
+    if (moralError.code !== 'PGRST116') {
+      console.error('Error fetching user moral data:', moralError.message);
+    }
+    return null;
+  }
+
+  // Get all data from utilisateurs_moraux_categories
+  const { data: categoriesData, error: categoriesError } = await supabase
+    .from('utilisateurs_moraux_categories')
+    .select('*')
+    .eq('user_id', authUser.id)
+    .single();
+
+  if (categoriesError && categoriesError.code !== 'PGRST116') {
+    console.error('Error fetching user categories data:', categoriesError.message);
+  }
+
+  return {
+    sous_secteur_id: moralData?.sous_secteur_id || null,
+    categories: categoriesData || null
+  };
+}
+
+// ======================
+// QUESTIONNAIRE FUNCTIONS
+// ======================
 
 export async function saveQuestionnaireData(
   supabaseClient: SupabaseClient,
@@ -2052,76 +1923,9 @@ export async function saveQuestionnaireData(
   }
 }
 
-// Type for combined sector and category data
-export interface UtilisateurMorauxSecteurAndCategory {
-  sous_secteur_id: number | null;
-  categories: {
-    id: number;
-    user_id: string;
-    flotte_vehicule: boolean | null;
-    plus_de_un_salarie: boolean | null;
-    locaux: boolean | null;
-    parc_informatique: boolean | null;
-    site_web: boolean | null;
-    site_de_production: boolean | null;
-    approvisionnement: boolean | null;
-    distribution: boolean | null;
-    stock: boolean | null;
-  } | null;
-}
-
-export async function getUtilisateurMorauxSecteurAndCategory(supabaseClient: SupabaseClient): Promise<UtilisateurMorauxSecteurAndCategory | null> {
-  const supabase = supabaseClient;
-  
-  // Get the current user first
-  const authUser = await getUser(supabaseClient);
-  if (!authUser) {
-    console.error('No authenticated user found');
-    return null;
-  }
-
-  // Get sous_secteur_id from utilisateurs_moraux
-  const { data: moralData, error: moralError } = await supabase
-    .from('utilisateurs_moraux')
-    .select('sous_secteur_id')
-    .eq('user_id_moral', authUser.id)
-    .single();
-
-  if (moralError) {
-    if (moralError.code !== 'PGRST116') {
-      console.error('Error fetching user moral data:', moralError.message);
-    }
-    return null;
-  }
-
-  // Get all data from utilisateurs_moraux_categories
-  const { data: categoriesData, error: categoriesError } = await supabase
-    .from('utilisateurs_moraux_categories')
-    .select('*')
-    .eq('user_id', authUser.id)
-    .single();
-
-  if (categoriesError && categoriesError.code !== 'PGRST116') {
-    console.error('Error fetching user categories data:', categoriesError.message);
-  }
-
-  return {
-    sous_secteur_id: moralData?.sous_secteur_id || null,
-    categories: categoriesData || null
-  };
-}
-
+// ======================
 // MAP DATA FUNCTIONS
-export interface PublicUtilisateurMoral {
-  user_id_moral: string;
-  raison_sociale: string | null;
-  secteur_id: number | null;
-  sous_secteur_id: number | null;
-  coordinates: [number, number] | null; // [lng, lat] array format from database
-  labels: {
-    certifications?: string[];
-  } | null;
-}
+// ======================
 
 export async function getPublicUtilisateursMoraux(
   supabaseClient: SupabaseClient,
@@ -2243,23 +2047,10 @@ function getMockUtilisateursMoraux(searchTerm?: string, sousSecteurId?: number):
   return filteredData;
 }
 
-// PDF Report Data Types and Functions
-export interface QuestionnaireResponse {
-  id: number;
-  user_id_moral: string;
-  question: string;
-  answer: string;
-  created_at: string;
-}
+// ======================
+// REPORTING FUNCTIONS
+// ======================
 
-export interface ReportData {
-  userProfile: EnterpriseInfo | null;
-  responses: QuestionnaireResponse[];
-  actions: Action[];
-  reportType: 'environnement' | 'social' | 'gouvernance';
-}
-
-// Query functions for PDF report data
 export async function getEnvironnementResponses(supabaseClient: SupabaseClient): Promise<QuestionnaireResponse[]> {
   const { data: { session }, error } = await supabaseClient.auth.getSession();
   
@@ -2323,16 +2114,6 @@ export async function getGouvernanceResponses(supabaseClient: SupabaseClient): P
   return data || [];
 }
 
-// Enterprise information interface
-export interface EnterpriseInfo {
-  raison_sociale: string | null;
-  tel: string | null;
-  siren: string | null;
-  adresse: string | null;
-  annee_de_creation: number | null;
-  labels: string[] | null;
-}
-
 export async function getEnterpriseInfo(supabaseClient: SupabaseClient): Promise<EnterpriseInfo | null> {
   const { data: { session }, error } = await supabaseClient.auth.getSession();
   
@@ -2390,14 +2171,9 @@ export async function getReportData(
   };
 }
 
-// New queries for company account information
-export interface CompanyAccountInfo {
-  user_id_moral: string;
-  raison_sociale: string | null;
-  tel: string | null;
-  labels: string[] | null;
-  logo: string | null;
-}
+// ======================
+// COMPANY ACCOUNT FUNCTIONS
+// ======================
 
 export async function getCompanyAccountInfo(supabaseClient: SupabaseClient): Promise<CompanyAccountInfo | null> {
   const supabase = supabaseClient;
@@ -2516,12 +2292,9 @@ export async function uploadCompanyLogo(
   return { success: true, filePath: fileName };
 }
 
-// PJs (Pièces Justificatives) related functions
-// Interface for the actions_pjs query result
-interface ActionPJQueryResult {
-  id_pj: number;
-  pjs: PJ[];
-}
+// ======================
+// PJS (PIÈCES JUSTIFICATIVES) FUNCTIONS
+// ======================
 
 export async function getActionPJs(
   supabaseClient: SupabaseClient,
@@ -2545,16 +2318,6 @@ export async function getActionPJs(
   }
 
   return data?.flatMap((item: ActionPJQueryResult) => item.pjs).filter(Boolean) || [];
-}
-
-// Interface for the utilisateurs_moraux_pjs query result
-interface UserMoralPJQueryResult {
-  id: number;
-  id_utilisateur_moral_action: number;
-  id_pj: number | null;
-  path_to_pj: string | null;
-  status: string | null;
-  pjs: PJ[] | null;
 }
 
 export async function getUserMoralPJs(
@@ -2652,202 +2415,4 @@ export async function getPJFileUrl(
   }
 
   return data.signedUrl;
-}
-
-// New KPI Queries for the user's specific table structure
-export interface UserKpiWithDetails {
-  id: number;
-  id_kpi: number;
-  user_id_moral: string;
-  question: string;
-  answer: string;
-  created_at: string;
-  updated_at: string;
-  next_ask: string | null;
-  kpi_details: {
-    id_kpi: number;
-    nom: string;
-    recurrence: string | null;
-    type: string;
-    kpi_type: string;
-    unit: string | null;
-  };
-  all_responses?: Array<{
-    id: number;
-    answer: string;
-    created_at: string;
-    updated_at: string;
-  }>;
-}
-
-export async function getUserKpisWithDetails(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
-  const user = await getUser(supabase);
-  if (!user) {
-    return null;
-  }
-
-  const { data, error } = await supabase
-    .from('utilisateurs_moraux_kpis')
-    .select(`
-      *,
-      kpi_details:kpis!inner(
-        id_kpi,
-        nom,
-        recurrence,
-        type,
-        kpi_type,
-        unit
-      )
-    `)
-    .eq('user_id_moral', user.id)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching user KPIs with details:', error);
-    return null;
-  }
-
-  return data as UserKpiWithDetails[];
-}
-
-
-
-// Interface for RPC response data structure
-interface KpiRpcResponse {
-  id: number;
-  id_kpi: number;
-  user_id_moral: string;
-  question: string;
-  answer: string;
-  created_at: string;
-  updated_at: string;
-  next_ask: string | null;
-  kpi_details: {
-    id_kpi: number;
-    nom: string;
-    recurrence: string | null;
-    type: string;
-    kpi_type: string;
-    unit: string | null;
-  };
-}
-
-export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
-  const user = await getUser(supabase);
-  if (!user) {
-    return null;
-  }
-
-  // Use the RPC function with user ID parameter
-  const { data, error } = await supabase.rpc('get_all_kpis_for_user', { user_id: user.id });
-
-  if (error) {
-    console.error('Error fetching user KPIs via RPC:', error);
-    return null;
-  }
-
-  if (!data) {
-    return [];
-  }
-
-  // Group by KPI ID to get all responses for each KPI
-  const kpiMap = new Map<number, UserKpiWithDetails>();
-  
-  data.forEach((response: KpiRpcResponse) => {
-    const kpiId = response.id_kpi;
-    if (!kpiMap.has(kpiId)) {
-      // Create new entry with latest response as main data
-      kpiMap.set(kpiId, {
-        id: response.id,
-        id_kpi: response.id_kpi,
-        user_id_moral: response.user_id_moral,
-        question: response.question,
-        answer: response.answer,
-        created_at: response.created_at,
-        updated_at: response.updated_at,
-        next_ask: response.next_ask,
-        kpi_details: response.kpi_details, // Now it's already a proper object from JSONB
-        all_responses: []
-      } as UserKpiWithDetails);
-    }
-    
-    // Add this response to the all_responses array
-    const kpiEntry = kpiMap.get(kpiId)!;
-    kpiEntry.all_responses!.push({
-      id: response.id,
-      answer: response.answer,
-      created_at: response.created_at,
-      updated_at: response.updated_at,
-    });
-  });
-
-  return Array.from(kpiMap.values());
-}
-
-export async function addKpiResponse(
-  supabase: SupabaseClient,
-  kpiId: number,
-  question: string,
-  answer: string
-): Promise<ActionResult> {
-  const user = await getUser(supabase);
-  if (!user) {
-    return { error: 'Utilisateur non authentifié.' };
-  }
-
-  const { error } = await supabase
-    .from('utilisateurs_moraux_kpis')
-    .insert({
-      id_kpi: kpiId,
-      user_id_moral: user.id,
-      question: question,
-      answer: answer,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    });
-
-  if (error) {
-    console.error('Error adding KPI response:', error);
-    return { error: 'Erreur lors de l\'ajout de la réponse.' };
-  }
-
-  return { success: 'Réponse ajoutée avec succès.' };
-}
-
-export function canAddNewKpiResponse(kpi: UserKpiWithDetails): boolean {
-  const { kpi_details, created_at } = kpi;
-  
-  // If type is "ponctuel" OR recurrence is "ponctuel", always allow new responses
-  if (kpi_details.recurrence === 'ponctuel') {
-    return true;
-  }
-  
-  // If type is "numeric", check recurrence
-  if (kpi_details.type === 'numeric') {
-    // If recurrence is null, cannot ask again
-    if (!kpi_details.recurrence) {
-      return false;
-    }
-    
-    const lastResponseDate = new Date(created_at);
-    
-    switch (kpi_details.recurrence) {
-      case 'mensuel':
-        // Check if it's been at least a month since last response
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-        return lastResponseDate <= oneMonthAgo;
-        
-      case 'annuel':
-        // Check if it's been at least a year since last response
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        return lastResponseDate <= oneYearAgo;
-        
-      default:
-        return false;
-    }
-  }
-  
-  return false;
 }

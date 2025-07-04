@@ -1,5 +1,5 @@
 import { QuestionTree } from "@/types/esg-form";
-import { UtilisateurMorauxSecteurAndCategory } from "@/lib/supabase/queries";
+import { UtilisateurMorauxSecteurAndCategory } from "@/types";
 
 // Import all gouvernance questionnaire modules
 import { gt } from "./gt";

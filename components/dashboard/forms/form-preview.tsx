@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
-import { FormField, FormSection } from '@/lib/supabase/queries';
+import { FormField, FormSection } from '@/types';
 
 interface FormPreviewProps {
   formData: {

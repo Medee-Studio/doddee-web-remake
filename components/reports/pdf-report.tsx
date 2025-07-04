@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { ReportData } from '@/lib/supabase/queries';
+import { ReportData } from '@/types';
 // Dynamically imported PDF components with minimal typing to avoid complex type issues
 let Document: React.ComponentType<{ children?: React.ReactNode }>;
 let Page: React.ComponentType<Record<string, unknown>>;

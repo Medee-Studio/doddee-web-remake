@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FormField, Option } from '@/lib/supabase/queries';
+import { FormField, Option } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

@@ -2,7 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { FormWithStats, toggleFormPublishAction, deleteForm } from '@/lib/supabase/queries';
+import { FormWithStats } from '@/types';
+import { deleteForm } from '@/lib/supabase/queries';
+import { toggleFormPublishAction } from '@/lib/supabase/actions';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

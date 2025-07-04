@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FormPreview } from './form-preview';
 import { SectionBuilder } from './section-builder';
-import { FormSection, FormSettings } from '@/lib/supabase/queries';
+import { FormSection, FormSettings } from '@/types';
 import { nanoid } from 'nanoid';
 import { toast } from 'sonner';
 import { z } from 'zod';

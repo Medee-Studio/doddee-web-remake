@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ReportData, getReportData } from '@/lib/supabase/queries';
+import { ReportData } from '@/types';
+import { getReportData } from '@/lib/supabase/queries';
 import { createClient } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 
