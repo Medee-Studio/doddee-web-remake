@@ -1864,8 +1864,10 @@ export async function getUserKpisWithDetails(supabase: SupabaseClient): Promise<
   return data as UserKpiWithDetails[];
 }
 
-// Interface for the KPI response data structure
-interface KpiResponseData {
+
+
+// Interface for RPC response data structure
+interface KpiRpcResponse {
   id: number;
   id_kpi: number;
   user_id_moral: string;
@@ -1881,7 +1883,7 @@ interface KpiResponseData {
     type: string;
     kpi_type: string;
     unit: string | null;
-  }[];
+  };
 }
 
 export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserKpiWithDetails[] | null> {
@@ -1905,7 +1907,7 @@ export async function getAllKpisForUser(supabase: SupabaseClient): Promise<UserK
   // Group by KPI ID to get all responses for each KPI
   const kpiMap = new Map<number, UserKpiWithDetails>();
   
-  data.forEach((response: any) => {
+  data.forEach((response: KpiRpcResponse) => {
     const kpiId = response.id_kpi;
     if (!kpiMap.has(kpiId)) {
       // Create new entry with latest response as main data
